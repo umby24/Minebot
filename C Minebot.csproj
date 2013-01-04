@@ -32,9 +32,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Cryptography">
-      <HintPath>..\..\Cryptography\Cryptography\bin\Debug\Cryptography.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -45,8 +42,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="Wrapped, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Wrapped">
       <HintPath>..\..\..\..\GitHub\Wrapped\Wrapped\bin\Debug\Wrapped.dll</HintPath>
     </Reference>
   </ItemGroup>
@@ -63,15 +59,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="packetHandler.cs" />
-    <Compile Include="Packets\ClientResponse.cs" />
-    <Compile Include="Packets\EncRequest.cs" />
-    <Compile Include="Packets\EncResponse.cs" />
-    <Compile Include="Packets\Handshake.cs" />
     <Compile Include="Minecraft_Net_Interaction.cs" />
-    <Compile Include="networkHandler.cs" />
-    <Compile Include="Packets\Kick.cs" />
-    <Compile Include="Packets\Login Response.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegistryControl.cs" />
@@ -106,7 +94,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

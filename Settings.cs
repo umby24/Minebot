@@ -62,7 +62,8 @@ namespace C_Minebot
             }
             catch
             {
-                
+                System.Windows.Forms.MessageBox.Show("Fuck.");
+                // well then.
             }
 
         }
@@ -123,47 +124,6 @@ namespace C_Minebot
                     txtPort.Text = favs[i].Split('|')[2].Replace("=","");
                 }
             }
-        }
-
-        private void btnPingFav_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnRemFav_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnAddFav_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnConnect_Click(object sender, EventArgs e)
-        {
-            myform.beginconnect(txtUN.Text,txtPW.Text,txtIP.Text,txtPort.Text,cbOnline.Checked);
-            this.Close();
-        }
-
-        private void txtIrcIP_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnAddAdmin_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnRemAdmin_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-
         }
 
     }

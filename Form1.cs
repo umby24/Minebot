@@ -17,22 +17,8 @@ namespace C_Minebot
         public Color TextAColor;
         public Boolean flatten;
         public Boolean colorize = true;
-        public Boolean onlineMode;
         public List<string> admins;
-        #region Network
-        public string username;
-        public string sessionId;
-        public networkHandler nh;
         #endregion
-        #region Encryption
-        public byte[] sharedkey = new byte[16];
-        public string ServerID;
-        public byte[] PublicKey;
-        public byte[] token;
-        public string serverHash;
-        #endregion
-        #endregion
-
         public Form1()
         {
             InitializeComponent();
@@ -40,7 +26,7 @@ namespace C_Minebot
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("I have developed this program entirely in secret due to the massive amount" + Environment.NewLine + "of bitching from everyone that VB looks like shit. So here you go, C# Minebot. Enjoy. Or don't.", "About C# Minebot");
+            MessageBox.Show("I have developed this program entirely in secret due to the massive amount" + Environment.NewLine + "of bitching from everyone that VB looks like shit. So here you go, motherfucking shitty ass C# Minebot. Enjoy. Or don't. I really don't give a fuck anymore about this damned project.", "About C# Minebot");
         }
 
         private void connectToolStripMenuItem_Click(object sender, EventArgs e)
@@ -73,7 +59,6 @@ namespace C_Minebot
                 }
             }
             admins.Add("Minebot");
-            puts("All settings loaded. Welcome to minebot.");
         }
     
         #region FormHelpers
@@ -111,56 +96,6 @@ namespace C_Minebot
             this.ResumeLayout(false);
             this.PerformLayout();
         }
-        private delegate void putss(string text);
-
-        public void puts(string text)
-        {
-            if (this.InvokeRequired)
-            {
-                this.Invoke(new putss(puts), text);
-            }
-            else
-            {
-                console.AppendText(Environment.NewLine + text);
-                console.Select(console.Text.Length, console.Text.Length);
-                console.ScrollToCaret();
-            }
-        }
-        public void beginconnect(string UN,string password, string ip, string port,bool online)
-        {
-            onlineMode = online;
-            puts("Logging in to Minecraft.net...");
-            if (online)
-            {
-                Minecraft_Net_Interaction netinter = new Minecraft_Net_Interaction();
-                string Response = netinter.login2(UN, password);
-                if (Response.Contains(":"))
-                {
-                    //version:Deprecated:UN:sessionID:UID
-                    string[] items = Response.Split(':');
-                    username = items[2];
-                    sessionId = items[3];
-                    nh = new networkHandler(ip, port,this);
-                    nh.start();
-                }
-                else
-                {
-                    MessageBox.Show(Response);
-                }
-            }
-            else
-            {
-                username = UN;
-                sessionId = "1337";
-                nh = new networkHandler(ip, port,this);
-                nh.start();
-            }
-        }
         #endregion
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            nh.socket.writeByte(0);
-        }
     }
 }
