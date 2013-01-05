@@ -38,7 +38,7 @@ namespace C_Minebot
                     Handshake myhand = new Handshake(false, sock, mainform);
                     break;
                 case 3:
-                    chatMessage chat = new chatMessage(false, sock, mainform);
+                     chatMessage chat = new chatMessage(false, sock, mainform);
                     break;
                 case 4:
                     timeUpdate time = new timeUpdate(sock, mainform);

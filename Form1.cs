@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
 
 namespace C_Minebot
 {
@@ -50,6 +51,14 @@ namespace C_Minebot
         public string username;
         public networkHandler nh;
         #endregion
+
+        #endregion
+        #region Colorized Chatbox
+        public const int EM_GETLINECOUNT = 0xBA;
+        public const int EM_LINESCROLL = 0xB6;
+        //     Public Declare Function SendMessage Lib "user32.dll" Alias "SendMessageA" (ByVal hWnd As IntPtr, ByVal msg As Integer, ByVal wParam As Integer, ByVal lParam As Integer) As Integer
+        [DllImport("user32.dll")]
+        public static extern int SendMessage(IntPtr hWnd, int msg, int wParam, int lParam);
 
         #endregion
 
@@ -97,7 +106,15 @@ namespace C_Minebot
                 }
             }
             admins.Add("Minebot");
-            puts("All settings loaded, welcome to Minebot.");
+           // puts("All settings loaded, welcome to Minebot.");
+            putsc("=_=_=_= C# Minebot =_=_=_=", Color.Yellow);
+            putsc("=+=+=+= Version 1.0 =+=+=+=", Color.Blue);
+            putsc("======= by Umby24 ========", Color.Red);
+            putsc("-------- All settings loaded ---------", Color.Orange);
+            console.Select(0, 0);
+
+
+
         }
 
         private void Form1_Close(object sender, EventArgs e)
@@ -105,6 +122,7 @@ namespace C_Minebot
             if (nh.started)
             nh.stop();
         }
+
         #region FormHelpers
         public void loadColors()
         {
@@ -171,7 +189,63 @@ namespace C_Minebot
         #region Threadsafe
 
         private delegate void putss(string text);
+        private delegate void putsc_(string text, Color tColor, bool append);
 
+        public void putsc(string text, Color tColor, bool append)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new putsc_(putsc), text, tColor, append);
+            }
+            else {
+                if (append == true)
+                {
+                    int intLines = SendMessage(console.Handle, EM_GETLINECOUNT, 0, 0);
+                    console.AppendText(text);
+                    console.Select(console.Text.Length - text.Length, text.Length);
+                    console.SelectionColor = tColor;
+                    int linesToAdd = (SendMessage(console.Handle, EM_GETLINECOUNT, 0, 0) - intLines);
+                    SendMessage(console.Handle, EM_LINESCROLL, 0, linesToAdd);
+                    return;
+                }
+                int aintLines = SendMessage(console.Handle, EM_GETLINECOUNT, 0, 0);
+                console.AppendText(Environment.NewLine);
+                console.AppendText(text);
+                console.Select(console.Text.Length - text.Length, text.Length);
+                console.SelectionColor = tColor;
+                int blinesToAdd = (SendMessage(console.Handle, EM_GETLINECOUNT, 0, 0) - aintLines);
+                SendMessage(console.Handle, EM_LINESCROLL, 0, blinesToAdd);
+            }
+
+        }
+        public void putsc(string text, Color tColor)
+        {
+            bool append = false;
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new putsc_(putsc), text, tColor, append);
+            }
+            else
+            {
+                if (append == true)
+                {
+                    int intLines = SendMessage(console.Handle, EM_GETLINECOUNT, 0, 0);
+                    console.AppendText(text);
+                    console.Select(console.Text.Length - text.Length, text.Length);
+                    console.SelectionColor = tColor;
+                    int linesToAdd = (SendMessage(console.Handle, EM_GETLINECOUNT, 0, 0) - intLines);
+                    SendMessage(console.Handle, EM_LINESCROLL, 0, linesToAdd);
+                    return;
+                }
+                int aintLines = SendMessage(console.Handle, EM_GETLINECOUNT, 0, 0);
+                console.AppendText(Environment.NewLine);
+                console.AppendText(text);
+                console.Select(console.Text.Length - text.Length, text.Length);
+                console.SelectionColor = tColor;
+                int blinesToAdd = (SendMessage(console.Handle, EM_GETLINECOUNT, 0, 0) - aintLines);
+                SendMessage(console.Handle, EM_LINESCROLL, 0, blinesToAdd);
+            }
+        }
         public void puts(string text)
         {
             if (this.InvokeRequired)
@@ -210,6 +284,8 @@ namespace C_Minebot
             }
         }
         #endregion
+
+
 
         private void btnSend_Click(object sender, EventArgs e)
         {

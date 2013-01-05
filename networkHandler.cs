@@ -47,7 +47,7 @@ namespace C_Minebot
             myform.puts("Connected to minecraft server.");
             Handshake handshake = new Handshake(true, socket,myform);
 
-            //Begin handling packets (Seperate thread to prevent bottlenecks)
+            // Begin handling packets (Seperate thread to prevent bottlenecks)
             Thread handle = new Thread(handlePackets);
             handle.Start();
             handler = handle;

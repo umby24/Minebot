@@ -155,6 +155,5 @@ namespace C_Minebot
             RegistryControl Reg = new RegistryControl();
             Reg.SaveSetting("SH", "Minebot SMP", "Password", txtPW.Text);
         }
-
     }
 }
