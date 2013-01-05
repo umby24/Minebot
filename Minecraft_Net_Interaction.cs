@@ -10,23 +10,11 @@ namespace C_Minebot
 {
     class Minecraft_Net_Interaction
     {
-        public string Login(string username,string password)
+        public string Login(string username, string password)
         {
-            WebRequest request = WebRequest.Create("https://login.minecraft.net/");
-            request.Method = "POST";
-            Byte[] byteArray = Encoding.UTF8.GetBytes("user=" + username + "&password=" + password + "&version=1337");
-            request.ContentType = "application/x-www-form-urlencoded";
-            request.ContentLength = byteArray.Length;
-            Stream dataStream = request.GetRequestStream();
-            dataStream.Write(byteArray, 0, byteArray.Length);
-            dataStream.Close();
-            WebResponse response = request.GetResponse();
-            dataStream = response.GetResponseStream();
-            StreamReader reader = new StreamReader(dataStream);
-            string ServResponse = reader.ReadToEnd();
-            reader.Close();
-            dataStream.Close();
-            response.Close();
+            WebClient request = new WebClient();
+            String ServResponse = request.DownloadString("https://login.minecraft.net/?user=" + username + "&password=" + password + "&version=1337");
+
             switch (ServResponse)
             {
                 case "Old version":
@@ -37,15 +25,71 @@ namespace C_Minebot
                     return ServResponse;
             }
         }
+
         public bool VerifyName(string username,string SessionID,string ServerHash)
         {
             WebClient request = new WebClient();
-            String result = request.DownloadString("http://session.minecraft.net/game/joinserver.ksp?user=" + username + "&sessionId=" + SessionID + "&serverId=" + ServerHash);
+            String result = request.DownloadString("http://session.minecraft.net/game/joinserver.jsp?user=" + username + "&sessionId=" + SessionID + "&serverId=" + ServerHash);
             
             if (result == "OK")
             {return true;} else {return false;}
 
         }
 
+        public void readMetadata(Wrapped.Wrapped socket)
+        {
+            do
+            {
+                byte item = socket.readByte();
+                if (item == 127) break;
+                int index = item & 0x1F;
+                int type = item >> 5;
+
+                switch (type)
+                {
+                    case 0:
+                        socket.readByte();
+                        break;
+                    case 1:
+                        socket.readShort();
+                        break;
+                    case 2:
+                        socket.readInt();
+                        break;
+                    case 3:
+                        socket.readFloat();
+                        break;
+                    case 4:
+                        socket.readString();
+                        break;
+                    case 5:
+                        readSlot(socket);
+                        break;
+                    case 6:
+                        socket.readInt();
+                        socket.readInt();
+                        socket.readInt();
+                        break;
+
+                }
+            } while (true);
+        }
+
+        public void readSlot(Wrapped.Wrapped socket)
+        {
+            int blockID = socket.readShort();
+
+            if (blockID == -1)
+                return;
+
+            socket.readByte();
+            socket.readShort();
+            int NBTLength = socket.readShort();
+
+            if (NBTLength == -1)
+                return;
+
+            socket.readByteArray(NBTLength);
+        }
     }
 }

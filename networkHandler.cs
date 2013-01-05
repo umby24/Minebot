@@ -20,6 +20,8 @@ namespace C_Minebot
         NetworkStream baseStream;
         public Wrapped.Wrapped socket;
         public bool logging = false;
+        public Thread handler;
+        public bool started = false;
 
         public networkHandler(string nip, string nport, Form1 asdf) {
             ip = nip;
@@ -38,16 +40,24 @@ namespace C_Minebot
                 MessageBox.Show("Error connecting: " + e.Message);
                 return;
             }
+            started = true;
             baseStream = baseSock.GetStream();
             socket = new Wrapped.Wrapped(baseStream);
-            //Connect.. 
+
             myform.puts("Connected to minecraft server.");
             Handshake handshake = new Handshake(true, socket,myform);
-            myform.puts("Handshake sent!");
+
             //Begin handling packets (Seperate thread to prevent bottlenecks)
             Thread handle = new Thread(handlePackets);
             handle.Start();
-            myform.puts("Networking thread started.");
+            handler = handle;
+        }
+
+        public void stop()
+        {
+            handler.Abort();
+            baseStream.Close();
+            baseSock.Close();
         }
 
         void handlePackets()
@@ -57,7 +67,7 @@ namespace C_Minebot
                 if (baseStream.DataAvailable == true)
                 {
                     int id = (int)socket.readByte();
-                    packetHandler ph = new packetHandler(id, socket, myform,logging);
+                    packetHandler ph = new packetHandler(id, socket, myform, logging);
                 }
             }
             baseSock.Close();

@@ -9,6 +9,7 @@ namespace C_Minebot
     {
         Wrapped.Wrapped sock;
         Form1 myform;
+
         public Handshake(bool outgoing, Wrapped.Wrapped socket,Form1 asdf)
         {
             sock = socket;
@@ -19,14 +20,16 @@ namespace C_Minebot
                 handle();
             }
         }
+
         void handle()
         {
-
+            // Currently C -> S only.
         }
+
         void send()
         {
             sock.writeByte((byte)2);
-            sock.writeByte((byte)47); // 51
+            sock.writeByte((byte)51); // 47
             sock.writeString(myform.username);
             sock.writeString(myform.nh.ip);
             sock.writeInt(myform.nh.port);

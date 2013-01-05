@@ -5,15 +5,16 @@ using System.Text;
 
 namespace C_Minebot.Packets
 {
-    class Kick
+    class HeldItemChange
     {
-        Wrapped.Wrapped sock;
+        Wrapped.Wrapped socket;
         Form1 myform;
 
-        public Kick(bool outgoing, Wrapped.Wrapped socket, Form1 asdf)
+        public HeldItemChange(bool outgoing, Wrapped.Wrapped Socket, Form1 Myform)
         {
-            sock = socket;
-            myform = asdf;
+            socket = Socket;
+            myform = Myform;
+
             if (outgoing)
             {
                 send();
@@ -26,14 +27,13 @@ namespace C_Minebot.Packets
 
         void handle()
         {
-            myform.puts("Kicked by server! Reason: " + sock.readString());
-            sock._stream.Close();
+            myform.selectedSlot = socket.readShort();
         }
 
         void send()
         {
-            sock.writeByte(255);
-            sock.writeString("Minebot closed.");
+            socket.writeByte(16);
+            socket.writeShort(myform.selectedSlot);
         }
     }
 }

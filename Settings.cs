@@ -126,5 +126,35 @@ namespace C_Minebot
             }
         }
 
+        private void btnConnect_Click(object sender, EventArgs e)
+        {
+            myform.beginConnect(txtIP.Text, txtPort.Text, txtUN.Text, txtPW.Text, cbOnline.Checked);
+            this.Close();
+        }
+
+        private void txtIP_TextChanged(object sender, EventArgs e)
+        {
+            RegistryControl Reg = new RegistryControl();
+            Reg.SaveSetting("SH", "Minebot SMP", "IP", txtIP.Text);
+        }
+
+        private void txtPort_TextChanged(object sender, EventArgs e)
+        {
+            RegistryControl Reg = new RegistryControl();
+            Reg.SaveSetting("SH", "Minebot SMP", "Port", txtPort.Text);
+        }
+
+        private void txtUN_TextChanged(object sender, EventArgs e)
+        {
+            RegistryControl Reg = new RegistryControl();
+            Reg.SaveSetting("SH", "Minebot SMP", "Username", txtUN.Text);
+        }
+
+        private void txtPW_TextChanged(object sender, EventArgs e)
+        {
+            RegistryControl Reg = new RegistryControl();
+            Reg.SaveSetting("SH", "Minebot SMP", "Password", txtPW.Text);
+        }
+
     }
 }

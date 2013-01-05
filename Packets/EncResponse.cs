@@ -25,6 +25,7 @@ namespace C_Minebot.Packets
                 handle();
             }
         }
+
         public EncResponse(bool outgoing, Wrapped.Wrapped sock, Form1 myform,byte[] Etoken,byte[] Ekey)
         {
             socket = sock;
@@ -40,42 +41,47 @@ namespace C_Minebot.Packets
                 handle();
             }
         }
+
         void send()
         {
-            int written = 0;
+
             socket.writeByte(252);
             socket.writeShort((short)enckey.Length);
-            form.puts(Convert.ToString(enckey.Length));
+
+
             for (int i = 0; i < enckey.Length; i++)
             {
-                written++;
                 socket.writeByte(enckey[i]);
             }
-            //socket.writeByte(0);
+
             socket.writeShort((short)enctoken.Length);
-            form.puts(Convert.ToString(enctoken.Length));
-            form.puts(Convert.ToString(written));
-            written = 0;
+
             for (int i = 0; i < enctoken.Length; i++)
             {
-                written++;
                 socket.writeByte(enctoken[i]);
             }
-           // socket.writeByte(0);
-            form.nh.logging = true;
-            form.puts(Convert.ToString(written));
-            form.puts("Wrote response.");
+
 
         }
         void handle()
 
         {
-            byte[] zeros = socket.readByteArray(4);
-                form.puts("Received encryption response; Enabling encryption now!");
+            short secretLength = socket.readShort();
+            byte[] sharedSecret = socket.readByteArray(secretLength);
+            short tokenLength = socket.readShort();
+            byte[] token;
+            if (tokenLength != 0)
+                 token = socket.readByteArray(tokenLength);
+
+            
+
+            if (tokenLength == 0 && secretLength == 0) 
+            
+            {
                 socket.EncEnabled = true;
                 ClientResponse response = new ClientResponse(true, socket, form, 0);
-                form.puts("Sent client response!");
-            
+                form.puts("Encryption enabled.");
+            }
         }
     }
 }
