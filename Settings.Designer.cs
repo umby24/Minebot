@@ -36,14 +36,12 @@
             this.cbOnline = new System.Windows.Forms.CheckBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.lblResult = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.txtPW = new System.Windows.Forms.TextBox();
             this.txtUN = new System.Windows.Forms.TextBox();
             this.txtPort = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.btnPingFav = new System.Windows.Forms.Button();
             this.btnRemFav = new System.Windows.Forms.Button();
             this.btnAddFav = new System.Windows.Forms.Button();
             this.tabPage2 = new System.Windows.Forms.TabPage();
@@ -55,7 +53,6 @@
             this.label11 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btnRemAdmin = new System.Windows.Forms.Button();
             this.btnAddAdmin = new System.Windows.Forms.Button();
@@ -146,14 +143,12 @@
             // 
             // tabPage1
             // 
-            this.tabPage1.Controls.Add(this.lblResult);
             this.tabPage1.Controls.Add(this.label4);
             this.tabPage1.Controls.Add(this.label3);
             this.tabPage1.Controls.Add(this.txtPW);
             this.tabPage1.Controls.Add(this.txtUN);
             this.tabPage1.Controls.Add(this.txtPort);
             this.tabPage1.Controls.Add(this.label2);
-            this.tabPage1.Controls.Add(this.btnPingFav);
             this.tabPage1.Controls.Add(this.btnRemFav);
             this.tabPage1.Controls.Add(this.btnAddFav);
             this.tabPage1.Controls.Add(this.cbOnline);
@@ -168,15 +163,6 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Connection";
             this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // lblResult
-            // 
-            this.lblResult.AutoSize = true;
-            this.lblResult.Location = new System.Drawing.Point(10, 266);
-            this.lblResult.Name = "lblResult";
-            this.lblResult.Size = new System.Drawing.Size(69, 13);
-            this.lblResult.TabIndex = 14;
-            this.lblResult.Text = "Ping Results:";
             // 
             // label4
             // 
@@ -230,15 +216,6 @@
             this.label2.TabIndex = 8;
             this.label2.Text = "Port:";
             // 
-            // btnPingFav
-            // 
-            this.btnPingFav.Location = new System.Drawing.Point(355, 256);
-            this.btnPingFav.Name = "btnPingFav";
-            this.btnPingFav.Size = new System.Drawing.Size(197, 23);
-            this.btnPingFav.TabIndex = 7;
-            this.btnPingFav.Text = "Ping Selected";
-            this.btnPingFav.UseVisualStyleBackColor = true;
-            // 
             // btnRemFav
             // 
             this.btnRemFav.Location = new System.Drawing.Point(355, 227);
@@ -247,6 +224,7 @@
             this.btnRemFav.TabIndex = 6;
             this.btnRemFav.Text = "Remove Selected";
             this.btnRemFav.UseVisualStyleBackColor = true;
+            this.btnRemFav.Click += new System.EventHandler(this.btnRemFav_Click);
             // 
             // btnAddFav
             // 
@@ -256,6 +234,7 @@
             this.btnAddFav.TabIndex = 5;
             this.btnAddFav.Text = "Add Favorite";
             this.btnAddFav.UseVisualStyleBackColor = true;
+            this.btnAddFav.Click += new System.EventHandler(this.btnAddFav_Click);
             // 
             // tabPage2
             // 
@@ -279,7 +258,6 @@
             this.groupBox3.Controls.Add(this.label11);
             this.groupBox3.Controls.Add(this.label10);
             this.groupBox3.Controls.Add(this.checkBox2);
-            this.groupBox3.Controls.Add(this.checkBox1);
             this.groupBox3.Location = new System.Drawing.Point(204, 114);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(348, 172);
@@ -355,16 +333,6 @@
             this.checkBox2.UseVisualStyleBackColor = true;
             this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
             // 
-            // checkBox1
-            // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(248, 146);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(94, 17);
-            this.checkBox1.TabIndex = 2;
-            this.checkBox1.Text = "Colorized Chat";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.btnRemAdmin);
@@ -385,6 +353,7 @@
             this.btnRemAdmin.TabIndex = 2;
             this.btnRemAdmin.Text = "Remove Admin";
             this.btnRemAdmin.UseVisualStyleBackColor = true;
+            this.btnRemAdmin.Click += new System.EventHandler(this.btnRemAdmin_Click);
             // 
             // btnAddAdmin
             // 
@@ -394,6 +363,7 @@
             this.btnAddAdmin.TabIndex = 1;
             this.btnAddAdmin.Text = "Add Admin";
             this.btnAddAdmin.UseVisualStyleBackColor = true;
+            this.btnAddAdmin.Click += new System.EventHandler(this.btnAddAdmin_Click);
             // 
             // lstAdmins
             // 
@@ -558,14 +528,12 @@
         private System.Windows.Forms.CheckBox cbOnline;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.Label lblResult;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox txtPW;
         private System.Windows.Forms.TextBox txtUN;
         private System.Windows.Forms.TextBox txtPort;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button btnPingFav;
         private System.Windows.Forms.Button btnRemFav;
         private System.Windows.Forms.Button btnAddFav;
         private System.Windows.Forms.TabPage tabPage2;
@@ -594,7 +562,6 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.CheckBox checkBox2;
-        private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.ColorDialog colorDialog1;
     }
 }

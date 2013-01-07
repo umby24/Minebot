@@ -120,7 +120,10 @@ namespace C_Minebot
         private void Form1_Close(object sender, EventArgs e)
         {
             if (nh.started)
-            nh.stop();
+            {
+                nh.stop();
+            }
+            
         }
 
         #region FormHelpers

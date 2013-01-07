@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Microsoft.VisualBasic;
 
 namespace C_Minebot
 {
@@ -37,8 +38,7 @@ namespace C_Minebot
             {
                 lstAdmins.Items.Add(myform.admins[i]);
             }
-            try
-            {
+
                 txtIrcIP.Text = (string)reg.GetSetting("SH", "Minebot SMP", "ircIP", "irc.esper.net");
 
                 txtIRCPort.Text = (string)reg.GetSetting("SH", "Minebot SMP", "ircPort", 6667);
@@ -60,13 +60,6 @@ namespace C_Minebot
                     }
                 }
             }
-            catch
-            {
-                System.Windows.Forms.MessageBox.Show("Fuck.");
-                // well then.
-            }
-
-        }
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -113,8 +106,11 @@ namespace C_Minebot
             RegistryControl Reg = new RegistryControl();
             Reg.SaveSetting("SH", "Minebot SMP", "Online", cbOnline.Checked.ToString());
         }
+
         private void lstFav_DoubleClick(object Sender, EventArgs e)
         {
+            if (lstFav.SelectedItem == null)
+                return;
             string selected = lstFav.SelectedItem.ToString();
             for (int i = 0; i < favs.Count; i++)
             {
@@ -154,6 +150,94 @@ namespace C_Minebot
         {
             RegistryControl Reg = new RegistryControl();
             Reg.SaveSetting("SH", "Minebot SMP", "Password", txtPW.Text);
+        }
+
+        private void btnRemFav_Click(object sender, EventArgs e)
+        {
+            string name = lstFav.GetItemText(lstFav.SelectedItem);
+            if (name == "" || name == null)
+            {
+                MessageBox.Show("No item selected.");
+                return;
+            }
+            
+            RegistryControl reg = new RegistryControl();
+            string fullstring;
+            string Favorites = (string)reg.GetSetting("SH", "Minebot SMP", "Fav", "");
+            string temp = Favorites.Substring(0, Favorites.IndexOf(name));
+            
+
+            if (temp.Length != 0)
+                fullstring = Favorites.Replace(temp, "");
+            else
+                fullstring = Favorites;
+            
+            fullstring = fullstring.Substring(0, fullstring.IndexOf("=") + 1);
+            Favorites = Favorites.Replace(fullstring, "");
+            reg.SaveSetting("SH", "Minebot SMP", "Fav", Favorites);
+            lstFav.Items.Clear();
+
+            if (Favorites.Contains("=") && Favorites.Contains("|"))
+            {
+                string[] Favsplit = Favorites.Split('=');
+                for (int i = 0; i < (Favsplit.Length); i++)
+                {
+                    if (Favsplit[i] != "")
+                    {
+                        favs.Add(Favsplit[i]);
+                        lstFav.Items.Add(Favsplit[i].Split('|')[0]);
+                    }
+
+                }
+            }
+        }
+
+        private void btnAddFav_Click(object sender, EventArgs e)
+        {
+             // As much as I wanted to stay away from VB Methods, there is no equivelant of this in C#.
+            string name = Interaction.InputBox("What is the name for your server?", "Server Name");
+            string ip = Interaction.InputBox("What is the server's IP?", "Server IP");
+            string port = Interaction.InputBox("What is the server's port?", "Server Port");
+            RegistryControl reg = new RegistryControl();
+
+            string Favorites = (string)reg.GetSetting("SH", "Minebot SMP", "Fav", "");
+            Favorites += name + "|" + ip + "|" + port + "=";
+            reg.SaveSetting("SH", "Minebot SMP", "Fav", Favorites);
+            lstFav.Items.Clear();
+
+            if (Favorites.Contains("=") && Favorites.Contains("|"))
+            {
+                string[] Favsplit = Favorites.Split('=');
+                for (int i = 0; i < (Favsplit.Length); i++)
+                {
+                    if (Favsplit[i] != "")
+                    {
+                        favs.Add(Favsplit[i]);
+                        lstFav.Items.Add(Favsplit[i].Split('|')[0]);
+                    }
+
+                }
+            }
+        }
+
+        private void btnPingFav_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnAddAdmin_Click(object sender, EventArgs e)
+        {
+            RegistryControl Reg = new RegistryControl();
+            string name = Interaction.InputBox("What is the admin's in-game username?", "Username");
+            string admins = (string)Reg.GetSetting("SH", "Minebot SMP", "Admins", "");
+
+            admins += name + "|";
+
+        }
+
+        private void btnRemAdmin_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
