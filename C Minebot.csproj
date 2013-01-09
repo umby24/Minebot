@@ -47,11 +47,15 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="Winsock Orcas">
+      <HintPath>..\VBMinebot\Minebot SMP Edition\bin\Debug\Winsock Orcas.dll</HintPath>
+    </Reference>
     <Reference Include="Wrapped">
       <HintPath>..\..\..\..\GitHub\Wrapped\Wrapped\bin\Debug\Wrapped.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="commandHandler.cs" />
     <Compile Include="Component1.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -64,6 +68,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="functions.cs" />
     <Compile Include="Minecraft_Net_Interaction.cs" />
     <Compile Include="networkHandler.cs" />
     <Compile Include="packetHandler.cs" />
@@ -157,7 +162,6 @@
     <EmbeddedResource Include="Settings.resx">
       <DependentUpon>Settings.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="ClassDiagram1.cd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

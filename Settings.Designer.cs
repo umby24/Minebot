@@ -396,6 +396,7 @@
             this.txtIrcNick.Name = "txtIrcNick";
             this.txtIrcNick.Size = new System.Drawing.Size(100, 20);
             this.txtIrcNick.TabIndex = 7;
+            this.txtIrcNick.TextChanged += new System.EventHandler(this.txtIrcNick_TextChanged);
             // 
             // txtIrcChan
             // 
@@ -403,6 +404,7 @@
             this.txtIrcChan.Name = "txtIrcChan";
             this.txtIrcChan.Size = new System.Drawing.Size(100, 20);
             this.txtIrcChan.TabIndex = 6;
+            this.txtIrcChan.TextChanged += new System.EventHandler(this.txtIrcChan_TextChanged);
             // 
             // txtIRCPort
             // 
@@ -410,6 +412,7 @@
             this.txtIRCPort.Name = "txtIRCPort";
             this.txtIRCPort.Size = new System.Drawing.Size(100, 20);
             this.txtIRCPort.TabIndex = 5;
+            this.txtIRCPort.TextChanged += new System.EventHandler(this.txtIRCPort_TextChanged);
             // 
             // txtIrcIP
             // 
@@ -417,6 +420,7 @@
             this.txtIrcIP.Name = "txtIrcIP";
             this.txtIrcIP.Size = new System.Drawing.Size(100, 20);
             this.txtIrcIP.TabIndex = 4;
+            this.txtIrcIP.TextChanged += new System.EventHandler(this.txtIrcIP_TextChanged);
             // 
             // label8
             // 

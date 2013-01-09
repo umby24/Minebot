@@ -220,11 +220,6 @@ namespace C_Minebot
             }
         }
 
-        private void btnPingFav_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void btnAddAdmin_Click(object sender, EventArgs e)
         {
             RegistryControl Reg = new RegistryControl();
@@ -232,12 +227,79 @@ namespace C_Minebot
             string admins = (string)Reg.GetSetting("SH", "Minebot SMP", "Admins", "");
 
             admins += name + "|";
+            Reg.SaveSetting("SH", "Minebot SMP", "Admins", admins);
+            myform.admins.Clear();
+            lstAdmins.Items.Clear();
 
+            string[] mysplits = admins.Split('|');
+
+            for (int i = 0; i < mysplits.Length; i++)
+            {
+                if (mysplits[i] != "")
+                {
+                    myform.admins.Add(mysplits[i]);
+                    lstAdmins.Items.Add(mysplits[i]);
+                }
+            }
+            if (!myform.admins.Contains("Minebot"))
+            {
+                myform.admins.Add("Minebot");
+                lstAdmins.Items.Add("Minebot");
+            }
         }
 
         private void btnRemAdmin_Click(object sender, EventArgs e)
         {
+            RegistryControl Reg = new RegistryControl();
+            string selected = (string)lstAdmins.SelectedItem;
+            string admins = (string)Reg.GetSetting("SH", "Minebot SMP", "Admins", "");
+            if (selected == null)
+                return;
+           
+            admins = admins.Replace(selected + "|", "");
+            Reg.SaveSetting("SH", "Minebot SMP", "Admins", admins);
+            lstAdmins.Items.Clear();
+            myform.admins.Clear();
 
+            string[] mysplits = admins.Split('|');
+
+            for (int i = 0; i < mysplits.Length; i++)
+            {
+                if (mysplits[i] != "")
+                {
+                    myform.admins.Add(mysplits[i]);
+                    lstAdmins.Items.Add(mysplits[i]);
+                }
+            }
+            if (!myform.admins.Contains("Minebot"))
+            {
+                myform.admins.Add("Minebot");
+                lstAdmins.Items.Add("Minebot");
+            }
+        }
+
+        private void txtIrcIP_TextChanged(object sender, EventArgs e)
+        {
+            RegistryControl Reg = new RegistryControl();
+            Reg.SaveSetting("SH", "Minebot SMP", "ircIP", txtIrcIP.Text);
+        }
+
+        private void txtIRCPort_TextChanged(object sender, EventArgs e)
+        {
+            RegistryControl Reg = new RegistryControl();
+            Reg.SaveSetting("SH", "Minebot SMP", "ircPort", txtIRCPort.Text);
+        }
+
+        private void txtIrcChan_TextChanged(object sender, EventArgs e)
+        {
+            RegistryControl Reg = new RegistryControl();
+            Reg.SaveSetting("SH", "Minebot SMP", "ircChan", txtIrcChan.Text);
+        }
+
+        private void txtIrcNick_TextChanged(object sender, EventArgs e)
+        {
+            RegistryControl Reg = new RegistryControl();
+            Reg.SaveSetting("SH", "Minebot SMP", "ircName", txtIrcNick.Text);
         }
     }
 }

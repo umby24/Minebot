@@ -82,6 +82,7 @@ namespace C_Minebot.Packets
                 {
                     myform.puts("Failed to verify name with minecraft.net");
                     sock._stream.Close();
+                    myform.sessionId = null;
                 }
 
 

@@ -45,9 +45,19 @@ namespace C_Minebot.Packets
 
         private void handle()
         {
+            functions func = new functions();
+
             Message = socket.readString();
-           // mainform.puts(strip_codes(Message));
+            commandHandler ch = new commandHandler(socket, mainform, func.strip_codes(Message));
             handleColors(Message);
+            if (mainform.ircmode == 2 || mainform.ircmode == 3)
+            {
+                string[] args = Message.Split(' ');
+                string username = args[0].Replace("<", "").Replace(">", "").Replace(":", "").Replace(" ", "");
+                username = func.strip_codes(username);
+                if (!(username == mainform.username && Message.Contains("IRC: <")))
+                 mainform.ircmessage(mainform.translate_colors(Message));
+            }
         }
 
         private void send()
@@ -56,38 +66,7 @@ namespace C_Minebot.Packets
             socket.writeString(Message);
         }
 
-        private string strip_codes(string text)
-        {
 
-        // Strips the color codes from text.
-        string smessage = text;
-        if (smessage.Contains("§"))
-        {
-            smessage = smessage.Replace("§0", "");
-            smessage = smessage.Replace("§1", "");
-            smessage = smessage.Replace("§2", "");
-            smessage = smessage.Replace("§3", "");
-            smessage = smessage.Replace("§4", "");
-            smessage = smessage.Replace("§5", "");
-            smessage = smessage.Replace("§6", "");
-            smessage = smessage.Replace("§7", "");
-            smessage = smessage.Replace("§8", "");
-            smessage = smessage.Replace("§9", "");
-            smessage = smessage.Replace("§a", "");
-            smessage = smessage.Replace("§b", "");
-            smessage = smessage.Replace("§c", "");
-            smessage = smessage.Replace("§d", "");
-            smessage = smessage.Replace("§e", "");
-            smessage = smessage.Replace("§f", "");
-            smessage = smessage.Replace("§A", "");
-            smessage = smessage.Replace("§B", "");
-            smessage = smessage.Replace("§C", "");
-            smessage = smessage.Replace("§D", "");
-            smessage = smessage.Replace("§E", "");
-            smessage = smessage.Replace("§F", "");
-        }
-             return smessage;
-        }
 
         public void handleColors(string text)
         {
@@ -247,15 +226,6 @@ namespace C_Minebot.Packets
                         }
                     }
                 }
-
-
-
-
-
-
-
-
-
 
             }
         }

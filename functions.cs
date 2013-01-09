@@ -3,27 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace C_Minebot.Packets
+namespace C_Minebot
 {
-    class PlayerListItem
+    class functions
     {
-        public PlayerListItem(Wrapped.Wrapped socket, Form1 mainform)
-        {
-            string name = socket.readString();
-            bool online = socket.readBool();
-            socket.readShort();
 
-            if (online)
-            {
-                mainform.add(strip_codes(name).Replace("§",""));
-            }
-            else
-            {
-                    mainform.remove(strip_codes(name).Replace("§",""));
-            }
-        }
-
-        private string strip_codes(string text)
+        public string strip_codes(string text)
         {
 
             // Strips the color codes from text.

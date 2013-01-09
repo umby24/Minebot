@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using Winsock_Orcas;
+using System.Text.RegularExpressions;
 
 namespace C_Minebot
 {
@@ -52,6 +54,19 @@ namespace C_Minebot
         public networkHandler nh;
         #endregion
 
+        #region IRC Bot
+
+        public Winsock_Orcas.Winsock IRCSock;
+        public int ircmode = 0;
+        public string channel;
+        public string ircname;
+        public bool canTalk = false;
+
+        public string ircIP;
+        public int ircPort;
+
+        #endregion
+
         #endregion
         #region Colorized Chatbox
         public const int EM_GETLINECOUNT = 0xBA;
@@ -80,11 +95,6 @@ namespace C_Minebot
 
         }
 
-        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-            
-        }
-
         private void Form1_Load(object sender, EventArgs e)
         {
             // Load interface Customizations
@@ -105,22 +115,36 @@ namespace C_Minebot
                     admins.Add(mysplits[i]);
                 }
             }
+
+
+            try
+            {
+                ircIP = (string)Reg.GetSetting("SH", "Minebot SMP", "ircIP", "irc.esper.net");
+
+                int.TryParse((string)Reg.GetSetting("SH", "Minebot SMP", "ircPort", 6667), out ircPort);
+                channel = (string)Reg.GetSetting("SH", "Minebot SMP", "ircChan", "#bot");
+                ircname = (string)Reg.GetSetting("SH", "Minebot SMP", "ircName", "VBMinebot");
+            }
+            catch (Exception f)
+            {
+                MessageBox.Show(f.Message);
+            }
+
             admins.Add("Minebot");
-           // puts("All settings loaded, welcome to Minebot.");
+
             putsc("=_=_=_= C# Minebot =_=_=_=", Color.Yellow);
             putsc("=+=+=+= Version 1.0 =+=+=+=", Color.Blue);
             putsc("======= by Umby24 ========", Color.Red);
             putsc("-------- All settings loaded ---------", Color.Orange);
-            console.Select(0, 0);
-
-
 
         }
 
         private void Form1_Close(object sender, EventArgs e)
         {
-            if (nh.started)
+            if (nh != null)
             {
+                Packets.Kick leaving = new Packets.Kick(true, nh.socket, this);
+                System.Threading.Thread.Sleep(200);
                 nh.stop();
             }
             
@@ -163,9 +187,10 @@ namespace C_Minebot
         }
         public void beginConnect(string IP, string port, string UN, string PW, bool online)
         {
+            lstOnline.Items.Clear();
             username = UN;
             onlineMode = online;
-            if (online)
+            if (online && sessionId == null)
             {
                 puts("Logging in to Minecraft.net...");
                 Minecraft_Net_Interaction Login = new Minecraft_Net_Interaction();
@@ -179,8 +204,15 @@ namespace C_Minebot
                 }
                 else
                 {
-                    puts("Error logging in to Minecraft.net!");
-                    puts(Response);
+                    if (sessionId != null)
+                    {
+                        puts("Error logging in to Minecraft.net!");
+                        puts(Response);
+                    }
+                    else
+                    {
+                        puts("Attempting to log in with old credentials..");
+                    }
                 }
             }
 
@@ -271,7 +303,8 @@ namespace C_Minebot
             }
             else
             {
-                lstOnline.Items.Add(name);
+                if (lstOnline.Items.Contains(name) == false)
+                    lstOnline.Items.Add(name);
             }
         }
 
@@ -283,15 +316,195 @@ namespace C_Minebot
             }
             else
             {
-                lstOnline.Items.Remove(name);
+                if (lstOnline.Items.Contains(name) == false)
+                    lstOnline.Items.Remove(name);
             }
         }
         #endregion
 
+        #region IRC
+        public void stopIRC()
+        {
+            IRCSock.Close();
+        }
+        public void startIRC()
+        {
+            RegistryControl Reg = new RegistryControl();
+            ircIP = (string)Reg.GetSetting("SH", "Minebot SMP", "ircIP", "irc.esper.net");
 
+            int.TryParse((string)Reg.GetSetting("SH", "Minebot SMP", "ircPort", 6667), out ircPort);
+            channel = (string)Reg.GetSetting("SH", "Minebot SMP", "ircChan", "#bot");
+            ircname = (string)Reg.GetSetting("SH", "Minebot SMP", "ircName", "VBMimebot");
+
+            IRCSock = new Winsock();
+            IRCSock.BufferSize = 8192;
+            IRCSock.LegacySupport = true;
+            IRCSock.Protocol = Winsock_Orcas.WinsockProtocol.Tcp;
+            IRCSock.Connected += new Winsock_Orcas.IWinsock.ConnectedEventHandler(IRCSock_Connected);
+            IRCSock.DataArrival += new Winsock_Orcas.IWinsock.DataArrivalEventHandler(IRCSock_DataArrival);
+            IRCSock.Connect(ircIP, ircPort);
+
+            puts(Environment.NewLine + "Connecting.");
+        }
+        public void IRCSock_Connected(object sender, WinsockConnectedEventArgs e)
+        {
+            send("NICK " + ircname);
+            send("USER C C C :" + ircname);
+            send("JOIN " + channel);
+            send("MODE " + ircname + " +B-x");
+            ircmessage("Current mode: " + ircmode);
+            puts("Connected.");
+        }
+        public string translate_colors(string text)
+        {
+            string smessage = text;
+            if (smessage.Contains("§"))
+            {
+                smessage = smessage.Replace("§0", ((Char) 3) + "00");
+                smessage = smessage.Replace("§1", ((Char)3) + "02");
+                smessage = smessage.Replace("§2", ((Char)3) + "03");
+                smessage = smessage.Replace("§3", ((Char)3) + "10");
+                smessage = smessage.Replace("§4", ((Char)3) + "05");
+                smessage = smessage.Replace("§5", ((Char)3) + "06");
+                smessage = smessage.Replace("§6", ((Char)3) + "07");
+                smessage = smessage.Replace("§7", ((Char)3) + "15");
+                smessage = smessage.Replace("§8", ((Char)3) + "14");
+                smessage = smessage.Replace("§9", ((Char)3) + "12");
+                smessage = smessage.Replace("§a", ((Char)3) + "09");
+                smessage = smessage.Replace("§b", ((Char)3) + "11");
+                smessage = smessage.Replace("§c", ((Char)3) + "04");
+                smessage = smessage.Replace("§d", ((Char)3) + "13");
+                smessage = smessage.Replace("§e", ((Char)3) + "08");
+                smessage = smessage.Replace("§f", ((Char)3) + "01");
+                smessage = smessage.Replace("§A", ((Char)3) + "09");
+                smessage = smessage.Replace("§B", ((Char)3) + "11");
+                smessage = smessage.Replace("§C", ((Char)3) + "04");
+                smessage = smessage.Replace("§D", ((Char)3) + "13");
+                smessage = smessage.Replace("§E", ((Char)3) + "08");
+                smessage = smessage.Replace("§F", ((Char)3) + "01");
+            }
+            return smessage;
+
+        }
+        public void IRCSock_DataArrival(object sender, WinsockDataArrivalEventArgs e)
+        {
+
+            string incoming = Encoding.UTF8.GetString((byte[])IRCSock.Get());
+            string host = "";
+            string dat = "";
+            string message = "";
+            string[] splits;
+            int index = 0;
+
+            splits = incoming.Split('\r','\n');
+
+            for (int b = 0; (splits.Length - 1) >= b;b++)
+            {
+                splits[b] = splits[b].Replace("\r\n","");
+                splits[b] = splits[b].Replace("\n","");
+                splits[b] = splits[b].Replace("\r","");
+            }
+
+            do
+            {
+                incoming = splits[index];
+                if (incoming.Contains(" "))
+                {
+                    if (incoming.Contains("/NAMES list"))
+                        canTalk = true;
+                    if (incoming.Substring(0, 1) == ":")
+                        host = incoming.Substring(1, incoming.IndexOf(" ") - 1);
+                    else
+                        host = incoming.Substring(0, incoming.IndexOf(" "));
+                    dat = incoming.Substring(incoming.IndexOf(" ") + 1, incoming.Length - (incoming.IndexOf(" ") + 1));
+                    if (dat.Contains(":"))
+                        message = dat.Substring(dat.IndexOf(":") + 1, dat.Length - (dat.IndexOf(":") + 1));
+                    if (host == "PING")
+                    {
+                        send("PONG " + dat);
+                        return;
+                    }
+                    string second = dat.Substring(0, dat.IndexOf(" "));
+                    string[] mysplits = dat.Split(new string[] { " " }, 4, StringSplitOptions.None);
+                    message = message.Replace("\r\n", "");
+                    switch (second)
+                    {
+                        case "PRIVMSG":
+                            if (ircmode == 1 || ircmode == 3 && message.StartsWith("+") == false)
+                            {
+                                nh.socket.writeByte(3);
+                                nh.socket.writeString("IRC: <" + host.Substring(0, host.IndexOf("!")) + "> " + message);
+                            }
+                            if (message.StartsWith("="))
+                            {
+                                string cmd = mysplits[2].Substring(1, mysplits[2].Length - 1);
+
+                                switch (cmd.ToLower())
+                                {
+                                    case "=say":
+                                        if (mysplits.Length > 3)
+                                        ircmessage(mysplits[3]);
+                                        break;
+                                    case "=ssay":
+                                        Packets.chatMessage mypacket;
+                                        if (mysplits.Length > 3)
+                                             mypacket = new Packets.chatMessage(true, nh.socket, this, mysplits[3]);
+                                        break;
+                                    case "=help":
+                                        ircmessage("C# Minebot IRC Client, Version 1.0");
+                                        ircmessage("Only functional to relay messages between IRC channels and minecraft servers.");
+                                        ircmessage("Commands are =say, =ssay, and =help.");
+                                        break;
+                                }
+                            }
+
+                            break;
+
+                    }
+                }
+                index++;
+            } while (index == splits.Length - 1);
+            incoming = "";
+        }
+
+        string stripillegal2(string text)
+        {
+            string final = "";
+            foreach (char b in text)
+            {
+                if ((Char.IsLetterOrDigit(b) && (b == '!' || b == '@' || b == '#' || b == '$' || b == '%' || b == '*' || b == '(' || b == ')' || b == '=' || b == '-' || b == '_' || b == '+' || b == '/' || b == '\\' || b == '<' || b == '>' || b == '?' || b == '.' || b == ',' || b == ' ')))
+                {
+                    final += b;
+                }
+            }
+            return final;
+        }
+        public void send(string msg)
+        {
+            if (IRCSock == null)
+                return;
+            if (IRCSock.State == WinsockStates.Connected)
+            {
+                msg += "\r\n";
+                byte[] data = System.Text.ASCIIEncoding.UTF8.GetBytes(msg);
+                IRCSock.Send(data);
+            }
+        }
+        public void ircmessage(string text)
+        {
+            send("PRIVMSG " + channel + " :" + text);
+        }
+        #endregion
 
         private void btnSend_Click(object sender, EventArgs e)
         {
+            if (chat.Text.StartsWith("+"))
+            {
+                commandHandler ch = new commandHandler(nh.socket, this, "Minebot: " + chat.Text);
+                chat.Clear();
+                return;
+            }
+
             Packets.chatMessage chatmess = new Packets.chatMessage(true, nh.socket, this, chat.Text);
             chat.Clear();
         }
