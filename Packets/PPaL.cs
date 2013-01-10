@@ -50,7 +50,7 @@ namespace C_Minebot.Packets
             float pitch = Socket.readFloat();
             bool onground = Socket.readBool();
 
-            mainform.location = new double[4] { X, Y, Z, stance };
+            mainform.location = new double[4] { X, Y - 1, Z, stance };
             mainform.position = new float[2] { yaw, pitch };
             mainform.onground = onground;
 

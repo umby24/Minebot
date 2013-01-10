@@ -44,24 +44,23 @@ namespace C_Minebot.Packets
 
         void send()
         {
-
             socket.writeByte(252);
             socket.writeShort((short)enckey.Length);
 
 
-            for (int i = 0; i < enckey.Length; i++)
-            {
-                socket.writeByte(enckey[i]);
-            }
-
+            //for (int i = 0; i < enckey.Length; i++)
+            //{
+            //    socket.writeByte(enckey[i]);
+            //}
+            socket._stream.Write(enckey, 0, enckey.Length);
             socket.writeShort((short)enctoken.Length);
+            socket._stream.Write(enctoken, 0, enctoken.Length);
+            //for (int i = 0; i < enctoken.Length; i++)
+            //{
+            //    socket.writeByte(enctoken[i]);
+            //}
 
-            for (int i = 0; i < enctoken.Length; i++)
-            {
-                socket.writeByte(enctoken[i]);
-            }
-
-
+            form.puts("a");
         }
         void handle()
 

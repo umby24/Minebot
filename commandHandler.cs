@@ -38,16 +38,84 @@ namespace C_Minebot
                         case "lol":
                             lol();
                             break;
+                        case "mute":
+                            Mute();
+                            break;
+                        case "yaw":
+                            yaw(message);
+                            break;
+                        case "pitch":
+                            pitch(message);
+                            break;
+                        case "move":
+                            move(message);
+                            break;
+                        case "pos":
+                            pos();
+                            break;
                     }
                 }
             }
         }
 
+        void pos()
+        {
+            Packets.chatMessage chat = new Packets.chatMessage(true, Socket, Mainform, "X: " + Mainform.location[0].ToString() + " Y: " + Mainform.location[1].ToString() + " Z: " + Mainform.location[2].ToString());
+        }
+        void yaw(string text)
+        {
+            string[] args = text.Split(new char[1] { ' ' }, 3);
+
+            Mainform.position[0] = float.Parse(args[2]);
+
+        }
+        void pitch(string text)
+        {
+            string[] args = text.Split(new char[1] { ' ' }, 3);
+
+            Mainform.position[1] = float.Parse(args[2]);
+        }
+        void move(string text)
+        {
+            string[] args = text.Split(new char[1] { ' ' }, 4);
+            string axis = args[2];
+            float position = float.Parse(args[3]);
+
+            if (position > 10 || -10 > position)
+                return;
+
+            switch (axis.ToLower())
+            {
+                case "x":
+                    Mainform.location[0] += position;
+                    break;
+                case "y":
+                    Mainform.location[1] += position;
+                    Mainform.location[3] = Mainform.location[1] + 1;
+                    break;
+                case "z":
+                    Mainform.location[2] += position;
+                    break;
+            }
+        }
         void Say(string text)
         {
             string[] args = text.Split(new char[1] {' '},3);
 
             Packets.chatMessage Message = new Packets.chatMessage(true, Socket, Mainform, args[2]);
+        }
+        void Mute()
+        {
+            if (Mainform.muted)
+            {
+                Mainform.muted = false;
+                Packets.chatMessage chat = new Packets.chatMessage(true, Socket, Mainform, "Unmuted.");
+            }
+            else
+            {
+                Mainform.muted = true;
+                Packets.chatMessage chat = new Packets.chatMessage(true, Socket, Mainform, "Muted.");
+            }
         }
         void Irc(string text)
         {

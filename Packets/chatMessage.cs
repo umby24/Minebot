@@ -62,8 +62,11 @@ namespace C_Minebot.Packets
 
         private void send()
         {
-            socket.writeByte(3);
-            socket.writeString(Message);
+            if (mainform.muted == false)
+            {
+                socket.writeByte(3);
+                socket.writeString(Message);
+            }
         }
 
 

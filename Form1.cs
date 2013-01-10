@@ -17,6 +17,8 @@ namespace C_Minebot
         #region Variables
 
         #region Bot Specific
+        public bool setopen = false;
+        public bool muted = false;
         public bool onlineMode;
         public Color windowColor;
         public Color TextColor;
@@ -41,6 +43,9 @@ namespace C_Minebot
         public string ServerID;
         public string serverHash;
         public string sessionId;
+        public string sip;
+        public string sport;
+
         #endregion
 
         #region Encryption
@@ -89,10 +94,13 @@ namespace C_Minebot
 
         private void connectToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Settings whatever = new Settings();
-            whatever.myform = this;
-            whatever.Show();
-
+            if (setopen == false)
+            {
+                Settings whatever = new Settings();
+                whatever.myform = this;
+                whatever.Show();
+                setopen = true;
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -190,11 +198,13 @@ namespace C_Minebot
             lstOnline.Items.Clear();
             username = UN;
             onlineMode = online;
+            sip = IP;
+            sport = port;
             if (online && sessionId == null)
             {
                 puts("Logging in to Minecraft.net...");
                 Minecraft_Net_Interaction Login = new Minecraft_Net_Interaction();
-                string Response = Login.Login(UN,PW);
+                string Response = Login.Login(UN, PW);
                 if (Response.Contains(':'))
                 {
                     string[] mysplit = Response.Split(':');
@@ -215,6 +225,8 @@ namespace C_Minebot
                     }
                 }
             }
+            else
+                sessionId = "epicw1n";
 
             //Begin connection to server.
             nh = new networkHandler(IP, port, this);
@@ -507,6 +519,43 @@ namespace C_Minebot
 
             Packets.chatMessage chatmess = new Packets.chatMessage(true, nh.socket, this, chat.Text);
             chat.Clear();
+        }
+
+        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
+        }
+
+        private void muteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (muted)
+            {
+                muted = false;
+                muteToolStripMenuItem.Checked = false;
+            }
+            else
+            {
+                muted = true;
+                muteToolStripMenuItem.Checked = true;
+            }
+        }
+
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (setopen == false)
+            {
+                Settings whatever = new Settings();
+                whatever.myform = this;
+                whatever.Show();
+                setopen = true;
+            }
+        }
+
+        private void reconnectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            nh.stop();
+            if (sip != null)
+                 beginConnect(sip, sport, username, "asdf", onlineMode);
         }
     }
 }

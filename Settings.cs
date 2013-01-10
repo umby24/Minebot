@@ -61,6 +61,11 @@ namespace C_Minebot
                 }
             }
 
+        private void Settings_closing(object sender, EventArgs e)
+        {
+            myform.setopen = false;
+        }
+        #region Clicks
         private void button1_Click(object sender, EventArgs e)
         {
             colorDialog1.ShowDialog();
@@ -71,7 +76,6 @@ namespace C_Minebot
             Reg.SaveSetting("SH", "Minebot SMP", "bcb", colorDialog1.Color.B.ToString());
             myform.loadColors();
         }
-
         private void button2_Click(object sender, EventArgs e)
         {
             colorDialog1.ShowDialog();
@@ -82,7 +86,6 @@ namespace C_Minebot
             Reg.SaveSetting("SH", "Minebot SMP", "bgb", colorDialog1.Color.B.ToString());
             myform.loadColors();
         }
-
         private void button3_Click(object sender, EventArgs e)
         {
             colorDialog1.ShowDialog();
@@ -93,20 +96,6 @@ namespace C_Minebot
             Reg.SaveSetting("SH", "Minebot SMP", "teb", colorDialog1.Color.B.ToString());
             myform.loadColors();
         }
-
-        private void checkBox2_CheckedChanged(object sender, EventArgs e)
-        {
-            RegistryControl Reg = new RegistryControl();
-            Reg.SaveSetting("SH", "Minebot SMP", "flat", checkBox2.Checked.ToString());
-            myform.loadColors();
-        }
-
-        private void cbOnline_CheckedChanged(object sender, EventArgs e)
-        {
-            RegistryControl Reg = new RegistryControl();
-            Reg.SaveSetting("SH", "Minebot SMP", "Online", cbOnline.Checked.ToString());
-        }
-
         private void lstFav_DoubleClick(object Sender, EventArgs e)
         {
             if (lstFav.SelectedItem == null)
@@ -117,7 +106,7 @@ namespace C_Minebot
                 if (favs[i].Split('|')[0] == selected)
                 {
                     txtIP.Text = favs[i].Split('|')[1];
-                    txtPort.Text = favs[i].Split('|')[2].Replace("=","");
+                    txtPort.Text = favs[i].Split('|')[2].Replace("=", "");
                 }
             }
         }
@@ -125,31 +114,8 @@ namespace C_Minebot
         private void btnConnect_Click(object sender, EventArgs e)
         {
             myform.beginConnect(txtIP.Text, txtPort.Text, txtUN.Text, txtPW.Text, cbOnline.Checked);
+            myform.setopen = false;
             this.Close();
-        }
-
-        private void txtIP_TextChanged(object sender, EventArgs e)
-        {
-            RegistryControl Reg = new RegistryControl();
-            Reg.SaveSetting("SH", "Minebot SMP", "IP", txtIP.Text);
-        }
-
-        private void txtPort_TextChanged(object sender, EventArgs e)
-        {
-            RegistryControl Reg = new RegistryControl();
-            Reg.SaveSetting("SH", "Minebot SMP", "Port", txtPort.Text);
-        }
-
-        private void txtUN_TextChanged(object sender, EventArgs e)
-        {
-            RegistryControl Reg = new RegistryControl();
-            Reg.SaveSetting("SH", "Minebot SMP", "Username", txtUN.Text);
-        }
-
-        private void txtPW_TextChanged(object sender, EventArgs e)
-        {
-            RegistryControl Reg = new RegistryControl();
-            Reg.SaveSetting("SH", "Minebot SMP", "Password", txtPW.Text);
         }
 
         private void btnRemFav_Click(object sender, EventArgs e)
@@ -160,18 +126,18 @@ namespace C_Minebot
                 MessageBox.Show("No item selected.");
                 return;
             }
-            
+
             RegistryControl reg = new RegistryControl();
             string fullstring;
             string Favorites = (string)reg.GetSetting("SH", "Minebot SMP", "Fav", "");
             string temp = Favorites.Substring(0, Favorites.IndexOf(name));
-            
+
 
             if (temp.Length != 0)
                 fullstring = Favorites.Replace(temp, "");
             else
                 fullstring = Favorites;
-            
+
             fullstring = fullstring.Substring(0, fullstring.IndexOf("=") + 1);
             Favorites = Favorites.Replace(fullstring, "");
             reg.SaveSetting("SH", "Minebot SMP", "Fav", Favorites);
@@ -194,7 +160,7 @@ namespace C_Minebot
 
         private void btnAddFav_Click(object sender, EventArgs e)
         {
-             // As much as I wanted to stay away from VB Methods, there is no equivelant of this in C#.
+            // As much as I wanted to stay away from VB Methods, there is no equivelant of this in C#.
             string name = Interaction.InputBox("What is the name for your server?", "Server Name");
             string ip = Interaction.InputBox("What is the server's IP?", "Server IP");
             string port = Interaction.InputBox("What is the server's port?", "Server Port");
@@ -255,7 +221,7 @@ namespace C_Minebot
             string admins = (string)Reg.GetSetting("SH", "Minebot SMP", "Admins", "");
             if (selected == null)
                 return;
-           
+
             admins = admins.Replace(selected + "|", "");
             Reg.SaveSetting("SH", "Minebot SMP", "Admins", admins);
             lstAdmins.Items.Clear();
@@ -277,6 +243,51 @@ namespace C_Minebot
                 lstAdmins.Items.Add("Minebot");
             }
         }
+        #endregion
+
+
+
+        #region Changed
+        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        {
+            RegistryControl Reg = new RegistryControl();
+            Reg.SaveSetting("SH", "Minebot SMP", "flat", checkBox2.Checked.ToString());
+            myform.loadColors();
+        }
+
+        private void cbOnline_CheckedChanged(object sender, EventArgs e)
+        {
+            RegistryControl Reg = new RegistryControl();
+            Reg.SaveSetting("SH", "Minebot SMP", "Online", cbOnline.Checked.ToString());
+        }
+
+
+
+        private void txtIP_TextChanged(object sender, EventArgs e)
+        {
+            RegistryControl Reg = new RegistryControl();
+            Reg.SaveSetting("SH", "Minebot SMP", "IP", txtIP.Text);
+        }
+
+        private void txtPort_TextChanged(object sender, EventArgs e)
+        {
+            RegistryControl Reg = new RegistryControl();
+            Reg.SaveSetting("SH", "Minebot SMP", "Port", txtPort.Text);
+        }
+
+        private void txtUN_TextChanged(object sender, EventArgs e)
+        {
+            RegistryControl Reg = new RegistryControl();
+            Reg.SaveSetting("SH", "Minebot SMP", "Username", txtUN.Text);
+        }
+
+        private void txtPW_TextChanged(object sender, EventArgs e)
+        {
+            RegistryControl Reg = new RegistryControl();
+            Reg.SaveSetting("SH", "Minebot SMP", "Password", txtPW.Text);
+        }
+
+
 
         private void txtIrcIP_TextChanged(object sender, EventArgs e)
         {
@@ -301,5 +312,9 @@ namespace C_Minebot
             RegistryControl Reg = new RegistryControl();
             Reg.SaveSetting("SH", "Minebot SMP", "ircName", txtIrcNick.Text);
         }
+        #endregion
+
+
+
     }
 }

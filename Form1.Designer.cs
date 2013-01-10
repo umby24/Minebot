@@ -63,6 +63,7 @@
             this.menuStrip1.Size = new System.Drawing.Size(764, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
+            this.menuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuStrip1_ItemClicked);
             // 
             // fileToolStripMenuItem
             // 
@@ -78,26 +79,28 @@
             // connectToolStripMenuItem
             // 
             this.connectToolStripMenuItem.Name = "connectToolStripMenuItem";
-            this.connectToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
+            this.connectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.connectToolStripMenuItem.Text = "&Connect";
             this.connectToolStripMenuItem.Click += new System.EventHandler(this.connectToolStripMenuItem_Click);
             // 
             // reconnectToolStripMenuItem
             // 
             this.reconnectToolStripMenuItem.Name = "reconnectToolStripMenuItem";
-            this.reconnectToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
+            this.reconnectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.reconnectToolStripMenuItem.Text = "&Reconnect";
+            this.reconnectToolStripMenuItem.Click += new System.EventHandler(this.reconnectToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(127, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(149, 6);
             // 
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
+            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
             // optionToolStripMenuItem
             // 
@@ -113,6 +116,7 @@
             this.muteToolStripMenuItem.Name = "muteToolStripMenuItem";
             this.muteToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.muteToolStripMenuItem.Text = "&Mute";
+            this.muteToolStripMenuItem.Click += new System.EventHandler(this.muteToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 

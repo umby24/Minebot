@@ -508,6 +508,7 @@
             this.Name = "Settings";
             this.Text = "Settings";
             this.Load += new System.EventHandler(this.Settings_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Settings_closing);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
