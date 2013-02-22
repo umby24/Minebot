@@ -10,22 +10,16 @@ namespace C_Minebot
     {
         Wrapped.Wrapped sock;
         Form1 mainform;
-        bool logg;
 
-        public packetHandler(int id,Wrapped.Wrapped socket,Form1 mform,bool log)
+        public packetHandler(int id,Wrapped.Wrapped socket,Form1 mform)
         {
             sock = socket;
             mainform = mform;
-            logg = log;
             Handle(id);
         }
 
         void Handle(int id)
         {
-            if (logg)
-            {
-                mainform.puts("p" + Convert.ToString(id));
-            }
             switch (id)
             {
                 case 0:

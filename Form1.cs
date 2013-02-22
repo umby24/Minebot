@@ -32,11 +32,11 @@ namespace C_Minebot
 
         public short health;
         public short hunger;
+        public short selectedSlot;
         public long time;
         public long worldAge;
         public int[] spawnPoint;
         public int EntityID;
-        public short selectedSlot;
         public bool onground;
         public float[] position;
         public double[] location;
@@ -63,12 +63,11 @@ namespace C_Minebot
 
         public Winsock_Orcas.Winsock IRCSock;
         public int ircmode = 0;
+        public int ircPort;
         public string channel;
         public string ircname;
-        public bool canTalk = false;
-
         public string ircIP;
-        public int ircPort;
+        public bool canTalk = false;
 
         #endregion
 
@@ -159,18 +158,19 @@ namespace C_Minebot
         }
 
         #region FormHelpers
+
         public void loadColors()
         {
             //Retrieve color settings from registry.
             RegistryControl reg = new RegistryControl();
+
             windowColor = Color.FromArgb(int.Parse(reg.GetSetting("SH", "Minebot SMP", "bcr", 255).ToString()), int.Parse(reg.GetSetting("SH", "Minebot SMP", "bcg", 255).ToString()), int.Parse(reg.GetSetting("SH", "Minebot SMP", "bcb", 255).ToString()));
-
             TextColor = Color.FromArgb(int.Parse(reg.GetSetting("SH", "Minebot SMP", "ter", 0).ToString()), int.Parse(reg.GetSetting("SH", "Minebot SMP", "teg", 0).ToString()), int.Parse(reg.GetSetting("SH", "Minebot SMP", "teb", 0).ToString()));
-
             TextAColor = Color.FromArgb(int.Parse(reg.GetSetting("SH", "Minebot SMP", "bgr", 192).ToString()), int.Parse(reg.GetSetting("SH", "Minebot SMP", "bgg", 192).ToString()), int.Parse(reg.GetSetting("SH", "Minebot SMP", "bgb", 192).ToString()));
 
             flatten = Boolean.Parse(reg.GetSetting("SH", "Minebot SMP", "flat", "false").ToString());
             colorize = Boolean.Parse(reg.GetSetting("SH", "Minebot SMP", "colored", "true").ToString());
+
             if (flatten == true)
             {
                 btnSend.FlatStyle = FlatStyle.Flat;
@@ -179,6 +179,7 @@ namespace C_Minebot
             {
                 btnSend.FlatStyle = FlatStyle.Standard;
             }
+
             //Set the colors from this form, the other forms will pull from this form to color themselves.
             this.BackColor = windowColor;
             this.ForeColor = TextColor;
@@ -193,18 +194,24 @@ namespace C_Minebot
             this.ResumeLayout(false);
             this.PerformLayout();
         }
+
         public void beginConnect(string IP, string port, string UN, string PW, bool online)
         {
+
             lstOnline.Items.Clear();
             username = UN;
             onlineMode = online;
             sip = IP;
             sport = port;
+
             if (online && sessionId == null)
             {
                 puts("Logging in to Minecraft.net...");
+
                 Minecraft_Net_Interaction Login = new Minecraft_Net_Interaction();
+
                 string Response = Login.Login(UN, PW);
+
                 if (Response.Contains(':'))
                 {
                     string[] mysplit = Response.Split(':');
@@ -335,6 +342,7 @@ namespace C_Minebot
         #endregion
 
         #region IRC
+
         public void stopIRC()
         {
             IRCSock.Close();
@@ -362,9 +370,7 @@ namespace C_Minebot
         {
             send("NICK " + ircname);
             send("USER C C C :" + ircname);
-            send("JOIN " + channel);
             send("MODE " + ircname + " +B-x");
-            ircmessage("Current mode: " + ircmode);
             puts("Connected.");
         }
         public string translate_colors(string text)
@@ -419,26 +425,36 @@ namespace C_Minebot
 
             do
             {
+
                 incoming = splits[index];
+
                 if (incoming.Contains(" "))
                 {
+
                     if (incoming.Contains("/NAMES list"))
                         canTalk = true;
+
                     if (incoming.Substring(0, 1) == ":")
                         host = incoming.Substring(1, incoming.IndexOf(" ") - 1);
                     else
                         host = incoming.Substring(0, incoming.IndexOf(" "));
+
                     dat = incoming.Substring(incoming.IndexOf(" ") + 1, incoming.Length - (incoming.IndexOf(" ") + 1));
+
                     if (dat.Contains(":"))
                         message = dat.Substring(dat.IndexOf(":") + 1, dat.Length - (dat.IndexOf(":") + 1));
+
                     if (host == "PING")
                     {
                         send("PONG " + dat);
                         return;
                     }
+
                     string second = dat.Substring(0, dat.IndexOf(" "));
                     string[] mysplits = dat.Split(new string[] { " " }, 4, StringSplitOptions.None);
+
                     message = message.Replace("\r\n", "");
+
                     switch (second)
                     {
                         case "PRIVMSG":
@@ -471,7 +487,10 @@ namespace C_Minebot
                             }
 
                             break;
-
+                        case "376":
+                            send("JOIN " + channel);
+                            ircmessage("Current mode: " + ircmode);
+                            break;
                     }
                 }
                 index++;
@@ -519,11 +538,6 @@ namespace C_Minebot
 
             Packets.chatMessage chatmess = new Packets.chatMessage(true, nh.socket, this, chat.Text);
             chat.Clear();
-        }
-
-        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-
         }
 
         private void muteToolStripMenuItem_Click(object sender, EventArgs e)

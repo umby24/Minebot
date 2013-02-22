@@ -10,7 +10,7 @@ namespace C_Minebot.Packets
         public EntMetadata(Wrapped.Wrapped socket, Form1 mainform)
         {
             socket.readInt();
-            Minecraft_Net_Interaction parser = new Minecraft_Net_Interaction();
+            functions parser = new functions();
             parser.readMetadata(socket);
         }
     }

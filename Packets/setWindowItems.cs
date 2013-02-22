@@ -11,7 +11,9 @@ namespace C_Minebot.Packets
         {
             socket.readByte();
             int count = socket.readShort();
-            Minecraft_Net_Interaction parser = new Minecraft_Net_Interaction();
+
+            functions parser = new functions();
+
             while (count != 0)
             {
                 parser.readSlot(socket);

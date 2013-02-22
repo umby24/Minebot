@@ -11,8 +11,6 @@ namespace C_Minebot
         //of your average user.
         public object GetSetting(string App,string key,string value,object Def)
         {
-           // if (Def == null)
-          //  { Def = ""; }
             try
             {
                 RegistryKey regkey = Registry.CurrentUser.OpenSubKey("Software");

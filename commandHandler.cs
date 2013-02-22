@@ -62,23 +62,24 @@ namespace C_Minebot
         {
             Packets.chatMessage chat = new Packets.chatMessage(true, Socket, Mainform, "X: " + Mainform.location[0].ToString() + " Y: " + Mainform.location[1].ToString() + " Z: " + Mainform.location[2].ToString());
         }
+
         void yaw(string text)
         {
             string[] args = text.Split(new char[1] { ' ' }, 3);
-
             Mainform.position[0] = float.Parse(args[2]);
-
         }
+
         void pitch(string text)
         {
             string[] args = text.Split(new char[1] { ' ' }, 3);
-
             Mainform.position[1] = float.Parse(args[2]);
         }
+
         void move(string text)
         {
             string[] args = text.Split(new char[1] { ' ' }, 4);
             string axis = args[2];
+            
             float position = float.Parse(args[3]);
 
             if (position > 10 || -10 > position)
@@ -97,13 +98,15 @@ namespace C_Minebot
                     Mainform.location[2] += position;
                     break;
             }
+            Packets.PPaL pal = new Packets.PPaL(true, Socket, Mainform);
         }
+
         void Say(string text)
         {
             string[] args = text.Split(new char[1] {' '},3);
-
             Packets.chatMessage Message = new Packets.chatMessage(true, Socket, Mainform, args[2]);
         }
+
         void Mute()
         {
             if (Mainform.muted)
@@ -117,6 +120,7 @@ namespace C_Minebot
                 Packets.chatMessage chat = new Packets.chatMessage(true, Socket, Mainform, "Muted.");
             }
         }
+
         void Irc(string text)
         {
             string[] args = text.Split(new char[1] { ' ' }, 3);
@@ -154,6 +158,7 @@ namespace C_Minebot
             }
 
         }
+
         void lol()
         {
             Mainform.send("JOIN " + Mainform.channel);

@@ -30,7 +30,7 @@ namespace C_Minebot.Packets
 
             //Have to handle the item now.
 
-            Minecraft_Net_Interaction slotHandler = new Minecraft_Net_Interaction();
+            functions slotHandler = new functions();
             slotHandler.readSlot(socket);
         }
 

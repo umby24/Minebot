@@ -19,7 +19,6 @@ namespace C_Minebot
         TcpClient baseSock;
         NetworkStream baseStream;
         public Wrapped.Wrapped socket;
-        public bool logging = false;
         public Thread handler;
         public bool started = false;
 
@@ -67,7 +66,7 @@ namespace C_Minebot
                 if (baseStream.DataAvailable == true)
                 {
                     int id = (int)socket.readByte();
-                    packetHandler ph = new packetHandler(id, socket, myform, logging);
+                    packetHandler ph = new packetHandler(id, socket, myform);
                 }
             }
             baseSock.Close();

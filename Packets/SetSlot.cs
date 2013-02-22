@@ -11,7 +11,7 @@ namespace C_Minebot.Packets
         {
             socket.readByte();
             socket.readShort();
-            Minecraft_Net_Interaction Parser = new Minecraft_Net_Interaction();
+            functions Parser = new functions();
             Parser.readSlot(socket);
         }
     }

@@ -20,7 +20,7 @@ namespace C_Minebot.Packets
             socket.readShort();
             socket.readShort();
             socket.readShort();
-            Minecraft_Net_Interaction parser = new Minecraft_Net_Interaction();
+            functions parser = new functions();
             parser.readMetadata(socket);
         }
     }
