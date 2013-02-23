@@ -91,6 +91,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\MapBlock.cs" />
     <Compile Include="commandHandler.cs" />
     <Compile Include="Component1.cs">
       <SubType>Component</SubType>
@@ -118,6 +119,7 @@
     <Compile Include="Packets\chatMessage.cs" />
     <Compile Include="Packets\ChunkData.cs" />
     <Compile Include="Packets\ClientResponse.cs" />
+    <Compile Include="Packets\ClientSettings.cs" />
     <Compile Include="Packets\CloseWindow.cs" />
     <Compile Include="Packets\CollectItem.cs" />
     <Compile Include="Packets\DestroyEnt.cs" />

@@ -35,9 +35,6 @@ namespace C_Minebot
                         case "irc":
                             Irc(message);
                             break;
-                        case "lol":
-                            lol();
-                            break;
                         case "mute":
                             Mute();
                             break;
@@ -67,19 +64,21 @@ namespace C_Minebot
         {
             string[] args = text.Split(new char[1] { ' ' }, 3);
             Mainform.position[0] = float.Parse(args[2]);
+            Packets.PlayerLook look = new Packets.PlayerLook(Socket, Mainform);
         }
 
         void pitch(string text)
         {
             string[] args = text.Split(new char[1] { ' ' }, 3);
             Mainform.position[1] = float.Parse(args[2]);
+            Packets.PlayerLook look = new Packets.PlayerLook(Socket, Mainform);
         }
 
         void move(string text)
         {
             string[] args = text.Split(new char[1] { ' ' }, 4);
             string axis = args[2];
-            
+            args[3] = args[3].Replace(" ", "");
             float position = float.Parse(args[3]);
 
             if (position > 10 || -10 > position)
@@ -98,7 +97,8 @@ namespace C_Minebot
                     Mainform.location[2] += position;
                     break;
             }
-            Packets.PPaL pal = new Packets.PPaL(true, Socket, Mainform);
+
+            Packets.PlayerPosition pos = new Packets.PlayerPosition(Socket, Mainform);
         }
 
         void Say(string text)
@@ -157,12 +157,6 @@ namespace C_Minebot
                     break;
             }
 
-        }
-
-        void lol()
-        {
-            Mainform.send("JOIN " + Mainform.channel);
-            Mainform.ircmessage("Current mode: " + Mainform.ircmode);
         }
     }
 }

@@ -25,20 +25,19 @@ namespace C_Minebot.Packets
                 handle();
             }
         }
-
+        public void dummy(int x, int y, int z)
+        {
+            Socket.writeByte(13);
+            Socket.writeDouble((double)x);
+            Socket.writeDouble((double)y);
+            Socket.writeDouble((double)y + 1);
+            Socket.writeDouble((double)z);
+            Socket.writeFloat(mainform.position[0]);
+            Socket.writeFloat(mainform.position[1]);
+            Socket.writeBool(true);
+        }
         void send()
         {
-            //Lets try doing this the fast way.
-            //byte[] myloc = new byte[42];
-            //myloc[0] = 13;
-            //Array.Copy(BitConverter.GetBytes(mainform.location[0]), 0, myloc, 1, 8);
-            //Array.Copy(BitConverter.GetBytes(mainform.location[1]), 0, myloc, 9, 8);
-            //Array.Copy(BitConverter.GetBytes(mainform.location[3]), 0, myloc, 17, 8);
-            //Array.Copy(BitConverter.GetBytes(mainform.location[2]), 0, myloc, 25, 8);
-            //Array.Copy(BitConverter.GetBytes(mainform.position[0]), 0, myloc, 33, 4);
-            //Array.Copy(BitConverter.GetBytes(mainform.position[1]), 0, myloc, 37, 4);
-            //myloc[41] = BitConverter.GetBytes(mainform.onground)[0];
-            //Socket._stream.Write(myloc, 0, 42);
             Socket.writeByte(13);
             Socket.writeDouble(mainform.location[0]);
             Socket.writeDouble(mainform.location[1]);
@@ -61,7 +60,8 @@ namespace C_Minebot.Packets
             float pitch = Socket.readFloat();
             bool onground = Socket.readBool();
 
-            mainform.location = new double[4] { X, Y -.5, Z, stance };
+            mainform.puts("X: " + X + " Y: " + Y + " Z: " + Z + " ongrond: " + onground);
+            mainform.location = new double[4] { X, Y, Z, stance };
             mainform.position = new float[2] { yaw, pitch };
             mainform.onground = onground;
 

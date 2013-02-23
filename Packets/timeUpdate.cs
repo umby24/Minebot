@@ -21,9 +21,9 @@ namespace C_Minebot.Packets
         {
             mainform.worldAge = socket.readLong();
             mainform.time = socket.readLong();
-            //PPaL pal;
-            //if (mainform.location != null)
-            //    pal = new PPaL(true, socket, mainform);
+            PPaL pal;
+            if (mainform.location != null)
+                pal = new PPaL(true, socket, mainform);
         }
     }
 }

@@ -59,18 +59,19 @@ namespace C_Minebot
             baseSock.Close();
         }
 
+
         void handlePackets()
         {
-            while (baseSock.Connected == true)
-            {
-                if (baseStream.DataAvailable == true)
+                while (baseSock.Connected == true)
                 {
-                    int id = (int)socket.readByte();
-                    packetHandler ph = new packetHandler(id, socket, myform);
+                    if (baseStream.DataAvailable == true)
+                    {
+                        int id = (int)socket.readByte();
+                        packetHandler ph = new packetHandler(id, socket, myform);
+                    }
                 }
-            }
-            baseSock.Close();
-            myform.puts("Disconnected from server.");
+                baseSock.Close();
+                myform.puts("Disconnected from server.");
         }
     }
 }
