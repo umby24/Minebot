@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace C_Minebot
 {
@@ -9,6 +10,7 @@ namespace C_Minebot
     {
         Wrapped.Wrapped Socket;
         Form1 Mainform;
+        Thread excersist;
 
         public commandHandler(Wrapped.Wrapped socket, Form1 mainform, string message)
         {
@@ -50,11 +52,43 @@ namespace C_Minebot
                         case "pos":
                             pos();
                             break;
+                        case "omfg":
+                            omfg(false);
+                            break;
+                        case "omfgstop":
+                            omfg(true);
+                            break;
                     }
                 }
             }
         }
 
+
+        void omfg(bool stop)
+        {
+            // <SinZ>in a thread, for(i=0,360) do pitch=i, sleep(1) end
+            if (stop)
+            {
+                excersist.Abort();
+            }
+            else
+            {
+                excersist = new Thread(datthread);
+                excersist.Start();
+            }
+        }
+        void datthread()
+        {
+            while (true)
+            {
+                for (int i = 0; 361 > i; i++)
+                {
+                    Mainform.position[1] = (float)i;
+                    Packets.PlayerLook look = new Packets.PlayerLook(Socket, Mainform);
+                    Thread.Sleep(100);
+                }
+            }
+        }
         void pos()
         {
             Packets.chatMessage chat = new Packets.chatMessage(true, Socket, Mainform, "X: " + Mainform.location[0].ToString() + " Y: " + Mainform.location[1].ToString() + " Z: " + Mainform.location[2].ToString());

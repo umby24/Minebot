@@ -15,7 +15,8 @@ namespace C_Minebot.Packets
             sock.readFloat();
             if (0 >= myform.health)
             {
-                //TODO: Respawn.
+                ClientResponse respawn = new ClientResponse(true, sock, myform, 1);
+                myform.puts("Respawned..?");
             }
         }
 

@@ -91,6 +91,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\Chunk.cs" />
     <Compile Include="Classes\MapBlock.cs" />
     <Compile Include="commandHandler.cs" />
     <Compile Include="Component1.cs">

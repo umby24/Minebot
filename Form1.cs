@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using Winsock_Orcas;
 using System.Text.RegularExpressions;
+using System.Collections;
 
 namespace C_Minebot
 {
@@ -570,6 +571,23 @@ namespace C_Minebot
             nh.stop();
             if (sip != null)
                  beginConnect(sip, sport, username, "asdf", onlineMode);
+        }
+
+        private void asdToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            short pbitmap = 15;
+
+            byte[] lol = BitConverter.GetBytes(pbitmap);
+            BitArray primary = new BitArray(BitConverter.GetBytes(pbitmap));
+            
+            for (int f = 0; f < primary.Count; f++)
+            {
+                MessageBox.Show(primary[f].ToString());
+                if (primary[f] == true)
+                {
+                    MessageBox.Show("aasd");
+                }
+            }
         }
 
     }
