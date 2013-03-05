@@ -72,6 +72,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Visual Studio 2012\Projects\Cryptography\Cryptography\bin\Debug\Cryptography.dll</HintPath>
     </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>bin\Debug\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -92,6 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Chunk.cs" />
+    <Compile Include="Classes\Decompressor.cs" />
     <Compile Include="Classes\MapBlock.cs" />
     <Compile Include="commandHandler.cs" />
     <Compile Include="Component1.cs">

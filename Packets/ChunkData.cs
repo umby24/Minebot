@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.IO.Compression;
+using C_Minebot.Classes;
 
 namespace C_Minebot.Packets
 {
@@ -59,12 +60,31 @@ namespace C_Minebot.Packets
             // Get all of the blocks, and load them into memory.
             for (byte i = 0; i < 16; i++)
             {
-                int what = (pbitmap & (1 << i));
-                if (true)
+                if (Convert.ToBoolean(pbitmap & (1 << i)))
                 {
+                    for (int f= 0; f < 4096; f++)
+                    {
+                        int blockX = (x * 16) + (f & 0x0F);
+                        int blockY = (i * 16) + (blockX >> 8);
+                        int blockZ = (z * 16) + (f & 0xF0) >> 4;
+                        int blockID = decompressed[f];
 
+                        MapBlock myBlock = new MapBlock(blockID, blockX, blockY, blockZ);
+
+                        if (Mainform.blocks == null)
+                            Mainform.blocks = new MapBlock[] { myBlock };
+                        else
+                        {
+                            MapBlock[] temp = Mainform.blocks;
+                            Mainform.blocks = new MapBlock[temp.Length + 1];
+                            Array.Copy(temp, Mainform.blocks, temp.Length);
+                            Mainform.blocks[temp.Length] = myBlock;
+                        }
+
+                    }
                 }
             }
+            
             
         }
     }

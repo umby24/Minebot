@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using Winsock_Orcas;
 using System.Text.RegularExpressions;
 using System.Collections;
+using C_Minebot.Classes;
 
 namespace C_Minebot
 {
@@ -46,7 +47,8 @@ namespace C_Minebot
         public string sessionId;
         public string sip;
         public string sport;
-
+        public MapBlock[] blocks;
+        public List<Chunk> Chunks = new List<Chunk>();
         #endregion
 
         #region Encryption
@@ -371,7 +373,8 @@ namespace C_Minebot
         {
             send("NICK " + ircname);
             send("USER C C C :" + ircname);
-            send("MODE " + ircname + " +B-x");
+            send("MODE " + ircname + " -x");
+            send("JOIN " + channel);
             puts("Connected.");
         }
         public string translate_colors(string text)
@@ -455,7 +458,7 @@ namespace C_Minebot
                     string[] mysplits = dat.Split(new string[] { " " }, 4, StringSplitOptions.None);
 
                     message = message.Replace("\r\n", "");
-
+                    puts(incoming);
                     switch (second)
                     {
                         case "PRIVMSG":
@@ -568,9 +571,12 @@ namespace C_Minebot
 
         private void reconnectToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            nh.stop();
-            if (sip != null)
-                 beginConnect(sip, sport, username, "asdf", onlineMode);
+            if (nh != null)
+            {
+                nh.stop();
+                if (sip != null)
+                    beginConnect(sip, sport, username, "asdf", onlineMode);
+            }
         }
 
         private void asdToolStripMenuItem_Click(object sender, EventArgs e)

@@ -5,21 +5,25 @@ using System.Text;
 
 namespace C_Minebot.Classes
 {
-    class MapBlock
+    public class MapBlock
     {
-       public short ID;
+       public int ID;
        public string Name;
        public int x;
        public int y;
        public int z;
 
-       public MapBlock(short id, int x, int y, int z)
+       public MapBlock(int id, int X, int Y, int Z)
        {
-
+           ID = id;
+           x = X;
+           y = Y;
+           z = Z;
+           get_name();
        }
        void get_name()
        {
-           
+           //TODO: Do this.
        }
     }
 }

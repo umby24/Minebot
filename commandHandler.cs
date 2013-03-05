@@ -22,8 +22,8 @@ namespace C_Minebot
             string[] args = message.Split(' ');
             string username = func.strip_codes(args[0].Replace("<", "").Replace(">", "").Replace(":", "").Replace(" ", ""));
             
-            if (username.ToLower() == mainform.username.ToLower())
-                return;
+            //if (username.ToLower() == mainform.username.ToLower())
+            //    return;
 
             if (Mainform.admins.Contains(username))
             {
@@ -36,6 +36,9 @@ namespace C_Minebot
                             break;
                         case "irc":
                             Irc(message);
+                            break;
+                        case "ircjoin":
+
                             break;
                         case "mute":
                             Mute();
@@ -58,12 +61,86 @@ namespace C_Minebot
                         case "omfgstop":
                             omfg(true);
                             break;
+                        case "block":
+                            whatblock(args);
+                            break;
                     }
                 }
             }
         }
 
+        void whatblock(string[] args)
+        {
+            Mainform.puts("'" + args[1] + "'");
 
+            int thisX = int.Parse(args[2]);
+            int thisy = int.Parse(args[3]);
+            int thisZ = int.Parse(args[4]);
+
+            foreach (Classes.Chunk c in Mainform.Chunks)
+            { //  & (c.z <= thisZ) & (thisZ <= (c.z + 16))
+                if (c.x == 4 & c.z == -2)
+                {
+                    Mainform.puts("asdasdasd");
+
+                    for (byte i = 0; i < 16; i++)
+                    {
+                        if (Convert.ToBoolean(c.pbitmap & (1 << i)))
+                        {
+                            for (int f = 0; f < 4096; f++)
+                            {
+
+                                // in classic; (z * mapy + y) * mapx + x
+                                int blockXa = c.x * 16 + (f & 0x0F);
+                                int blockX = f & 0x0F;
+                                int blockY = i * 16 + (f >> 8);
+                                int blockZ = (f & 0xF0) >> 4;
+
+                                int blockYa = i * 16 + (blockXa >> 8);
+                                int blockZa = c.z * 16 + (f & 0xF0) >> 4;
+                                int blockID = c.blocks[(blockX + blockZ * 16 + blockY * 256)]; //  return x + z*depth + y*ystep;
+                                // depth = 16, width = 16, ystep = width * depth ( 256)
+
+                                if (((int)blockXa == (int)thisX))
+                                {
+                                    if ((int)blockYa == (int)thisy)
+                                    {
+                                        if ((int)blockZa == (int)thisZ)
+                                        {
+                                    Mainform.puts("Got it! it is " + blockID.ToString());
+                                        }
+                                    }
+                                }
+                                //MapBlock myBlock = new MapBlock(blockID, blockX, blockY, blockZ);
+
+                                //if (Mainform.blocks == null)
+                                //    Mainform.blocks = new MapBlock[] { myBlock };
+                                //else
+                                //{
+                                //    MapBlock[] temp = Mainform.blocks;
+                                //    Mainform.blocks = new MapBlock[temp.Length + 1];
+                                //    Array.Copy(temp, Mainform.blocks, temp.Length);
+                                //    Mainform.blocks[temp.Length] = myBlock;
+                                //}
+
+                            }
+                        }
+                    }
+                }
+            }
+            //foreach (Classes.MapBlock b in Mainform.blocks)
+            //{
+            //    if (b.x.ToString() == args[1] & b.y.ToString() == args[2] & b.z.ToString() == args[3])
+            //    {
+            //        Packets.chatMessage chat = new Packets.chatMessage(true, Socket, Mainform, "Block: " + b.ID.ToString());
+            //    }
+            //}
+        }
+
+        void ircjoin()
+        {
+            Mainform.send("JOIN " + Mainform.channel);
+        }
         void omfg(bool stop)
         {
             // <SinZ>in a thread, for(i=0,360) do pitch=i, sleep(1) end

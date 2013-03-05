@@ -18,7 +18,6 @@ namespace C_Minebot.Packets
         public BulkChunks(Wrapped.Wrapped socket, Form1 mainform)
         {
             short columncount = socket.readShort();
-            int offset = 0;
             int Datalength = socket.readInt();
             bool skylight = socket.readBool();
 
@@ -45,76 +44,66 @@ namespace C_Minebot.Packets
                int z = socket.readInt();
                short pbitmap = socket.readShort();
                short abitmap = socket.readShort();
-               Chunk b = new Chunk(x, z, pbitmap, abitmap, skylight);
 
-               for (int f = 0; f < (256 >> 4); f++)
-               {
-                   if (Convert.ToBoolean(pbitmap & (1 << f)))
-                   {
-                       byte[] newBlocks = new byte[8192];
-                       byte[] temp = b.blocks;
+               Chunk mychunk = new Chunk(x, z, pbitmap, abitmap, skylight);
 
-                       Array.Copy(decompressed, offset, newBlocks, 0, 8192);
+               chunks[i] = mychunk;
 
-                       if (b.blocks == null)
-                           b.blocks = newBlocks;
-                       else
-                       {
-                           b.blocks = new byte[temp.Length + 8192];
-                           temp.CopyTo(b.blocks, 0);
-                           newBlocks.CopyTo(b.blocks, temp.Length);
-                       }
-
-                       b.numBlocks += 8192;
-                       offset += 8192;
-                   }
-                   if (skylight == true)
-                   {
-                       // remove 2048 bytes for skylight data
-                       byte[] newBlocks = new byte[2048];
-                       byte[] temp = b.blighting;
-
-                       Array.Copy(decompressed, offset, newBlocks, 0, 2048);
-
-                       if (b.blighting == null)
-                           b.blocks = newBlocks;
-                       else
-                       {
-                           b.blighting = new byte[temp.Length + 2048];
-                           temp.CopyTo(b.blighting, 0);
-                           newBlocks.CopyTo(b.blighting, temp.Length);
-                       }
-                       if (Convert.ToBoolean(abitmap & (1 << f)))
-                       {
-                           offset += 2048;
-                       }
-                       //if($add_bitmask & (1 << $i)){
-                       //             $offsetData += 2048;
-                       //         }
-                       offset += 2048;
-                   }
-
-               }
-
-               offset += 256;
-               //Chunk mychunk = new Chunk(x, z, pbitmap, abitmap, skylight);
-               chunks[i] = b;
             }
 
-
+            int offset = 0;
 
             foreach (Chunk b in chunks)
             {
+                for (int i = 0; i < 16; i++)
+                {
+                    if (Convert.ToBoolean(b.pbitmap & (1 << i)))
+                    {
+                        byte[] newBlocks = new byte[4096];
+                        byte[] temp = b.blocks;
 
+                        Array.Copy(decompressed, offset, newBlocks, 0, 4096);
+
+                        if (b.blocks == null)
+                            b.blocks = newBlocks;
+                        else
+                        {
+                            b.blocks = new byte[temp.Length + 4096];
+                            temp.CopyTo(b.blocks, 0);
+                            newBlocks.CopyTo(b.blocks, temp.Length);
+                        }
+                        b.numBlocks += 4096;
+                        offset += 4096;
+                    }
+                }
 
                 mainform.Chunks.Add(b);
-
                 if (b.abitmap != 0)
                 {
                     throw new Exception();
                 }
+                // we need to adjust the offset in compensation for additional metadata included with every chunk..
+                int additional = 0;
+                int Nibbleinfo = b.numBlocks / 2;
+                int totalSections = b.numBlocks / 4096;
 
-             //   b.parseData();
+
+                if (skylight == true)
+                    additional = (totalSections * Nibbleinfo) + (totalSections * Nibbleinfo) + (totalSections * Nibbleinfo);
+                else
+                    additional = (totalSections * Nibbleinfo) + (totalSections * Nibbleinfo);
+
+                additional += 256;
+
+                offset += additional;
+                //Array.Copy(decompressed, b.blocks, b.blocks.Length);
+
+                //temp = new byte[decompressed.Length - b.blocks.Length];
+
+                //Array.Copy(decompressed, b.blocks.Length, temp, 0, decompressed.Length - b.blocks.Length);
+                //decompressed = temp;
+                //mainform.Chunks.Add(b);
+                // parseChunk(b,mainform);
             }
         }
 
