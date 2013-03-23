@@ -22,38 +22,29 @@ namespace C_Minebot
         public bool setopen = false;
         public bool muted = false;
         public bool onlineMode;
-        public Color windowColor;
-        public Color TextColor;
-        public Color TextAColor;
+        public Color windowColor, TextColor, TextAColor;
         public Boolean flatten;
         public Boolean colorize = true;
         public List<string> admins;
+        public List<Classes.Item> inventory;
         #endregion
 
         #region Server
 
-        public short health;
-        public short hunger;
-        public short selectedSlot;
-        public long time;
-        public long worldAge;
+        public short health, hunger, selectedSlot;
+        public long time, worldAge;
         public int[] spawnPoint;
         public int EntityID;
         public bool onground;
         public float[] position;
         public double[] location;
-        public string ServerID;
-        public string serverHash;
-        public string sessionId;
-        public string sip;
-        public string sport;
+        public string ServerID, serverHash, sessionId, sip, sport;
         public MapBlock[] blocks;
         public List<Chunk> Chunks = new List<Chunk>();
         #endregion
 
         #region Encryption
-        public byte[] PublicKey;
-        public byte[] token;
+        public byte[] PublicKey, token;
         public byte[] sharedkey = new byte[16];
         #endregion
 
@@ -67,9 +58,7 @@ namespace C_Minebot
         public Winsock_Orcas.Winsock IRCSock;
         public int ircmode = 0;
         public int ircPort;
-        public string channel;
-        public string ircname;
-        public string ircIP;
+        public string channel, ircname, ircIP;
         public bool canTalk = false;
 
         #endregion
@@ -78,7 +67,7 @@ namespace C_Minebot
         #region Colorized Chatbox
         public const int EM_GETLINECOUNT = 0xBA;
         public const int EM_LINESCROLL = 0xB6;
-        //     Public Declare Function SendMessage Lib "user32.dll" Alias "SendMessageA" (ByVal hWnd As IntPtr, ByVal msg As Integer, ByVal wParam As Integer, ByVal lParam As Integer) As Integer
+
         [DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int msg, int wParam, int lParam);
 
@@ -87,22 +76,6 @@ namespace C_Minebot
         public Form1()
         {
             InitializeComponent();
-        }
-
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("This is the official successor to VB Minebot, written so I could learn C#, and to get this project up again, but cleaner.", "About C# Minebot");
-        }
-
-        private void connectToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (setopen == false)
-            {
-                Settings whatever = new Settings();
-                whatever.myform = this;
-                whatever.Show();
-                setopen = true;
-            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -126,7 +99,7 @@ namespace C_Minebot
                 }
             }
 
-
+            // Load IRC settings
             try
             {
                 ircIP = (string)Reg.GetSetting("SH", "Minebot SMP", "ircIP", "irc.esper.net");
@@ -137,7 +110,7 @@ namespace C_Minebot
             }
             catch (Exception f)
             {
-                MessageBox.Show(f.Message);
+                MessageBox.Show("An error occured while loading settings. " + f.Message);
             }
 
             admins.Add("Minebot");
@@ -148,7 +121,6 @@ namespace C_Minebot
             putsc("-------- All settings loaded ---------", Color.Orange);
 
         }
-
         private void Form1_Close(object sender, EventArgs e)
         {
             if (nh != null)
@@ -343,7 +315,6 @@ namespace C_Minebot
             }
         }
         #endregion
-
         #region IRC
 
         public void stopIRC()
@@ -353,6 +324,7 @@ namespace C_Minebot
         public void startIRC()
         {
             RegistryControl Reg = new RegistryControl();
+
             ircIP = (string)Reg.GetSetting("SH", "Minebot SMP", "ircIP", "irc.esper.net");
 
             int.TryParse((string)Reg.GetSetting("SH", "Minebot SMP", "ircPort", 6667), out ircPort);
@@ -380,6 +352,7 @@ namespace C_Minebot
         public string translate_colors(string text)
         {
             string smessage = text;
+
             if (smessage.Contains("§"))
             {
                 smessage = smessage.Replace("§0", ((Char) 3) + "00");
@@ -405,8 +378,8 @@ namespace C_Minebot
                 smessage = smessage.Replace("§E", ((Char)3) + "08");
                 smessage = smessage.Replace("§F", ((Char)3) + "01");
             }
-            return smessage;
 
+            return smessage;
         }
         public void IRCSock_DataArrival(object sender, WinsockDataArrivalEventArgs e)
         {
@@ -499,12 +472,14 @@ namespace C_Minebot
                 }
                 index++;
             } while (index == splits.Length - 1);
+
             incoming = "";
         }
 
         string stripillegal2(string text)
         {
             string final = "";
+
             foreach (char b in text)
             {
                 if ((Char.IsLetterOrDigit(b) && (b == '!' || b == '@' || b == '#' || b == '$' || b == '%' || b == '*' || b == '(' || b == ')' || b == '=' || b == '-' || b == '_' || b == '+' || b == '/' || b == '\\' || b == '<' || b == '>' || b == '?' || b == '.' || b == ',' || b == ' ')))
@@ -512,12 +487,14 @@ namespace C_Minebot
                     final += b;
                 }
             }
+
             return final;
         }
         public void send(string msg)
         {
             if (IRCSock == null)
                 return;
+
             if (IRCSock.State == WinsockStates.Connected)
             {
                 msg += "\r\n";
@@ -530,7 +507,23 @@ namespace C_Minebot
             send("PRIVMSG " + channel + " :" + text);
         }
         #endregion
+        #region Button Clicks
 
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("This is the official successor to VB Minebot, written so I could learn C#, and to get this project up again, but cleaner.", "About C# Minebot");
+        }
+
+        private void connectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (setopen == false)
+            {
+                Settings whatever = new Settings();
+                whatever.myform = this;
+                whatever.Show();
+                setopen = true;
+            }
+        }
         private void btnSend_Click(object sender, EventArgs e)
         {
             if (chat.Text.StartsWith("+"))
@@ -581,20 +574,14 @@ namespace C_Minebot
 
         private void asdToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            short pbitmap = 15;
+            functions thisLookup = new functions();
+            string build = "";
 
-            byte[] lol = BitConverter.GetBytes(pbitmap);
-            BitArray primary = new BitArray(BitConverter.GetBytes(pbitmap));
-            
-            for (int f = 0; f < primary.Count; f++)
-            {
-                MessageBox.Show(primary[f].ToString());
-                if (primary[f] == true)
-                {
-                    MessageBox.Show("aasd");
-                }
+            for (int i = 0; i < 44; i++) {
+                build += i.ToString() + ": " + thisLookup.getitembyslot(i,this).ToString() + Environment.NewLine;
             }
+            MessageBox.Show(build);
         }
-
+        #endregion
     }
 }

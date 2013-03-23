@@ -10,6 +10,8 @@ using ICSharpCode.SharpZipLib;
 
 namespace C_Minebot.Packets
 {
+    // Note: This packet is all sorts of broken.
+
     // Step 1: Decompress entire compressed stream
     // Step 2: pull number of blocks, optionally with lighting from decompressed data
 
@@ -45,78 +47,78 @@ namespace C_Minebot.Packets
                int z = socket.readInt();
                short pbitmap = socket.readShort();
                short abitmap = socket.readShort();
-               Chunk b = new Chunk(x, z, pbitmap, abitmap, skylight);
+               //Chunk b = new Chunk(x, z, pbitmap, abitmap, skylight);
 
-               for (int f = 0; f < (256 >> 4); f++)
-               {
-                   if (Convert.ToBoolean(pbitmap & (1 << f)))
-                   {
-                       byte[] newBlocks = new byte[8192];
-                       byte[] temp = b.blocks;
+               //for (int f = 0; f < (256 >> 4); f++)
+               //{
+               //    if (Convert.ToBoolean(pbitmap & (1 << f)))
+               //    {
+               //        byte[] newBlocks = new byte[8192];
+               //        byte[] temp = b.blocks;
 
-                       Array.Copy(decompressed, offset, newBlocks, 0, 8192);
+               //        Array.Copy(decompressed, offset, newBlocks, 0, 8192);
 
-                       if (b.blocks == null)
-                           b.blocks = newBlocks;
-                       else
-                       {
-                           b.blocks = new byte[temp.Length + 8192];
-                           temp.CopyTo(b.blocks, 0);
-                           newBlocks.CopyTo(b.blocks, temp.Length);
-                       }
+               //        if (b.blocks == null)
+               //            b.blocks = newBlocks;
+               //        else
+               //        {
+               //            b.blocks = new byte[temp.Length + 8192];
+               //            temp.CopyTo(b.blocks, 0);
+               //            newBlocks.CopyTo(b.blocks, temp.Length);
+               //        }
 
-                       b.numBlocks += 8192;
-                       offset += 8192;
-                   }
-                   if (skylight == true)
-                   {
-                       // remove 2048 bytes for skylight data
-                       byte[] newBlocks = new byte[2048];
-                       byte[] temp = b.blighting;
+               //        b.numBlocks += 8192;
+               //        offset += 8192;
+               //    }
+               //    if (skylight == true)
+               //    {
+               //        // remove 2048 bytes for skylight data
+               //        byte[] newBlocks = new byte[2048];
+               //        byte[] temp = b.blighting;
 
-                       Array.Copy(decompressed, offset, newBlocks, 0, 2048);
+               //        Array.Copy(decompressed, offset, newBlocks, 0, 2048);
 
-                       if (b.blighting == null)
-                           b.blocks = newBlocks;
-                       else
-                       {
-                           b.blighting = new byte[temp.Length + 2048];
-                           temp.CopyTo(b.blighting, 0);
-                           newBlocks.CopyTo(b.blighting, temp.Length);
-                       }
-                       if (Convert.ToBoolean(abitmap & (1 << f)))
-                       {
-                           offset += 2048;
-                       }
-                       //if($add_bitmask & (1 << $i)){
-                       //             $offsetData += 2048;
-                       //         }
-                       offset += 2048;
+               //        if (b.blighting == null)
+               //            b.blocks = newBlocks;
+               //        else
+               //        {
+               //            b.blighting = new byte[temp.Length + 2048];
+               //            temp.CopyTo(b.blighting, 0);
+               //            newBlocks.CopyTo(b.blighting, temp.Length);
+               //        }
+               //        if (Convert.ToBoolean(abitmap & (1 << f)))
+               //        {
+               //            offset += 2048;
+               //        }
+               //        //if($add_bitmask & (1 << $i)){
+               //        //             $offsetData += 2048;
+               //        //         }
+               //        offset += 2048;
                    }
 
                }
 
-               offset += 256;
-               //Chunk mychunk = new Chunk(x, z, pbitmap, abitmap, skylight);
-               chunks[i] = b;
-            }
+               //offset += 256;
+               ////Chunk mychunk = new Chunk(x, z, pbitmap, abitmap, skylight);
+               //chunks[i] = b;
+        //    }
 
 
 
-            foreach (Chunk b in chunks)
-            {
+            //foreach (Chunk b in chunks)
+            //{
 
 
-                mainform.Chunks.Add(b);
+            //    mainform.Chunks.Add(b);
 
-                if (b.abitmap != 0)
-                {
-                    throw new Exception();
-                }
+            //    if (b.abitmap != 0)
+            //    {
+            //        throw new Exception();
+            //    }
 
-             //   b.parseData();
-            }
-        }
+            //    b.parseData();
+            //}
+   //     }
 
         void parseChunk(Chunk toparse, Form1 thisform)
         {

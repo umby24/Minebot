@@ -30,8 +30,13 @@ namespace C_Minebot.Packets
 
             //Have to handle the item now.
 
-            functions slotHandler = new functions();
-            slotHandler.readSlot(socket);
+            if (EID == mainform.EntityID) {
+                functions slotHandler = new functions();
+                slotHandler.readSlot(socket, true, mainform, slot);
+            } else {
+                functions slotHandler = new functions();
+                slotHandler.readSlot(socket);
+            }
         }
 
     }

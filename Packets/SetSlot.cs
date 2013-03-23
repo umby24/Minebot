@@ -9,10 +9,11 @@ namespace C_Minebot.Packets
     {
         public SetSlot(Wrapped.Wrapped socket, Form1 mainform)
         {
-            socket.readByte();
-            socket.readShort();
+            byte windowId = socket.readByte();
+            short slot = socket.readShort();
             functions Parser = new functions();
-            Parser.readSlot(socket);
+
+            Parser.readSlot(socket,true,mainform,slot);
         }
     }
 }

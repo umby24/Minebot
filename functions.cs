@@ -3,24 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace C_Minebot
-{
-    class functions
-    {
+namespace C_Minebot {
+    class functions {
 
-       public void readMetadata(Wrapped.Wrapped socket)
-        {
-            do
-            {
+        public void readMetadata(Wrapped.Wrapped socket) {
+            do {
 
                 byte item = socket.readByte();
 
                 if (item == 127) break;
-                    int index = item & 0x1F;
-                    int type = item >> 5;
+                int index = item & 0x1F;
+                int type = item >> 5;
 
-                switch (type)
-                {
+                switch (type) {
                     case 0:
                         socket.readByte();
                         break;
@@ -49,29 +44,41 @@ namespace C_Minebot
             } while (true);
         }
 
-        public void readSlot(Wrapped.Wrapped socket)
-        {
+        public void readSlot(Wrapped.Wrapped socket, bool inventory = false, Form1 Mainform = null, short slot = 500) {
+            // Just in case..
+            if (inventory == true & Mainform == null) {
+                throw new Exception("If inventory is true, you must include a main form.");
+            }
+            if ((inventory == true) & slot == 500) {
+                throw new Exception("If inventory is true, you must include which slot to add to.");
+            }
+
             int blockID = socket.readShort();
 
             if (blockID == -1)
                 return;
 
-            socket.readByte();
-            socket.readShort();
+            byte itemCount = socket.readByte();
+            short damage = socket.readShort();
             int NBTLength = socket.readShort();
 
             if (NBTLength == -1)
                 return;
 
             socket.readByteArray(NBTLength);
+
+            if (Mainform.inventory == null && inventory == true)
+                Mainform.inventory = new List<Classes.Item>();
+
+            if (inventory == true)
+                Mainform.inventory.Add(new Classes.Item(blockID, itemCount, damage, slot));
+
         }
 
-        public string strip_codes(string text)
-        {
+        public string strip_codes(string text) {
             // Strips the color codes from text.
             string smessage = text;
-            if (smessage.Contains("§"))
-            {
+            if (smessage.Contains("§")) {
                 smessage = smessage.Replace("§0", "");
                 smessage = smessage.Replace("§1", "");
                 smessage = smessage.Replace("§2", "");
@@ -96,6 +103,18 @@ namespace C_Minebot
                 smessage = smessage.Replace("§F", "");
             }
             return smessage;
+        }
+
+        public int getitembyslot(int slot, Form1 mainform) {
+            int item = 0;
+
+            foreach (Classes.Item b in mainform.inventory) {
+                if (b.slot == slot) {
+                    item = b.itemID;
+                    break;
+                }
+            }
+            return item;
         }
     }
 }

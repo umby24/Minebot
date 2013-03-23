@@ -96,6 +96,7 @@
   <ItemGroup>
     <Compile Include="Classes\Chunk.cs" />
     <Compile Include="Classes\Decompressor.cs" />
+    <Compile Include="Classes\Item.cs" />
     <Compile Include="Classes\MapBlock.cs" />
     <Compile Include="commandHandler.cs" />
     <Compile Include="Component1.cs">
@@ -128,6 +129,7 @@
     <Compile Include="Packets\CloseWindow.cs" />
     <Compile Include="Packets\CollectItem.cs" />
     <Compile Include="Packets\DestroyEnt.cs" />
+    <Compile Include="Packets\displayScoreboard.cs" />
     <Compile Include="Packets\EncRequest.cs" />
     <Compile Include="Packets\EncResponse.cs" />
     <Compile Include="Packets\EntEffect.cs" />
@@ -152,6 +154,7 @@
     <Compile Include="Packets\MultiBlockChange.cs" />
     <Compile Include="Packets\Namedsound.cs" />
     <Compile Include="Packets\OpenWindow.cs" />
+    <Compile Include="Packets\Particle.cs" />
     <Compile Include="Packets\Player.cs" />
     <Compile Include="Packets\PlayerAbilities.cs" />
     <Compile Include="Packets\PlayerBlockPlacement.cs" />
@@ -163,6 +166,7 @@
     <Compile Include="Packets\PPaL.cs" />
     <Compile Include="Packets\RemoveEntEffect.cs" />
     <Compile Include="Packets\Respawn.cs" />
+    <Compile Include="Packets\scoreboardObjective.cs" />
     <Compile Include="Packets\SetExp.cs" />
     <Compile Include="Packets\SetSlot.cs" />
     <Compile Include="Packets\setWindowItems.cs" />
@@ -175,8 +179,10 @@
     <Compile Include="Packets\SpawnPainting.cs" />
     <Compile Include="Packets\spawnPosition.cs" />
     <Compile Include="Packets\TabComplete.cs" />
+    <Compile Include="Packets\teams.cs" />
     <Compile Include="Packets\timeUpdate.cs" />
     <Compile Include="Packets\updateHealth.cs" />
+    <Compile Include="Packets\updateScore.cs" />
     <Compile Include="Packets\updateSign.cs" />
     <Compile Include="Packets\updateTileEntity.cs" />
     <Compile Include="Packets\updateWindowProperty.cs" />

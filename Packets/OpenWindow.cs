@@ -13,6 +13,7 @@ namespace C_Minebot.Packets
             socket.readByte();
             socket.readString();
             socket.readByte();
+            bool useTitle = socket.readBool();
         }
     }
 }

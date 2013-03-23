@@ -148,6 +148,9 @@ namespace C_Minebot
                 case 62:
                     Namedsound namedatsound = new Namedsound(sock, mainform);
                     break;
+                case 63:
+                    Particle mypartical = new Particle(sock, mainform);
+                    break;
                 case 70:
                     changeGameState rainin = new changeGameState(sock, mainform);
                     break;
@@ -195,6 +198,18 @@ namespace C_Minebot
                     break;
                 case 203:
                     TabComplete tc = new TabComplete(sock, mainform);
+                    break;
+                case 206:
+                    scoreboardObjective SO = new scoreboardObjective(sock, mainform);
+                    break;
+                case 207:
+                    updateScore US = new updateScore(sock, mainform);
+                    break;
+                case 208:
+                    displayScoreboard DS = new displayScoreboard(sock, mainform);
+                    break;
+                case 209:
+                    teams t = new teams(sock, mainform);
                     break;
                 case 250:
                     PluginMessage pm = new PluginMessage(sock, mainform);
