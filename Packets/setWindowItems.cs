@@ -11,11 +11,12 @@ namespace C_Minebot.Packets
         {
             byte windowid = socket.readByte();
             int count = socket.readShort();
-
+            int asdf = 0;
             functions parser = new functions();
             if (windowid == 0) {
-                for (short i = 0; i < count - 1; i++) {
+                for (short i = 0; i < count; i++) {
                     parser.readSlot(socket, true, mainform, i);
+                    asdf++;
                 }
             } else {
                 while (count != 0) {

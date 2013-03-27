@@ -62,13 +62,14 @@ namespace C_Minebot {
             short damage = socket.readShort();
             int NBTLength = socket.readShort();
 
-            if (NBTLength == -1)
+            if (NBTLength == -1) {
+                if (inventory == true)
+                    Mainform.inventory.Add(new Classes.Item(blockID, itemCount, damage, slot));
                 return;
+            }
 
             socket.readByteArray(NBTLength);
 
-            if (Mainform.inventory == null && inventory == true)
-                Mainform.inventory = new List<Classes.Item>();
 
             if (inventory == true)
                 Mainform.inventory.Add(new Classes.Item(blockID, itemCount, damage, slot));

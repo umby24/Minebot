@@ -26,7 +26,7 @@ namespace C_Minebot
         public Boolean flatten;
         public Boolean colorize = true;
         public List<string> admins;
-        public List<Classes.Item> inventory;
+        public List<Classes.Item> inventory = new List<Classes.Item>();
         #endregion
 
         #region Server
