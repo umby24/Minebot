@@ -578,7 +578,7 @@ namespace C_Minebot
             string build = "";
 
             for (int i = 0; i < 44; i++) {
-                build += i.ToString() + ": " + thisLookup.getitembyslot(i,this).ToString() + Environment.NewLine;
+                build += i.ToString() + ": " + thisLookup.getitembyslot(i,this) +  "(" + thisLookup.getItemCount(i,this) + ")" + Environment.NewLine;
             }
             MessageBox.Show(build);
         }

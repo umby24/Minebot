@@ -173,7 +173,7 @@ namespace C_Minebot
                     updateWindowProperty uwp = new updateWindowProperty(sock, mainform);
                     break;
                 case 106:
-                    mainform.puts("Parse packet 0x6A!");
+                    ConfirmTransaction CT = new ConfirmTransaction(sock, mainform);
                     break;
                 case 107:
                     mainform.puts("Parse packet 0x6B!");

@@ -38,7 +38,9 @@ namespace C_Minebot
                             Irc(message);
                             break;
                         case "ircjoin":
-
+                            break;
+                        case "hold":
+                            holdChange(args);
                             break;
                         case "mute":
                             Mute();
@@ -51,6 +53,9 @@ namespace C_Minebot
                             break;
                         case "move":
                             move(message);
+                            break;
+                        case "drop":
+                            dropStack(args);
                             break;
                         case "pos":
                             pos();
@@ -69,6 +74,21 @@ namespace C_Minebot
             }
         }
 
+
+        void dropStack(string[] args) {
+            functions lookup = new functions();
+            Classes.Item thisitem = null;
+
+            foreach (Classes.Item b in Mainform.inventory) {
+                if (b.slot == (short.Parse(args[2]))) {
+                    thisitem = b;
+                    break;
+                }
+            }
+
+            Packets.ClickWindow click = new Packets.ClickWindow(Socket, Mainform, short.Parse(args[2]), 0, 0, thisitem);
+            Packets.ClickWindow click2 = new Packets.ClickWindow(Socket, Mainform, -999, 0, 0, thisitem);
+        }
         void whatblock(string[] args)
         {
             Mainform.puts("'" + args[1] + "'");
@@ -135,6 +155,13 @@ namespace C_Minebot
             //        Packets.chatMessage chat = new Packets.chatMessage(true, Socket, Mainform, "Block: " + b.ID.ToString());
             //    }
             //}
+        }
+
+        void holdChange(string[] args) {
+            if (short.Parse(args[2]) < 0 || short.Parse(args[2]) > 9)
+                return;
+            Mainform.selectedSlot = short.Parse(args[2]);
+            Packets.HeldItemChange hic = new Packets.HeldItemChange(true, Socket, Mainform);
         }
 
         void ircjoin()

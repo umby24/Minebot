@@ -124,10 +124,12 @@
     <Compile Include="Packets\changeGameState.cs" />
     <Compile Include="Packets\chatMessage.cs" />
     <Compile Include="Packets\ChunkData.cs" />
+    <Compile Include="Packets\ClickWindow.cs" />
     <Compile Include="Packets\ClientResponse.cs" />
     <Compile Include="Packets\ClientSettings.cs" />
     <Compile Include="Packets\CloseWindow.cs" />
     <Compile Include="Packets\CollectItem.cs" />
+    <Compile Include="Packets\ConfirmTransaction.cs" />
     <Compile Include="Packets\DestroyEnt.cs" />
     <Compile Include="Packets\displayScoreboard.cs" />
     <Compile Include="Packets\EncRequest.cs" />

@@ -46,6 +46,9 @@ namespace C_Minebot {
 
         public void readSlot(Wrapped.Wrapped socket, bool inventory = false, Form1 Mainform = null, short slot = 500) {
             // Just in case..
+            bool delete = false;
+            Classes.Item existing = null;
+
             if (inventory == true & Mainform == null) {
                 throw new Exception("If inventory is true, you must include a main form.");
             }
@@ -53,7 +56,21 @@ namespace C_Minebot {
                 throw new Exception("If inventory is true, you must include which slot to add to.");
             }
 
+            if (inventory == true) {
+                foreach (Classes.Item b in Mainform.inventory) {
+                    if (b.slot == slot) {
+                        delete = true;
+                        existing = b;
+                        break;
+                    }
+                }
+
+                if (delete == true)
+                    Mainform.inventory.Remove(existing);
+            }
+
             int blockID = socket.readShort();
+
 
             if (blockID == -1)
                 return;
@@ -106,16 +123,27 @@ namespace C_Minebot {
             return smessage;
         }
 
-        public int getitembyslot(int slot, Form1 mainform) {
-            int item = 0;
+        public string getitembyslot(int slot, Form1 mainform) {
+            string item = "";
 
             foreach (Classes.Item b in mainform.inventory) {
                 if (b.slot == slot) {
-                    item = b.itemID;
+                    item = b.itemname;
                     break;
                 }
             }
             return item;
+        }
+
+        public int getItemCount(int slot, Form1 mainform) {
+            int count = 0;
+            foreach (Classes.Item b in mainform.inventory) {
+                if (b.slot == slot) {
+                    count = b.itemCount;
+                    break;
+                }
+            }
+            return count;
         }
     }
 }

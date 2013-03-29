@@ -11,6 +11,8 @@ namespace C_Minebot.Packets
         {
             if (outgoing)
             {
+                socket.writeByte(0x65);
+                socket.writeByte(0);
             }
             else
             {

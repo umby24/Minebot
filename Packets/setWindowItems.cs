@@ -13,6 +13,7 @@ namespace C_Minebot.Packets
             int count = socket.readShort();
             int asdf = 0;
             functions parser = new functions();
+
             if (windowid == 0) {
                 for (short i = 0; i < count; i++) {
                     parser.readSlot(socket, true, mainform, i);
