@@ -17,6 +17,7 @@ namespace C_Minebot.Packets {
                 socket.writeByte(windowID);
                 socket.writeShort(actionNumber);
                 socket.writeBool(accepted);
+                ClickWindow cw = new ClickWindow(socket, mainform, -999, 0, 0, null); // If we're holding something on our cursor, drop it.
             }
         }
     }

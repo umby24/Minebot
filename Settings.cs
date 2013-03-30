@@ -37,6 +37,7 @@ namespace C_Minebot
             txtIrcChan.Text = (string)reg.GetSetting("SH", "Minebot SMP", "ircChan", "#bot");
             txtIrcNick.Text = (string)reg.GetSetting("SH", "Minebot SMP", "ircName", "VBMimebot");
             cbOnline.Checked = bool.Parse((string)reg.GetSetting("SH", "Minebot SMP", "Online", true));
+            txtPrefix.Text = (string)reg.GetSetting("SH", "Minebot SMP", "prefix", "+");
 
            // Load in admins from main form
             for (int i = 0; i < (myform.admins.Count); i++)
@@ -328,6 +329,13 @@ namespace C_Minebot
             Reg.SaveSetting("SH", "Minebot SMP", "ircName", txtIrcNick.Text);
         }
         #endregion
+
+        private void txtPrefix_TextChanged(object sender, EventArgs e) {
+
+            RegistryControl reg = new RegistryControl();
+            reg.SaveSetting("SH", "Minebot SMP", "prefix", txtPrefix.Text);
+
+        }
 
 
 

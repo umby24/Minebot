@@ -145,5 +145,10 @@ namespace C_Minebot {
             }
             return count;
         }
+
+        public bool isNumeric(string test) {
+            int thisOut;
+            return int.TryParse(test, out thisOut);
+        }
     }
 }

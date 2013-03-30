@@ -14,13 +14,18 @@ namespace C_Minebot.Packets {
             socket.writeByte(mouse);
             socket.writeShort(13);
             socket.writeByte(mode);
-            //TODO: Implement slot data writing
-            socket.writeShort((short)clicked.itemID);
-            socket.writeByte(clicked.itemCount);
-            socket.writeShort(clicked.itemDamage);
-            socket.writeShort(-1);
 
-            MainForm.inventory.Remove(clicked);
+            if (clicked == null)
+                socket.writeShort(-1);
+            else {
+                socket.writeShort((short)clicked.itemID);
+                socket.writeByte(clicked.itemCount);
+                socket.writeShort(clicked.itemDamage);
+                socket.writeShort(-1);
+            }
+
+            if (slot == -999 && clicked != null)
+                MainForm.inventory.Remove(clicked); // Just to make sure, pretty sure that minecraft will send a setwindowitem for it to clear anyway.
         }
     }
 }

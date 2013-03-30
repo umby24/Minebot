@@ -19,6 +19,7 @@ namespace C_Minebot
         #region Variables
 
         #region Bot Specific
+        public string prefix = "+";
         public bool setopen = false;
         public bool muted = false;
         public bool onlineMode;
@@ -112,6 +113,10 @@ namespace C_Minebot
             {
                 MessageBox.Show("An error occured while loading settings. " + f.Message);
             }
+
+            // Load command prefix
+            RegistryControl reg = new RegistryControl();
+            prefix = (string)reg.GetSetting("SH", "Minebot SMP", "prefix", "+");
 
             admins.Add("Minebot");
 
@@ -345,7 +350,7 @@ namespace C_Minebot
         {
             send("NICK " + ircname);
             send("USER C C C :" + ircname);
-            send("MODE " + ircname + " -x");
+            send("MODE " + ircname + " +i");
             send("JOIN " + channel);
             puts("Connected.");
         }
@@ -431,7 +436,7 @@ namespace C_Minebot
                     string[] mysplits = dat.Split(new string[] { " " }, 4, StringSplitOptions.None);
 
                     message = message.Replace("\r\n", "");
-                    puts(incoming);
+
                     switch (second)
                     {
                         case "PRIVMSG":

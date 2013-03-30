@@ -71,6 +71,8 @@
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.label9 = new System.Windows.Forms.Label();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
+            this.lblPrefix = new System.Windows.Forms.Label();
+            this.txtPrefix = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -251,6 +253,8 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.txtPrefix);
+            this.groupBox3.Controls.Add(this.lblPrefix);
             this.groupBox3.Controls.Add(this.button3);
             this.groupBox3.Controls.Add(this.button2);
             this.groupBox3.Controls.Add(this.button1);
@@ -499,6 +503,25 @@
             this.label9.TabIndex = 0;
             this.label9.Text = resources.GetString("label9.Text");
             // 
+            // lblPrefix
+            // 
+            this.lblPrefix.AutoSize = true;
+            this.lblPrefix.Location = new System.Drawing.Point(30, 130);
+            this.lblPrefix.Name = "lblPrefix";
+            this.lblPrefix.Size = new System.Drawing.Size(86, 13);
+            this.lblPrefix.TabIndex = 4;
+            this.lblPrefix.Text = "Command Prefix:";
+            // 
+            // txtPrefix
+            // 
+            this.txtPrefix.Location = new System.Drawing.Point(122, 127);
+            this.txtPrefix.MaxLength = 1;
+            this.txtPrefix.Name = "txtPrefix";
+            this.txtPrefix.Size = new System.Drawing.Size(75, 20);
+            this.txtPrefix.TabIndex = 9;
+            this.txtPrefix.Text = "+";
+            this.txtPrefix.TextChanged += new System.EventHandler(this.txtPrefix_TextChanged);
+            // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -507,8 +530,8 @@
             this.Controls.Add(this.tabControl1);
             this.Name = "Settings";
             this.Text = "Settings";
-            this.Load += new System.EventHandler(this.Settings_Load);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Settings_closing);
+            this.Load += new System.EventHandler(this.Settings_Load);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
@@ -568,5 +591,7 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.CheckBox checkBox2;
         private System.Windows.Forms.ColorDialog colorDialog1;
+        private System.Windows.Forms.TextBox txtPrefix;
+        private System.Windows.Forms.Label lblPrefix;
     }
 }
