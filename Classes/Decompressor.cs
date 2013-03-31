@@ -18,30 +18,6 @@ namespace C_Minebot.Classes
 
         public byte[] decompress()
         {
-            //DeflateStream decompresser = new DeflateStream(new MemoryStream(thisdata), CompressionMode.Decompress);
-            //int size = 0;
-            //int next = decompresser.ReadByte();
-            //byte[] decompressed = null;
-
-            //while (next != -1)
-            //{
-            //    size++;
-
-            //    if (decompressed == null)
-            //        decompressed = new byte[1] { (byte)next };
-            //    else
-            //    {
-            //        byte[] temp = decompressed;
-            //        decompressed = new byte[size];
-            //        Array.Copy(temp, decompressed, size - 1);
-            //        decompressed[size - 1] = (byte)next;
-            //    }
-                
-            //    next = decompresser.ReadByte();
-
-            //}
-
-            //return decompressed;
             using(var compressedStream = new MemoryStream(thisdata))
             using(var zipStream = new DeflateStream(compressedStream,CompressionMode.Decompress))
             using (var resultStream = new MemoryStream())

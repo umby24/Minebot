@@ -40,7 +40,8 @@ namespace C_Minebot
         public float[] position;
         public double[] location;
         public string ServerID, serverHash, sessionId, sip, sport;
-        public MapBlock[] blocks;
+      //  public MapBlock[] blocks;
+        public List<MapBlock> blocks = new List<MapBlock>();
         public List<Chunk> Chunks = new List<Chunk>();
         #endregion
 
@@ -588,5 +589,18 @@ namespace C_Minebot
             MessageBox.Show(build);
         }
         #endregion
+
+        private void parseToolStripMenuItem_Click(object sender, EventArgs e) {
+            System.Threading.Thread newthread = new System.Threading.Thread(parsethem);
+            newthread.Start();
+          //  parsethem();
+        }
+
+        private void parsethem() {
+            foreach (Chunk b in Chunks) {
+                b.parseBlocks(this);
+            }
+            puts("DONE PARSING");
+        }
     }
 }

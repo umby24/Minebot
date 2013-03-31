@@ -54,6 +54,10 @@ namespace C_Minebot
                         case "drop":
                             dropStack(args);
                             break;
+                        case "block":
+                          //  findBlock(args);
+                            test();
+                            break;
                         case "pos":
                             pos();
                             break;
@@ -63,6 +67,54 @@ namespace C_Minebot
         }
 
 
+        void test() {
+            Classes.MapBlock thisblock = null;
+
+            foreach (Classes.MapBlock b in Mainform.blocks) {
+                if (b.Name == "BookShelf") {
+                    thisblock = b;
+                }
+
+            }
+
+            if (thisblock != null) {
+                Packets.chatMessage cm = new Packets.chatMessage(true, Socket, Mainform, "FOUND IT. " + thisblock.x + " - " + thisblock.y + " - " + thisblock.z);
+
+            } else {
+                Packets.chatMessage cm = new Packets.chatMessage(true, Socket, Mainform, "Fail :(");
+            }
+        }
+        void findBlock(string[] args) {
+            functions lookup = new functions();
+
+            if (!lookup.isNumeric(args[2]))
+                return;
+            if (!lookup.isNumeric(args[3]))
+                return;
+            if (!lookup.isNumeric(args[4]))
+                return;
+
+            Classes.MapBlock thisblock = null;
+
+            foreach (Classes.MapBlock b in Mainform.blocks) {
+                if (b.x == int.Parse(args[2])) {
+                    if (b.y == int.Parse(args[3])) {
+                        if (b.z == int.Parse(args[4])) {
+                            thisblock = b;
+                            break;
+                        }
+                    }
+
+                }
+            }
+
+            if (thisblock != null) {
+                Packets.chatMessage cm = new Packets.chatMessage(true, Socket, Mainform, "FOUND IT. " + thisblock.Name);
+
+            } else {
+                Packets.chatMessage cm = new Packets.chatMessage(true, Socket, Mainform, "Fail :(");
+            }
+        }
         void dropStack(string[] args) {
             functions lookup = new functions();
             Classes.Item thisitem = null;
