@@ -99,12 +99,6 @@
     <Compile Include="Classes\Item.cs" />
     <Compile Include="Classes\MapBlock.cs" />
     <Compile Include="commandHandler.cs" />
-    <Compile Include="Component1.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Component1.Designer.cs">
-      <DependentUpon>Component1.cs</DependentUpon>
-    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -67,7 +67,7 @@ namespace C_Minebot.Classes
                         int flat = BlockX + BlockZ * 16 + BlockY * 256;
                         int BlockID = temp[f];
 
-                        MapBlock newBlock = new MapBlock(BlockID, BlockX, BlockY, BlockZ);
+                        MapBlock newBlock = new MapBlock(BlockID, BlockX, BlockY, BlockZ,x,z);
                         Mainform.blocks.Add(newBlock);
 
                     }

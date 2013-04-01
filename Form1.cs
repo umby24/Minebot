@@ -462,7 +462,7 @@ namespace C_Minebot
                                              mypacket = new Packets.chatMessage(true, nh.socket, this, mysplits[3]);
                                         break;
                                     case "=help":
-                                        ircmessage("C# Minebot IRC Client, Version 1.0");
+                                        ircmessage("C# Minebot IRC Client, Version 1.1");
                                         ircmessage("Only functional to relay messages between IRC channels and minecraft servers.");
                                         ircmessage("Commands are =say, =ssay, and =help.");
                                         break;

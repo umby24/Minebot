@@ -71,8 +71,9 @@ namespace C_Minebot
             Classes.MapBlock thisblock = null;
 
             foreach (Classes.MapBlock b in Mainform.blocks) {
-                if (b.Name == "BookShelf") {
+                if (b.Name == "DiamondBlock") {
                     thisblock = b;
+                    break;
                 }
 
             }

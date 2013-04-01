@@ -39,10 +39,10 @@
             this.muteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.asdToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.parseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chat = new System.Windows.Forms.TextBox();
             this.btnSend = new System.Windows.Forms.Button();
             this.lstOnline = new System.Windows.Forms.ListBox();
-            this.parseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -136,8 +136,15 @@
             // 
             this.asdToolStripMenuItem.Name = "asdToolStripMenuItem";
             this.asdToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.asdToolStripMenuItem.Text = "asd";
+            this.asdToolStripMenuItem.Text = "Inventory";
             this.asdToolStripMenuItem.Click += new System.EventHandler(this.asdToolStripMenuItem_Click);
+            // 
+            // parseToolStripMenuItem
+            // 
+            this.parseToolStripMenuItem.Name = "parseToolStripMenuItem";
+            this.parseToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.parseToolStripMenuItem.Text = "Parse";
+            this.parseToolStripMenuItem.Click += new System.EventHandler(this.parseToolStripMenuItem_Click);
             // 
             // chat
             // 
@@ -168,13 +175,6 @@
             this.lstOnline.Name = "lstOnline";
             this.lstOnline.Size = new System.Drawing.Size(120, 199);
             this.lstOnline.TabIndex = 4;
-            // 
-            // parseToolStripMenuItem
-            // 
-            this.parseToolStripMenuItem.Name = "parseToolStripMenuItem";
-            this.parseToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.parseToolStripMenuItem.Text = "Parse";
-            this.parseToolStripMenuItem.Click += new System.EventHandler(this.parseToolStripMenuItem_Click);
             // 
             // Form1
             // 
