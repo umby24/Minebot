@@ -148,7 +148,7 @@ namespace C_Minebot {
 
         public bool isNumeric(string test) {
             int thisOut;
-            return int.TryParse(test, out thisOut);
+            return (int.TryParse(test, out thisOut));
         }
 
         //TODO: Add newer items to this enum..

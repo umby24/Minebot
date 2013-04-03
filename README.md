@@ -69,6 +69,6 @@ Current Developer is Umby24.
 
 Those whose work has assisted include SinZ (Github: SinZ167) and SirCmpwn
 
-The socket libary used in C# Minebot (Wrapped) is a port of SinZ' own project, SinZationalSockets to VB.NET.
+The socket libary used in C# Minebot (Wrapped) is a port of SinZ' own project, SinZationalSockets ported to VB.NET.
 
 Encryption support in this bot as required to communicate with minecraft servers was achieved thanks to SirCmpwn's project SMProxy.

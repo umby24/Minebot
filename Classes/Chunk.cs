@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace C_Minebot.Classes
 {
@@ -16,6 +17,7 @@ namespace C_Minebot.Classes
         public byte[] blocks;
         public byte[] blighting;
         public bool lighting = false;
+        public List<MapBlock> tBlocks;
 
         public Chunk(int X, int Z, short Pbitmap, short Abitmap, bool inLighting)
         {
@@ -25,6 +27,7 @@ namespace C_Minebot.Classes
             abitmap = Abitmap;
             x = X;
             z = Z;
+            tBlocks = new List<MapBlock>();
 
             // Generate a number of how many chunks (16 x 16 x 16) are included for this chunk.
             numBlocks = 0;
@@ -45,7 +48,14 @@ namespace C_Minebot.Classes
             numBlocks = numBlocks * 4096;
         }
 
-        public void parseBlocks(Form1 Mainform) {
+        public void parseBlocks() {
+            // Push off to a thread so it returns immediatly and doesn't slow down the networking.
+
+            Thread blockParser = new Thread(loadArray);
+            blockParser.Start();
+        }
+
+        void loadArray() {
             int offset = 0;
 
             for (int i = 0; i < 16; i++) {
@@ -55,27 +65,22 @@ namespace C_Minebot.Classes
                     Array.Copy(blocks, offset, temp, 0, 4096);
 
                     for (int f = 0; f < 4096; f++) {
+                        // It's all about the parenthesis..
 
-                        int BlockX = f & 0x0F;
-                        BlockX = BlockX + 16;
+                        int BlockX = x * 16 + (f & 0x0F);
                         int BlockY = i * 16 + (f >> 8);
-                        int BlockZ = (f & 0xF0) >> 4;
-                        BlockZ = BlockZ - 16;
-                       // int BlockX = (x * 16) + (f & 0x0F);
-                        //int BlockY = (i * 16) + (BlockX >> 8);
-                        //int BlockZ = (z * 16) + (f & 0xF0) >> 4;
-                        int flat = BlockX + BlockZ * 16 + BlockY * 256;
+                        int BlockZ = z * 16 + ((f & 0xF0) >> 4);
                         int BlockID = temp[f];
 
-                        MapBlock newBlock = new MapBlock(BlockID, BlockX, BlockY, BlockZ,x,z);
-                        Mainform.blocks.Add(newBlock);
+                        MapBlock newBlock = new MapBlock(BlockID, BlockX, BlockY, BlockZ, x, z);
+                        tBlocks.Add(newBlock);
 
                     }
                     offset += 4096;
                 }
             }
         }
-        
+
         public byte[] getData(byte[] deCompressed) {
 
             blocks = new byte[numBlocks];
@@ -88,7 +93,7 @@ namespace C_Minebot.Classes
             removeable += 256;
 
             Array.Copy(deCompressed, 0, blocks, 0, numBlocks);
-            temp = new byte[deCompressed.Length - (numBlocks + removeable)];
+            temp = new byte[deCompressed.Length - (removeable)];
 
             deCompressed.Reverse();
             Array.Copy(deCompressed, temp, temp.Length);

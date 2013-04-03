@@ -21,7 +21,6 @@ namespace C_Minebot.Packets
         public BulkChunks(Wrapped.Wrapped socket, Form1 mainform) {
 
             short columncount = socket.readShort();
-            int offset = 0;
             int Datalength = socket.readInt();
             bool skylight = socket.readBool();
 
@@ -32,9 +31,8 @@ namespace C_Minebot.Packets
             byte[] trim = new byte[Datalength - 2];
             Chunk[] chunks = new Chunk[columncount];
 
-            Array.Reverse(packdata);
-            Array.Copy(packdata, trim, Datalength - 2);
-            Array.Reverse(trim);
+            // Shoutout to BjorN64 for the simplification of this.
+            Array.Copy(packdata, 2, trim, 0, Datalength - 2);
 
             // Decompress the data
 
@@ -54,7 +52,7 @@ namespace C_Minebot.Packets
                 chunks[i] = new Chunk(x, z, pbitmap, abitmap, skylight);
 
                 decompressed = chunks[i].getData(decompressed);
-                // chunks[i].parseBlocks(mainform);
+                chunks[i].parseBlocks();
                 mainform.Chunks.Add(chunks[i]);
 
             }

@@ -591,16 +591,7 @@ namespace C_Minebot
         #endregion
 
         private void parseToolStripMenuItem_Click(object sender, EventArgs e) {
-            System.Threading.Thread newthread = new System.Threading.Thread(parsethem);
-            newthread.Start();
-          //  parsethem();
-        }
 
-        private void parsethem() {
-            foreach (Chunk b in Chunks) {
-                b.parseBlocks(this);
-            }
-            puts("DONE PARSING");
         }
     }
 }

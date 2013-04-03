@@ -56,7 +56,7 @@ namespace C_Minebot
                             break;
                         case "block":
                           //  findBlock(args);
-                            test();
+                            test(args);
                             break;
                         case "pos":
                             pos();
@@ -67,24 +67,62 @@ namespace C_Minebot
         }
 
 
-        void test() {
+        void test(string[] args) {
+            // Attempt on an alternitive block lookup method, for speed's sake..
+            functions lookup = new functions();
+
+            if (!lookup.isNumeric(args[2]))
+                return;
+            if (!lookup.isNumeric(args[3]))
+                return;
+            if (!lookup.isNumeric(args[4]))
+                return;
+
+            int blockX = int.Parse(args[2]);
+            int blockY = int.Parse(args[3]);
+            int blockZ = int.Parse(args[4]);
+
+            decimal ChunkX = decimal.Divide(blockX, 16);
+            decimal ChunkZ = decimal.Divide(blockZ, 16);
+
+            if (ChunkX.ToString().Contains("-"))
+                ChunkX = Math.Floor(ChunkX);
+            else
+                ChunkX = Math.Ceiling(ChunkX);
+
+            if (ChunkZ.ToString().Contains("-"))
+                ChunkZ = Math.Floor(ChunkZ);
+            else
+                ChunkZ = Math.Ceiling(ChunkZ);
+
+            Classes.Chunk thisChunk = null;
             Classes.MapBlock thisblock = null;
 
-            foreach (Classes.MapBlock b in Mainform.blocks) {
-                if (b.Name == "DiamondBlock") {
-                    thisblock = b;
+            foreach (Classes.Chunk b in Mainform.Chunks) {
+                if (b.x == ChunkX & b.z == ChunkZ) {
+                    thisChunk = b;
                     break;
                 }
+            }
 
+            foreach (Classes.MapBlock b in thisChunk.tBlocks) {
+                if (b.x == blockX)
+                    Mainform.puts("Found X..");
+                if (b.z == blockZ)
+                    Mainform.puts("found Z..");
+                if (b.x == blockX & b.y == blockY & b.z == blockZ) {
+                    thisblock = b;
+                }
             }
 
             if (thisblock != null) {
-                Packets.chatMessage cm = new Packets.chatMessage(true, Socket, Mainform, "FOUND IT. " + thisblock.x + " - " + thisblock.y + " - " + thisblock.z);
-
+                Packets.chatMessage cm = new Packets.chatMessage(true, Socket, Mainform, "FOUND IT. " + thisblock.Name);
             } else {
                 Packets.chatMessage cm = new Packets.chatMessage(true, Socket, Mainform, "Fail :(");
             }
+
         }
+
         void findBlock(string[] args) {
             functions lookup = new functions();
 

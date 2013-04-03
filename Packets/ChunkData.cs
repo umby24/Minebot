@@ -13,7 +13,7 @@ namespace C_Minebot.Packets
     {
         public ChunkData(Wrapped.Wrapped socket, Form1 Mainform)
         {
-            int decompressedSize = 0;
+            // int decompressedSize = 0;
             int x = socket.readInt();
             int z = socket.readInt();
             bool groundup = socket.readBool();
@@ -35,15 +35,12 @@ namespace C_Minebot.Packets
             //    decompressedSize = decompressedSize * 12544; // + 256 for biome data
 
             // Remove first two bytes to array
-            Array.Reverse(data);
-            Array.Copy(data, trim, size - 2);
-            Array.Reverse(trim);
+            Array.Copy(data, 2, trim, 0, size - 2);
 
             // Decompress the data
 
-            DeflateStream decompresser = new DeflateStream(new MemoryStream(trim), CompressionMode.Decompress);
-            decompressed = new byte[decompressedSize];
-            decompresser.Read(decompressed, 0, decompressedSize);
+            Classes.Decompressor DC = new Decompressor(trim);
+            decompressed = DC.decompress();
 
 
             Chunk myChunk = new Chunk(x, z, pbitmap, abitmap, true); // Skylight assumed true..
@@ -51,8 +48,7 @@ namespace C_Minebot.Packets
             Mainform.Chunks.Add(myChunk);
 
             // might as well parse it.. why the fuck not.
-
-            myChunk.parseBlocks(Mainform);
+            myChunk.parseBlocks();
 
             //// Get all of the blocks, and load them into memory.
             //for (byte i = 0; i < 16; i++)
