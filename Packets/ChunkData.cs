@@ -42,6 +42,22 @@ namespace C_Minebot.Packets
             Classes.Decompressor DC = new Decompressor(trim);
             decompressed = DC.decompress();
 
+            if (pbitmap == 0) {
+                // Unload chunk, save ALL the ram!
+                Classes.Chunk thischunk = null;
+
+                foreach (Chunk f in Mainform.Chunks) {
+                    if (f.x == x && f.z == z) {
+                        thischunk = f;
+                        break;
+                    }
+                }
+
+                if (thischunk != null) 
+                    Mainform.Chunks.Remove(thischunk);
+
+                // Unloaded, hopefully.
+            }
 
             Chunk myChunk = new Chunk(x, z, pbitmap, abitmap, true); // Skylight assumed true..
             decompressed = myChunk.getData(decompressed);

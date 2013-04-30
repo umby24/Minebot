@@ -25,7 +25,8 @@ namespace C_Minebot.Packets
             byte mode = socket.readByte();
             short height = socket.readShort();
             string leveltype = socket.readString();
-            
+
+            mainform.Chunks.Clear(); // Clear out the chunks.
         }
     }
 }

@@ -85,15 +85,8 @@ namespace C_Minebot
             decimal ChunkX = decimal.Divide(blockX, 16);
             decimal ChunkZ = decimal.Divide(blockZ, 16);
 
-            if (ChunkX.ToString().Contains("-"))
-                ChunkX = Math.Floor(ChunkX);
-            else
-                ChunkX = Math.Ceiling(ChunkX);
-
-            if (ChunkZ.ToString().Contains("-"))
-                ChunkZ = Math.Floor(ChunkZ);
-            else
-                ChunkZ = Math.Ceiling(ChunkZ);
+            ChunkX = Math.Floor(ChunkX);
+            ChunkZ = Math.Floor(ChunkZ);
 
             Classes.Chunk thisChunk = null;
             Classes.MapBlock thisblock = null;
@@ -106,10 +99,10 @@ namespace C_Minebot
             }
 
             foreach (Classes.MapBlock b in thisChunk.tBlocks) {
-                if (b.x == blockX)
-                    Mainform.puts("Found X..");
-                if (b.z == blockZ)
-                    Mainform.puts("found Z..");
+                if (b.Name == "DiamondBlock") {
+                    Mainform.puts("found block");
+                    Mainform.puts(b.x.ToString() + " " + b.y.ToString() + " " + b.z.ToString());
+                }
                 if (b.x == blockX & b.y == blockY & b.z == blockZ) {
                     thisblock = b;
                 }

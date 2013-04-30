@@ -39,8 +39,6 @@ namespace C_Minebot.Packets
             Classes.Decompressor dc = new Classes.Decompressor(trim);
             decompressed = dc.decompress();
 
-            // Checksum time..
-
             
             for (int i = 0; columncount > i; i++) {
                 // Need to store this data so it's not lost as well..
@@ -51,21 +49,11 @@ namespace C_Minebot.Packets
 
                 chunks[i] = new Chunk(x, z, pbitmap, abitmap, skylight);
 
-                decompressed = chunks[i].getData(decompressed);
-                chunks[i].parseBlocks();
-                mainform.Chunks.Add(chunks[i]);
+                decompressed = chunks[i].getData(decompressed); // Calls the chunk class to take all of the bytes it needs, and return whats left.
+                chunks[i].parseBlocks(); // Call the chunk to spawn a new thread to parse the bytes it just took into blocks.
+                mainform.Chunks.Add(chunks[i]); // Add the chunk to the main form so we can use it later.
 
             }
-
-            //mainform.puts("begin parse.." + DateTime.Now.ToString());
-            //Thread thisthread = new Thread(parsethem);
-            //thisthread.Start(mainform);
-            //mainform.puts("Parsed.." + DateTime.Now.ToString());
-        }
-
-        void parsethem() {
-
-
         }
     }
 }
