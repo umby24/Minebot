@@ -27,21 +27,26 @@ namespace C_Minebot.Packets
             if (thischunk == null)
                 throw new Exception("Attempted to access an uninitilized chunk.");
 
+            // The below parsing method is thanks to redstone_bot, translated from ruby to C# by myself.
+
             for (int i = 0; i < blocks - 1; i++) {
-              //  Array.Reverse(data);
-                int blockdata = BitConverter.ToInt32(data, (i * 4)); // Convert to int (4 bytes) for bitwise operations.
-                int blockid = (int)(blockdata & 0x0000fff0) >> 8;
-                int y = (blockdata & 0x00ff0000) >> 16;
-                int z = (blockdata & 0x0f000000) >> 24;
-                int x = (int)(blockdata & 0xf0000000) >> 28;
+                byte[] blockData = new byte[4];
+                Array.Copy(data, (i * 4), blockData, 0, 4);
 
-                y = y * 16;
-                z = (chunkZ * 16) + z;
+                int z = (blockData[0] & 0x0F);
+                int x = (blockData[0] >> 4) & 0x0F;
+                int y = (blockData[1]);
+                int blockId = (blockData[2] << 4) | ((blockData[3] & 0xF0) >> 4);
+                int metaData = blockData[3] & 0xF;
+
+                if (blockId == 3 || blockId == 2)
+                    mainform.puts(metaData.ToString());
+
+                // X,Z Are rel. to Chunk, so convert to chunk coords.. (also, this part down is my own code again)
                 x = (chunkX * 16) + x;
+                z = (chunkZ * 16) + z;
 
-                if (y != 64)
-                  throw new Exception("Whatup");
-
+                thischunk.updateBlock(x, y, z, blockId);
             }
         }
     }

@@ -84,6 +84,22 @@ namespace C_Minebot.Classes
             }
         }
 
+        public void updateBlock(int Bx, int By, int Bz, int id) {
+            MapBlock oldBlock = null;
+
+            foreach (MapBlock b in tBlocks) {
+                if (b.x == Bx && b.y == By && b.z == Bz) {
+                    oldBlock = b;
+                    break;
+                }
+            }
+
+            if (oldBlock != null)
+                tBlocks.Remove(oldBlock);
+
+            tBlocks.Add(new MapBlock(id, Bx, By, Bz, x, z));
+        }
+
         public byte[] getData(byte[] deCompressed) {
 
             blocks = new byte[numBlocks];
