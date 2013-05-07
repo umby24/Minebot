@@ -27,15 +27,20 @@ namespace C_Minebot.Packets
             if (thischunk == null)
                 throw new Exception("Attempted to access an uninitilized chunk.");
 
-            for (int i = 1; i < blocks; i++) {
-                Array.Reverse(data);
-                int blockdata = BitConverter.ToInt32(data, data.Length - 4); // Convert to int (4 bytes) for bitwise operations.
-                int blockid = (blockdata & 0x0000fff0) >> 4;
+            for (int i = 0; i < blocks - 1; i++) {
+              //  Array.Reverse(data);
+                int blockdata = BitConverter.ToInt32(data, (i * 4)); // Convert to int (4 bytes) for bitwise operations.
+                int blockid = (int)(blockdata & 0x0000fff0) >> 8;
                 int y = (blockdata & 0x00ff0000) >> 16;
                 int z = (blockdata & 0x0f000000) >> 24;
                 int x = (int)(blockdata & 0xf0000000) >> 28;
 
-             //   throw new Exception("Whatup");
+                y = y * 16;
+                z = (chunkZ * 16) + z;
+                x = (chunkX * 16) + x;
+
+                if (y != 64)
+                  throw new Exception("Whatup");
 
             }
         }

@@ -29,7 +29,7 @@ namespace C_Minebot
         void send()
         {
             sock.writeByte((byte)2);
-            sock.writeByte((byte)60); // 47
+            sock.writeByte((byte)61); // 47
             sock.writeString(myform.username);
             sock.writeString(myform.nh.ip);
             sock.writeInt(myform.nh.port);
