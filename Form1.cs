@@ -590,8 +590,5 @@ namespace C_Minebot
         }
         #endregion
 
-        private void parseToolStripMenuItem_Click(object sender, EventArgs e) {
-            MessageBox.Show((32 >> 4).ToString());
-        }
     }
 }

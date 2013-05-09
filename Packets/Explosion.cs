@@ -19,9 +19,15 @@ namespace C_Minebot.Packets
 
             while (count != 0)
             {
-                int x = ((int)ex) + (int)socket.readByte();
-                int y = ((int)ey) + (int)socket.readByte();
-                int z = ((int)ez) + (int)socket.readByte();
+                int x = (int)socket.readByte();
+                int y = (int)socket.readByte();
+                int z = (int)socket.readByte();
+
+                // Convert to Absolute coords
+
+                x = (int)ex + x;
+                y = (int)ey + y;
+                z = (int)ez + z;
 
                 decimal ChunkX = decimal.Divide(x, 16);
                 decimal ChunkZ = decimal.Divide(z, 16);
@@ -38,7 +44,9 @@ namespace C_Minebot.Packets
                     }
                 }
 
-                thisChunk.updateBlock(x, y, z, 0);
+                if (thisChunk != null)
+                   thisChunk.updateBlock(x, y, z, 0);
+
                 count--;
             }
 

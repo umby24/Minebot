@@ -72,9 +72,6 @@ namespace C_Minebot.Classes
                         int BlockZ = z * 16 + ((f & 0xF0) >> 4);
                         int BlockID = temp[f];
 
-                        if (BlockID == 57) {
-                            BlockID = 57;
-                        }
                         MapBlock newBlock = new MapBlock(BlockID, BlockX, BlockY, BlockZ, x, z);
                         tBlocks.Add(newBlock);
 

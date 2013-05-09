@@ -39,9 +39,6 @@ namespace C_Minebot.Packets
                 int blockId = (blockData[2] << 4) | ((blockData[3] & 0xF0) >> 4);
                 int metaData = blockData[3] & 0xF;
 
-                if (blockId == 3 || blockId == 2)
-                    mainform.puts(metaData.ToString());
-
                 // X,Z Are rel. to Chunk, so convert to chunk coords.. (also, this part down is my own code again)
                 x = (chunkX * 16) + x;
                 z = (chunkZ * 16) + z;
