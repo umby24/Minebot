@@ -11,10 +11,10 @@ namespace C_Minebot.Packets
         {
             socket.writeByte(0xcc);
             socket.writeString("en_US");
-            socket.writeByte(0);
+            socket.writeByte(1);
             socket.writeByte(4);
             socket.writeByte(2);
-            socket.writeBool(true);
+            socket.writeBool(false);
         }
     }
 }

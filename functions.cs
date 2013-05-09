@@ -7,6 +7,7 @@ namespace C_Minebot {
     class functions {
 
         public void readMetadata(Wrapped.Wrapped socket) {
+            // read metadata from socket
             do {
 
                 byte item = socket.readByte();
@@ -124,6 +125,7 @@ namespace C_Minebot {
         }
 
         public string getitembyslot(int slot, Form1 mainform) {
+            // Return "Item" object from a slot number.
             string item = "";
 
             foreach (Classes.Item b in mainform.inventory) {
@@ -136,6 +138,7 @@ namespace C_Minebot {
         }
 
         public int getItemCount(int slot, Form1 mainform) {
+            // Return number of items from a certain inventory slot in bot inventory
             int count = 0;
             foreach (Classes.Item b in mainform.inventory) {
                 if (b.slot == slot) {

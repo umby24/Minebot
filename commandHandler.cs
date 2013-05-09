@@ -21,8 +21,6 @@ namespace C_Minebot
             string[] args = message.Split(' ');
             string username = func.strip_codes(args[0].Replace("<", "").Replace(">", "").Replace(":", "").Replace(" ", ""));
             
-            //if (username.ToLower() == mainform.username.ToLower())
-            //    return;
 
             if (Mainform.admins.Contains(username))
             {
@@ -55,7 +53,6 @@ namespace C_Minebot
                             dropStack(args);
                             break;
                         case "block":
-                          //  findBlock(args);
                             test(args);
                             break;
                         case "pos":
@@ -108,6 +105,11 @@ namespace C_Minebot
                 }
             }
 
+            foreach (byte a in thisChunk.blocks) {
+                if (a == 57) {
+                    Mainform.puts("Found it..");
+                }
+            }
             if (thisblock != null) {
                 Packets.chatMessage cm = new Packets.chatMessage(true, Socket, Mainform, "FOUND IT. " + thisblock.Name);
             } else {
@@ -147,6 +149,7 @@ namespace C_Minebot
                 Packets.chatMessage cm = new Packets.chatMessage(true, Socket, Mainform, "Fail :(");
             }
         }
+
         void dropStack(string[] args) {
             functions lookup = new functions();
             Classes.Item thisitem = null;

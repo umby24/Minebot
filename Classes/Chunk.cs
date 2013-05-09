@@ -35,7 +35,7 @@ namespace C_Minebot.Classes
 
             for (int i = 0; i < 16; i++) {
                 if (Convert.ToBoolean(Pbitmap & (1 << i))) {
-                    numBlocks++;
+                    numBlocks++; // "Sections"
                 }
             }
 
@@ -45,6 +45,7 @@ namespace C_Minebot.Classes
                 }
             }
 
+            // Number of sections * blocks per section = blocks in this "Chunk"
             numBlocks = numBlocks * 4096;
         }
 
@@ -61,6 +62,7 @@ namespace C_Minebot.Classes
             for (int i = 0; i < 16; i++) {
                 if (Convert.ToBoolean(pbitmap & (1 << i))) {
 
+                    // Break into individual blocks for easier manipulation
                     byte[] temp = new byte[4096];
                     Array.Copy(blocks, offset, temp, 0, 4096);
 
@@ -74,7 +76,6 @@ namespace C_Minebot.Classes
 
                         MapBlock newBlock = new MapBlock(BlockID, BlockX, BlockY, BlockZ, x, z);
                         tBlocks.Add(newBlock);
-
                     }
                     offset += 4096;
                 }
@@ -82,6 +83,10 @@ namespace C_Minebot.Classes
         }
 
         public void updateBlock(int Bx, int By, int Bz, int id) {
+            // Updates the block in this chunk.
+            // TODO: Ensure that the block being updated is in this chunk.
+            // Even though chances of that exception throwing are tiny.
+
             MapBlock oldBlock = null;
 
             foreach (MapBlock b in tBlocks) {
@@ -98,6 +103,8 @@ namespace C_Minebot.Classes
         }
 
         public byte[] getData(byte[] deCompressed) {
+            // Loading chunks, network handler hands off the decompressed bytes
+            // This function takes its portion, and returns what's left.
 
             blocks = new byte[numBlocks];
             byte[] temp;
