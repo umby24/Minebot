@@ -43,7 +43,7 @@ namespace C_Minebot.Packets
                 short pbitmap = socket.readShort();
                 short abitmap = socket.readShort();
 
-                chunks[i] = new Chunk(x, z, pbitmap, abitmap, skylight);
+                chunks[i] = new Chunk(x, z, pbitmap, abitmap, skylight, true); // Assume true for Ground Up Continuous
 
                 decompressed = chunks[i].getData(decompressed); // Calls the chunk class to take all of the bytes it needs, and return whats left.
                 chunks[i].parseBlocks(); // Call the chunk to spawn a new thread to parse the bytes it just took into blocks.

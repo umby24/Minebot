@@ -16,11 +16,12 @@ namespace C_Minebot.Classes
         public short abitmap;
         public byte[] blocks;
         public byte[] blighting;
-        public bool lighting = false;
+        public bool lighting, groundup = false;
         public List<MapBlock> tBlocks;
 
-        public Chunk(int X, int Z, short Pbitmap, short Abitmap, bool inLighting)
+        public Chunk(int X, int Z, short Pbitmap, short Abitmap, bool inLighting,bool Groundup)
         {
+            groundup = Groundup;
             lighting = inLighting;
             pbitmap = Pbitmap;
             abitmap = Abitmap;
@@ -112,7 +113,8 @@ namespace C_Minebot.Classes
             if (lighting == true)
                 removeable += (numBlocks / 2);
 
-            removeable += 256;
+            if (groundup)
+             removeable += 256;
 
             Array.Copy(deCompressed, 0, blocks, 0, numBlocks);
             temp = new byte[deCompressed.Length - (numBlocks + removeable)];

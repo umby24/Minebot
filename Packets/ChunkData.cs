@@ -45,7 +45,7 @@ namespace C_Minebot.Packets
                     Mainform.Chunks.Remove(thischunk);
             }
 
-            Chunk myChunk = new Chunk(x, z, pbitmap, abitmap, true); // Skylight assumed true..
+            Chunk myChunk = new Chunk(x, z, pbitmap, abitmap, true,groundup); // Skylight assumed true..
             decompressed = myChunk.getData(decompressed);
 
             // Parse the received blocks.
