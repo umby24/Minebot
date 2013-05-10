@@ -96,10 +96,6 @@ namespace C_Minebot
             }
 
             foreach (Classes.MapBlock b in thisChunk.tBlocks) {
-                if (b.Name == "DiamondBlock") {
-                    Mainform.puts("found block");
-                    Mainform.puts(b.x.ToString() + " " + b.y.ToString() + " " + b.z.ToString());
-                }
                 if (b.x == blockX & b.y == blockY & b.z == blockZ) {
                     thisblock = b;
                 }

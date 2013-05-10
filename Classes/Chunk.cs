@@ -21,7 +21,6 @@ namespace C_Minebot.Classes
 
         public Chunk(int X, int Z, short Pbitmap, short Abitmap, bool inLighting)
         {
-            
             lighting = inLighting;
             pbitmap = Pbitmap;
             abitmap = Abitmap;
@@ -116,11 +115,9 @@ namespace C_Minebot.Classes
             removeable += 256;
 
             Array.Copy(deCompressed, 0, blocks, 0, numBlocks);
-            temp = new byte[deCompressed.Length - (removeable)];
+            temp = new byte[deCompressed.Length - (numBlocks + removeable)];
 
-            deCompressed.Reverse();
-            Array.Copy(deCompressed, temp, temp.Length);
-            temp.Reverse();
+            Array.Copy(deCompressed, (numBlocks + removeable), temp, 0, temp.Length);
 
             return temp;
         }
