@@ -8,26 +8,22 @@ namespace C_Minebot.Classes
 {
     public class Chunk
     {
-        public int x;
-        public int z;
-        public int numBlocks;
-        public int aBlocks;
-        public short pbitmap;
-        public short abitmap;
+        public int x,z,numBlocks,aBlocks;
+        public short pbitmap, abitmap;
         public byte[] blocks;
-        public byte[] blighting;
         public bool lighting, groundup = false;
-        public List<MapBlock> tBlocks;
+        public List<Section> sections;
 
         public Chunk(int X, int Z, short Pbitmap, short Abitmap, bool inLighting,bool Groundup)
         {
+            // Create chunk sections.
             groundup = Groundup;
             lighting = inLighting;
             pbitmap = Pbitmap;
             abitmap = Abitmap;
             x = X;
             z = Z;
-            tBlocks = new List<MapBlock>();
+            sections = new List<Section>();
 
             // Generate a number of how many chunks (16 x 16 x 16) are included for this chunk.
             numBlocks = 0;
@@ -36,6 +32,7 @@ namespace C_Minebot.Classes
             for (int i = 0; i < 16; i++) {
                 if (Convert.ToBoolean(Pbitmap & (1 << i))) {
                     numBlocks++; // "Sections"
+                    sections.Add(new Section((byte)i));
                 }
             }
 
@@ -50,36 +47,31 @@ namespace C_Minebot.Classes
         }
 
         public void parseBlocks() {
-            // Push off to a thread so it returns immediatly and doesn't slow down the networking.
+            // Seperate thread no longer required due to new optizations.
 
-            Thread blockParser = new Thread(loadArray);
-            blockParser.Start();
-        }
-
-        void loadArray() {
             int offset = 0;
 
             for (int i = 0; i < 16; i++) {
                 if (Convert.ToBoolean(pbitmap & (1 << i))) {
 
-                    // Break into individual blocks for easier manipulation
                     byte[] temp = new byte[4096];
                     Array.Copy(blocks, offset, temp, 0, 4096);
+                    Section mySection = sections[i];
 
-                    for (int f = 0; f < 4096; f++) {
-                        // It's all about the parenthesis..
-
-                        int BlockX = x * 16 + (f & 0x0F);
-                        int BlockY = i * 16 + (f >> 8);
-                        int BlockZ = z * 16 + ((f & 0xF0) >> 4);
-                        int BlockID = temp[f];
-
-                        MapBlock newBlock = new MapBlock(BlockID, BlockX, BlockY, BlockZ, x, z);
-                        tBlocks.Add(newBlock);
-                    }
+                    mySection.blocks = temp;
                     offset += 4096;
                 }
             }
+        }
+
+        public int getBlockId(int Bx, int By, int Bz) {
+            Section thisSection = GetSectionByNumber(By);
+            return thisSection.getBlock(getXinSection(Bx), GetPositionInSection(By), getZinSection(Bz)).ID;
+        }
+
+        public MapBlock getBlock(int Bx, int By, int Bz) {
+            Section thisSection = GetSectionByNumber(By);
+            return thisSection.getBlock(getXinSection(Bx), GetPositionInSection(By), getZinSection(Bz));
         }
 
         public void updateBlock(int Bx, int By, int Bz, int id) {
@@ -87,19 +79,9 @@ namespace C_Minebot.Classes
             // TODO: Ensure that the block being updated is in this chunk.
             // Even though chances of that exception throwing are tiny.
 
-            MapBlock oldBlock = null;
-
-            foreach (MapBlock b in tBlocks) {
-                if (b.x == Bx && b.y == By && b.z == Bz) {
-                    oldBlock = b;
-                    break;
-                }
-            }
-
-            if (oldBlock != null)
-                tBlocks.Remove(oldBlock);
-
-            tBlocks.Add(new MapBlock(id, Bx, By, Bz, x, z));
+            Section thisSection = GetSectionByNumber(By);
+            thisSection.setBlock(getXinSection(Bx), GetPositionInSection(By), getZinSection(Bz), id);
+            
         }
 
         public byte[] getData(byte[] deCompressed) {
@@ -124,5 +106,31 @@ namespace C_Minebot.Classes
             return temp;
         }
 
+        private Section GetSectionByNumber(int blockY) {
+            Section thisSection = null;
+
+            foreach (Section y in sections) {
+                if (y.y == blockY / 16) {
+                    thisSection = y;
+                    break;
+                }
+            }
+
+            if (thisSection == null) { // Add a new section, if it doesn't exist yet.
+                thisSection = new Section((byte)(blockY / 16));
+                sections.Add(thisSection);
+            }
+
+            return thisSection;
+        }
+        private int getXinSection(int BlockX) {
+            return BlockX - (x * 16);
+        }
+        private int GetPositionInSection(int blockY) {
+            return blockY & (16 - 1); // Credits: SirCmpwn Craft.net
+        }
+        private int getZinSection(int BlockZ) {
+            return BlockZ - (z * 16);
+        }
     }
 }

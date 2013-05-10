@@ -21,7 +21,6 @@ namespace C_Minebot.Packets
             chunkZ = (int)Math.Floor(decimal.Divide(z, 16));
 
             Classes.Chunk thisChunk = null;
-            Classes.MapBlock thisblock = null;
 
             foreach (Classes.Chunk b in Mainform.Chunks) {
                 if (b.x == chunkX & b.z == chunkZ) {
@@ -30,17 +29,7 @@ namespace C_Minebot.Packets
                 }
             }
 
-            foreach (Classes.MapBlock b in thisChunk.tBlocks) {
-                if (b.x == x & b.y == y & b.z == z) {
-                    thisblock = b;
-                    break;
-                }
-            }
-
-            if (thisblock == null) 
-                thisChunk.tBlocks.Add(new Classes.MapBlock((int)blockID, x, (int)y, z, chunkX, chunkZ));
-             else 
-                thisChunk.tBlocks[thisChunk.tBlocks.IndexOf(thisblock)] = new Classes.MapBlock((int)blockID, x, (int)y, z, chunkX, chunkZ); 
+            thisChunk.updateBlock(x, y, z, blockID);
 
         }
 

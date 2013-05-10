@@ -119,21 +119,21 @@
             // muteToolStripMenuItem
             // 
             this.muteToolStripMenuItem.Name = "muteToolStripMenuItem";
-            this.muteToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.muteToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.muteToolStripMenuItem.Text = "&Mute";
             this.muteToolStripMenuItem.Click += new System.EventHandler(this.muteToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // asdToolStripMenuItem
             // 
             this.asdToolStripMenuItem.Name = "asdToolStripMenuItem";
-            this.asdToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.asdToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.asdToolStripMenuItem.Text = "Inventory";
             this.asdToolStripMenuItem.Click += new System.EventHandler(this.asdToolStripMenuItem_Click);
             // 

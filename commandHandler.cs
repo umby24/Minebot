@@ -95,17 +95,8 @@ namespace C_Minebot
                 }
             }
 
-            foreach (Classes.MapBlock b in thisChunk.tBlocks) {
-                if (b.x == blockX & b.y == blockY & b.z == blockZ) {
-                    thisblock = b;
-                }
-            }
+            thisblock = thisChunk.getBlock(blockX,blockY,blockZ);
 
-            foreach (byte a in thisChunk.blocks) {
-                if (a == 57) {
-                    Mainform.puts("Found it..");
-                }
-            }
             if (thisblock != null) {
                 Packets.chatMessage cm = new Packets.chatMessage(true, Socket, Mainform, "FOUND IT. " + thisblock.Name);
             } else {
