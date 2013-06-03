@@ -46,17 +46,19 @@ namespace C_Minebot.Classes {
         public void populate() {
             // Seperate thread no longer required due to new optizations.
 
-            int offset = 0;
+            int offset = 0, current = 0;
 
             for (int i = 0; i < 16; i++) {
                 if (Convert.ToBoolean(pbitmap & (1 << i))) {
 
                     byte[] temp = new byte[4096];
+
                     Array.Copy(blocks, offset, temp, 0, 4096);
-                    Section mySection = sections[i];
+                    Section mySection = sections[current];
 
                     mySection.blocks = temp;
                     offset += 4096;
+                    current += 1;
                 }
             }
         }
