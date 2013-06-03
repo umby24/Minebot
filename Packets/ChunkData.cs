@@ -11,6 +11,8 @@ namespace C_Minebot.Packets
     {
         public ChunkData(Wrapped.Wrapped socket, Form1 Mainform)
         {
+            // Parse or unload a single chunk
+
             int x = socket.readInt();
             int z = socket.readInt();
             bool groundup = socket.readBool();
@@ -45,11 +47,8 @@ namespace C_Minebot.Packets
                     Mainform.Chunks.Remove(thischunk);
             }
 
-            Chunk myChunk = new Chunk(x, z, pbitmap, abitmap, true,groundup); // Skylight assumed true..
+            Chunk myChunk = new Chunk(x, z, pbitmap, abitmap, true, groundup); // Skylight assumed true..
             decompressed = myChunk.getData(decompressed);
-
-            // Parse the received blocks.
-            myChunk.parseBlocks();
 
             Mainform.Chunks.Add(myChunk); // Add to main form for use later.
         }

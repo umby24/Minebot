@@ -5,6 +5,7 @@ using System.Text;
 
 namespace C_Minebot.Classes {
     public class Item {
+
         public int itemID;
         public byte itemCount;
         public short itemDamage;

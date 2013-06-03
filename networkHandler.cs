@@ -39,6 +39,7 @@ namespace C_Minebot
                 MessageBox.Show("Error connecting: " + e.Message);
                 return;
             }
+
             started = true;
             baseStream = baseSock.GetStream();
             socket = new Wrapped.Wrapped(baseStream);
@@ -70,6 +71,7 @@ namespace C_Minebot
                         packetHandler ph = new packetHandler(id, socket, myform);
                     }
                 }
+
                 baseSock.Close();
                 myform.puts("Disconnected from server.");
         }

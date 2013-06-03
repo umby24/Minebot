@@ -9,6 +9,7 @@ namespace C_Minebot.Classes
 {
     public class Decompressor
     {
+        // ZLib Decompressor.
         byte[] thisdata;
 
         public Decompressor(byte[] data)

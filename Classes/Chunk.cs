@@ -4,18 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 
-namespace C_Minebot.Classes
-{
-    public class Chunk
-    {
-        public int x,z,numBlocks,aBlocks;
+namespace C_Minebot.Classes {
+    public class Chunk {
+
+        public int x, z, numBlocks, aBlocks;
         public short pbitmap, abitmap;
         public byte[] blocks;
         public bool lighting, groundup = false;
         public List<Section> sections;
 
-        public Chunk(int X, int Z, short Pbitmap, short Abitmap, bool inLighting,bool Groundup)
-        {
+        public Chunk(int X, int Z, short Pbitmap, short Abitmap, bool inLighting, bool Groundup) {
             // Create chunk sections.
             groundup = Groundup;
             lighting = inLighting;
@@ -25,7 +23,6 @@ namespace C_Minebot.Classes
             z = Z;
             sections = new List<Section>();
 
-            // Generate a number of how many chunks (16 x 16 x 16) are included for this chunk.
             numBlocks = 0;
             aBlocks = 0;
 
@@ -46,7 +43,7 @@ namespace C_Minebot.Classes
             numBlocks = numBlocks * 4096;
         }
 
-        public void parseBlocks() {
+        public void populate() {
             // Seperate thread no longer required due to new optizations.
 
             int offset = 0;
@@ -81,7 +78,7 @@ namespace C_Minebot.Classes
 
             Section thisSection = GetSectionByNumber(By);
             thisSection.setBlock(getXinSection(Bx), GetPositionInSection(By), getZinSection(Bz), id);
-            
+
         }
 
         public byte[] getData(byte[] deCompressed) {
@@ -96,17 +93,20 @@ namespace C_Minebot.Classes
                 removeable += (numBlocks / 2);
 
             if (groundup)
-             removeable += 256;
+                removeable += 256;
 
             Array.Copy(deCompressed, 0, blocks, 0, numBlocks);
             temp = new byte[deCompressed.Length - (numBlocks + removeable)];
 
             Array.Copy(deCompressed, (numBlocks + removeable), temp, 0, temp.Length);
 
+            populate(); // Populate all of our sections with the bytes we just aquired.
+
             return temp;
         }
 
-        private Section GetSectionByNumber(int blockY) {
+        #region Helping Methods
+            private Section GetSectionByNumber(int blockY) {
             Section thisSection = null;
 
             foreach (Section y in sections) {
@@ -123,14 +123,15 @@ namespace C_Minebot.Classes
 
             return thisSection;
         }
-        private int getXinSection(int BlockX) {
+            private int getXinSection(int BlockX) {
             return BlockX - (x * 16);
         }
-        private int GetPositionInSection(int blockY) {
+            private int GetPositionInSection(int blockY) {
             return blockY & (16 - 1); // Credits: SirCmpwn Craft.net
         }
-        private int getZinSection(int BlockZ) {
+            private int getZinSection(int BlockZ) {
             return BlockZ - (z * 16);
         }
+        #endregion
     }
 }

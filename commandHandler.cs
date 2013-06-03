@@ -53,7 +53,7 @@ namespace C_Minebot
                             dropStack(args);
                             break;
                         case "block":
-                            test(args);
+                            findBlock(args);
                             break;
                         case "pos":
                             pos();
@@ -64,7 +64,7 @@ namespace C_Minebot
         }
 
 
-        void test(string[] args) {
+        void findBlock(string[] args) {
             // Attempt on an alternitive block lookup method, for speed's sake..
             functions lookup = new functions();
 
@@ -105,37 +105,6 @@ namespace C_Minebot
 
         }
 
-        void findBlock(string[] args) {
-            functions lookup = new functions();
-
-            if (!lookup.isNumeric(args[2]))
-                return;
-            if (!lookup.isNumeric(args[3]))
-                return;
-            if (!lookup.isNumeric(args[4]))
-                return;
-
-            Classes.MapBlock thisblock = null;
-
-            foreach (Classes.MapBlock b in Mainform.blocks) {
-                if (b.x == int.Parse(args[2])) {
-                    if (b.y == int.Parse(args[3])) {
-                        if (b.z == int.Parse(args[4])) {
-                            thisblock = b;
-                            break;
-                        }
-                    }
-
-                }
-            }
-
-            if (thisblock != null) {
-                Packets.chatMessage cm = new Packets.chatMessage(true, Socket, Mainform, "FOUND IT. " + thisblock.Name);
-
-            } else {
-                Packets.chatMessage cm = new Packets.chatMessage(true, Socket, Mainform, "Fail :(");
-            }
-        }
 
         void dropStack(string[] args) {
             functions lookup = new functions();

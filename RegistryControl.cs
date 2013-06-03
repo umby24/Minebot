@@ -9,6 +9,7 @@ namespace C_Minebot
     {
         //This will allow for interops with VB minebot, and keep settings out of the range
         //of your average user.
+
         public object GetSetting(string App,string key,string value,object Def)
         {
             try
@@ -17,6 +18,7 @@ namespace C_Minebot
                 regkey = regkey.OpenSubKey("VB and VBA Program Settings");
                 regkey = regkey.OpenSubKey(App);
                 regkey = regkey.OpenSubKey(key);
+
                 if (regkey.GetValue(value) == null)
                 { 
                     return Def; 

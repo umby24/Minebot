@@ -46,6 +46,8 @@
             this.btnAddFav = new System.Windows.Forms.Button();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.txtPrefix = new System.Windows.Forms.TextBox();
+            this.lblPrefix = new System.Windows.Forms.Label();
             this.button3 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
@@ -71,8 +73,6 @@
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.label9 = new System.Windows.Forms.Label();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
-            this.lblPrefix = new System.Windows.Forms.Label();
-            this.txtPrefix = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -268,6 +268,25 @@
             this.groupBox3.TabIndex = 3;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Customization";
+            // 
+            // txtPrefix
+            // 
+            this.txtPrefix.Location = new System.Drawing.Point(122, 127);
+            this.txtPrefix.MaxLength = 1;
+            this.txtPrefix.Name = "txtPrefix";
+            this.txtPrefix.Size = new System.Drawing.Size(75, 20);
+            this.txtPrefix.TabIndex = 9;
+            this.txtPrefix.Text = "+";
+            this.txtPrefix.TextChanged += new System.EventHandler(this.txtPrefix_TextChanged);
+            // 
+            // lblPrefix
+            // 
+            this.lblPrefix.AutoSize = true;
+            this.lblPrefix.Location = new System.Drawing.Point(30, 130);
+            this.lblPrefix.Name = "lblPrefix";
+            this.lblPrefix.Size = new System.Drawing.Size(86, 13);
+            this.lblPrefix.TabIndex = 4;
+            this.lblPrefix.Text = "Command Prefix:";
             // 
             // button3
             // 
@@ -503,31 +522,13 @@
             this.label9.TabIndex = 0;
             this.label9.Text = resources.GetString("label9.Text");
             // 
-            // lblPrefix
-            // 
-            this.lblPrefix.AutoSize = true;
-            this.lblPrefix.Location = new System.Drawing.Point(30, 130);
-            this.lblPrefix.Name = "lblPrefix";
-            this.lblPrefix.Size = new System.Drawing.Size(86, 13);
-            this.lblPrefix.TabIndex = 4;
-            this.lblPrefix.Text = "Command Prefix:";
-            // 
-            // txtPrefix
-            // 
-            this.txtPrefix.Location = new System.Drawing.Point(122, 127);
-            this.txtPrefix.MaxLength = 1;
-            this.txtPrefix.Name = "txtPrefix";
-            this.txtPrefix.Size = new System.Drawing.Size(75, 20);
-            this.txtPrefix.TabIndex = 9;
-            this.txtPrefix.Text = "+";
-            this.txtPrefix.TextChanged += new System.EventHandler(this.txtPrefix_TextChanged);
-            // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(568, 318);
             this.Controls.Add(this.tabControl1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Settings";
             this.Text = "Settings";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Settings_closing);

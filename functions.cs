@@ -46,10 +46,12 @@ namespace C_Minebot {
         }
 
         public void readSlot(Wrapped.Wrapped socket, bool inventory = false, Form1 Mainform = null, short slot = 500) {
-            // Just in case..
+            // Read's slot data off the socket, and if the options are provided, will also add to the bot's inventory.
+
             bool delete = false;
             Classes.Item existing = null;
 
+            // Just in case.
             if (inventory == true & Mainform == null) {
                 throw new Exception("If inventory is true, you must include a main form.");
             }
@@ -57,6 +59,7 @@ namespace C_Minebot {
                 throw new Exception("If inventory is true, you must include which slot to add to.");
             }
 
+            // Delete the existing inventory data if it already exists. 
             if (inventory == true) {
                 foreach (Classes.Item b in Mainform.inventory) {
                     if (b.slot == slot) {
@@ -71,7 +74,6 @@ namespace C_Minebot {
             }
 
             int blockID = socket.readShort();
-
 
             if (blockID == -1)
                 return;
@@ -97,7 +99,9 @@ namespace C_Minebot {
         public string strip_codes(string text) {
             // Strips the color codes from text.
             string smessage = text;
+
             if (smessage.Contains("§")) {
+
                 smessage = smessage.Replace("§0", "");
                 smessage = smessage.Replace("§1", "");
                 smessage = smessage.Replace("§2", "");
@@ -120,7 +124,9 @@ namespace C_Minebot {
                 smessage = smessage.Replace("§D", "");
                 smessage = smessage.Replace("§E", "");
                 smessage = smessage.Replace("§F", "");
+
             }
+
             return smessage;
         }
 
@@ -139,13 +145,16 @@ namespace C_Minebot {
 
         public int getItemCount(int slot, Form1 mainform) {
             // Return number of items from a certain inventory slot in bot inventory
+
             int count = 0;
+
             foreach (Classes.Item b in mainform.inventory) {
                 if (b.slot == slot) {
                     count = b.itemCount;
                     break;
                 }
             }
+
             return count;
         }
 
@@ -267,7 +276,7 @@ namespace C_Minebot {
             StoneBrickStairs,
             Mycelium,
             LilyPad,
-            NetherBrick,
+            NetherBrickBlock,
             NetherBrickFence,
             NetherBrickStairs,
             NetherWart,
@@ -455,14 +464,14 @@ namespace C_Minebot {
             WrittenBook,
             Emerald_item,
             ItemFrame,
-            FlowerPot,
+            FlowerPot_item,
             Carrot,
             Potato,
             BakedPotato,
             PoisonPotato,
             EmptyMap,
             GoldenCarrot,
-            MobHead,
+            MobHead_item,
             CarrotonStick,
             NetherStar,
             PumpkinPie,
