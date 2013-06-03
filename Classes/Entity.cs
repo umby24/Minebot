@@ -5,5 +5,9 @@ using System.Text;
 
 namespace C_Minebot.Classes {
     class Entity {
+
+        public Entity() {
+            
+        }
     }
 }
