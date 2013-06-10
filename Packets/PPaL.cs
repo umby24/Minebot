@@ -25,17 +25,6 @@ namespace C_Minebot.Packets
                 handle();
             }
         }
-        public void dummy(int x, int y, int z)
-        {
-            Socket.writeByte(13);
-            Socket.writeDouble((double)x);
-            Socket.writeDouble((double)y);
-            Socket.writeDouble((double)y + 1);
-            Socket.writeDouble((double)z);
-            Socket.writeFloat(mainform.position[0]);
-            Socket.writeFloat(mainform.position[1]);
-            Socket.writeBool(true);
-        }
         void send()
         {
             Socket.writeByte(13);

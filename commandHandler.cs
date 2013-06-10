@@ -58,12 +58,39 @@ namespace C_Minebot
                         case "pos":
                             pos();
                             break;
+                        case "warning":
+                            findEnt(mainform);
+                            break;
+                        case "follow":
+                            follow(args);
+                            break;
                     }
                 }
             }
         }
 
+        void follow(string[] args) {
+            if (Mainform.following == false) {
+                Mainform.following = true;
+                Mainform.fname = args[2];
+                Packets.chatMessage chat = new Packets.chatMessage(true, Socket, Mainform, "Following " + args[2]); 
+            } else {
+                Mainform.following = false;
+                Mainform.fname = "";
+                Packets.chatMessage chat = new Packets.chatMessage(true, Socket, Mainform, "No longer following."); 
+            }
+        }
+        void findEnt(Form1 mainform) {
+            int count = 0;
 
+            foreach (Classes.Entity b in mainform.Entitys) {
+                if (b.name == "Slime") {
+                    count++;
+                }
+            }
+
+            Packets.chatMessage chat = new Packets.chatMessage(true, Socket, mainform, "There are " + count.ToString() + " Slimes near you."); 
+        }
         void findBlock(string[] args) {
             // Attempt on an alternitive block lookup method, for speed's sake..
             functions lookup = new functions();

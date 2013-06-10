@@ -9,9 +9,14 @@ namespace C_Minebot.Packets
     {
         public Entlook(Wrapped.Wrapped socket, Form1 mainform)
         {
-            socket.readInt();
-            socket.readByte();
-            socket.readByte();
+            int EID = socket.readInt();
+            byte yaw = socket.readByte();
+            byte pitch = socket.readByte();
+            functions helper = new functions();
+
+            Classes.Entity thisEnt = helper.getEntbyID(EID,mainform);
+            thisEnt.yaw = yaw;
+            thisEnt.pitch = pitch;
         }
 
     }

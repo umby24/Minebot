@@ -10,7 +10,6 @@ namespace C_Minebot.Packets
     {
         public Explosion(Wrapped.Wrapped socket, Form1 mainform)
         {
-            mainform.puts("Explosion");
             double ex = socket.readDouble();
             double ey = socket.readDouble();
             double ez = socket.readDouble();

@@ -35,7 +35,7 @@ namespace C_Minebot.Packets
                 slotHandler.readSlot(socket, true, mainform, slot);
             } else {
                 functions slotHandler = new functions();
-                slotHandler.readSlot(socket);
+                slotHandler.otherSlot(socket, mainform, EID, slot);
             }
         }
 

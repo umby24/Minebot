@@ -17,7 +17,8 @@ namespace C_Minebot
     public partial class Form1 : Form
     {
         #region Variables
-
+        public bool following = false;
+        public string fname = "";
         #region Bot Specific
         public string prefix = "+";
         public bool setopen = false;
@@ -40,9 +41,9 @@ namespace C_Minebot
         public float[] position;
         public double[] location;
         public string ServerID, serverHash, sessionId, sip, sport;
-      //  public MapBlock[] blocks;
-        public List<MapBlock> blocks = new List<MapBlock>();
+
         public List<Chunk> Chunks = new List<Chunk>();
+        public List<Entity> Entitys = new List<Entity>();
         #endregion
 
         #region Encryption
@@ -74,7 +75,7 @@ namespace C_Minebot
         public static extern int SendMessage(IntPtr hWnd, int msg, int wParam, int lParam);
 
         #endregion
-
+        #region Form Events
         public Form1()
         {
             InitializeComponent();
@@ -122,7 +123,7 @@ namespace C_Minebot
             admins.Add("Minebot");
 
             putsc("=_=_=_= C# Minebot =_=_=_=", Color.Yellow);
-            putsc("=+=+=+= Version 1.0 =+=+=+=", Color.Blue);
+            putsc("=+=+=+= Version 1.5 =+=+=+=", Color.Blue);
             putsc("======= by Umby24 ========", Color.Red);
             putsc("-------- All settings loaded ---------", Color.Orange);
 
@@ -137,7 +138,7 @@ namespace C_Minebot
             }
             
         }
-
+        #endregion
         #region FormHelpers
 
         public void loadColors()
@@ -289,7 +290,7 @@ namespace C_Minebot
             }
             else
             {
-                console.AppendText(text + Environment.NewLine);
+                console.AppendText(Environment.NewLine + text);
                 console.Select(console.Text.Length, console.Text.Length);
                 console.ScrollToCaret();
             }
@@ -514,7 +515,11 @@ namespace C_Minebot
         }
         #endregion
         #region Button Clicks
-
+        private void trackerToolStripMenuItem_Click(object sender, EventArgs e) {
+            Entity_Tracker tracker = new Entity_Tracker();
+            tracker.Show();
+            tracker.startTracking(this);
+        }
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show("This is the official successor to VB Minebot, written so I could learn C#, and to get this project up again, but cleaner.", "About C# Minebot");
@@ -573,8 +578,16 @@ namespace C_Minebot
             if (nh != null)
             {
                 nh.stop();
+
+                Entitys.Clear();
+                Chunks.Clear();
+                inventory.Clear();
+                following = false;
+                fname = "";
+
                 if (sip != null)
                     beginConnect(sip, sport, username, "asdf", onlineMode);
+
             }
         }
 
@@ -589,6 +602,5 @@ namespace C_Minebot
             MessageBox.Show(build);
         }
         #endregion
-
     }
 }

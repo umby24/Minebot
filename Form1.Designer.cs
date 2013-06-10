@@ -40,6 +40,7 @@
             this.muteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.asdToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.trackerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chat = new System.Windows.Forms.TextBox();
             this.btnSend = new System.Windows.Forms.Button();
             this.lstOnline = new System.Windows.Forms.ListBox();
@@ -55,7 +56,7 @@
             this.console.Location = new System.Drawing.Point(12, 27);
             this.console.Name = "console";
             this.console.ReadOnly = true;
-            this.console.Size = new System.Drawing.Size(622, 204);
+            this.console.Size = new System.Drawing.Size(622, 200);
             this.console.TabIndex = 0;
             this.console.Text = "";
             // 
@@ -112,7 +113,8 @@
             this.optionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.muteToolStripMenuItem,
             this.aboutToolStripMenuItem,
-            this.asdToolStripMenuItem});
+            this.asdToolStripMenuItem,
+            this.trackerToolStripMenuItem});
             this.optionToolStripMenuItem.Name = "optionToolStripMenuItem";
             this.optionToolStripMenuItem.Size = new System.Drawing.Size(56, 20);
             this.optionToolStripMenuItem.Text = "&Option";
@@ -138,11 +140,18 @@
             this.asdToolStripMenuItem.Text = "Inventory";
             this.asdToolStripMenuItem.Click += new System.EventHandler(this.asdToolStripMenuItem_Click);
             // 
+            // trackerToolStripMenuItem
+            // 
+            this.trackerToolStripMenuItem.Name = "trackerToolStripMenuItem";
+            this.trackerToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.trackerToolStripMenuItem.Text = "Tracker";
+            this.trackerToolStripMenuItem.Click += new System.EventHandler(this.trackerToolStripMenuItem_Click);
+            // 
             // chat
             // 
             this.chat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.chat.Location = new System.Drawing.Point(12, 237);
+            this.chat.Location = new System.Drawing.Point(12, 233);
             this.chat.Name = "chat";
             this.chat.Size = new System.Drawing.Size(665, 20);
             this.chat.TabIndex = 2;
@@ -150,7 +159,7 @@
             // btnSend
             // 
             this.btnSend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSend.Location = new System.Drawing.Point(683, 234);
+            this.btnSend.Location = new System.Drawing.Point(683, 230);
             this.btnSend.Name = "btnSend";
             this.btnSend.Size = new System.Drawing.Size(75, 23);
             this.btnSend.TabIndex = 3;
@@ -173,7 +182,7 @@
             this.AcceptButton = this.btnSend;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(764, 262);
+            this.ClientSize = new System.Drawing.Size(764, 258);
             this.Controls.Add(this.lstOnline);
             this.Controls.Add(this.btnSend);
             this.Controls.Add(this.chat);
@@ -208,6 +217,7 @@
         private System.Windows.Forms.ListBox lstOnline;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asdToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem trackerToolStripMenuItem;
     }
 }
 

@@ -104,6 +104,12 @@
     <Compile Include="Classes\MapBlock.cs" />
     <Compile Include="Classes\Section.cs" />
     <Compile Include="commandHandler.cs" />
+    <Compile Include="Entity Tracker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Entity Tracker.Designer.cs">
+      <DependentUpon>Entity Tracker.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -197,6 +203,9 @@
     <Compile Include="Settings.Designer.cs">
       <DependentUpon>Settings.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Entity Tracker.resx">
+      <DependentUpon>Entity Tracker.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
       <SubType>Designer</SubType>

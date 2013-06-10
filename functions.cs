@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using C_Minebot.Classes;
 
 namespace C_Minebot {
     class functions {
@@ -95,7 +96,78 @@ namespace C_Minebot {
                 Mainform.inventory.Add(new Classes.Item(blockID, itemCount, damage, slot));
 
         }
+        public void otherSlot(Wrapped.Wrapped socket, Form1 Mainform, int EID, int slot) {
+            Entity thisEnt = getEntbyID(EID, Mainform); // Entity we are modifying
 
+            int blockID = socket.readShort();
+
+            if (blockID == -1) {
+                switch (slot) {
+                    case 0:
+                        thisEnt.held = new Item(0, 1, 0, 0);
+                        break;
+                    case 1:
+                        thisEnt.boots = new Item(0, 1, 0, 0);
+                        break;
+                    case 2:
+                        thisEnt.leggins = new Item(0, 1, 0, 0);
+                        break;
+                    case 3:
+                        thisEnt.chestplate = new Item(0, 1, 0, 0);
+                        break;
+                    case 4:
+                        thisEnt.helmet = new Item(0, 1, 0, 0);
+                        break;
+                }
+                return;
+            }
+
+            byte itemCount = socket.readByte();
+            short damage = socket.readShort();
+            int NBTLength = socket.readShort();
+
+            if (NBTLength == -1) {
+                switch (slot) {
+                    case 0:
+                        thisEnt.held = new Item(blockID, itemCount, damage, (short)slot);
+                        break;
+                    case 1:
+                        thisEnt.boots = new Item(blockID, itemCount, damage, (short)slot);
+                        break;
+                    case 2:
+                        thisEnt.leggins = new Item(blockID, itemCount, damage, (short)slot);
+                        break;
+                    case 3:
+                        thisEnt.chestplate = new Item(blockID, itemCount, damage, (short)slot);
+                        break;
+                    case 4:
+                        thisEnt.helmet = new Item(blockID, itemCount, damage, (short)slot);
+                        break;
+                }
+                return;
+            }
+
+            socket.readByteArray(NBTLength);
+
+            switch (slot) {
+                case 0:
+                    thisEnt.held = new Item(blockID, itemCount, damage, (short)slot);
+                    break;
+                case 1:
+                    thisEnt.boots = new Item(blockID, itemCount, damage, (short)slot);
+                    break;
+                case 2:
+                    thisEnt.leggins = new Item(blockID, itemCount, damage, (short)slot);
+                    break;
+                case 3:
+                    thisEnt.chestplate = new Item(blockID, itemCount, damage, (short)slot);
+                    break;
+                case 4:
+                    thisEnt.helmet = new Item(blockID, itemCount, damage, (short)slot);
+                    break;
+            }
+
+        }
         public string strip_codes(string text) {
             // Strips the color codes from text.
             string smessage = text;
@@ -162,6 +234,67 @@ namespace C_Minebot {
             int thisOut;
             return (int.TryParse(test, out thisOut));
         }
+
+        #region entity Help
+        public void deleteEnt(int EID, Form1 mainform) {
+            Classes.Entity blank = null;
+
+            foreach (Classes.Entity b in mainform.Entitys) {
+                if (b.EID == EID) {
+                    blank = b;
+                    break;
+                }
+            }
+
+            if (blank != null)
+                mainform.Entitys.Remove(blank);
+
+        }
+        public Entity getEntbyID(int EID, Form1 mainform) {
+            Entity blank = null;
+
+            foreach (Entity b in mainform.Entitys) {
+                if (b.EID == EID) {
+                    blank = b;
+                    break;
+                }
+            }
+
+            return blank;
+        }
+        public enum entityId {
+            Creeper = 50,
+            Skeleton,
+            Spider,
+            GiantZombie,
+            Zombie,
+            Slime,
+            Ghast,
+            ZombiePigman,
+            Enderman,
+            CaveSpider,
+            Silverfish,
+            Blaze,
+            MagmaCube,
+            EnderDragon,
+            Wither,
+            Bat,
+            Witch,
+            Pig = 90,
+            Sheep,
+            Cow,
+            Chicken,
+            Squid,
+            Wolf,
+            Mooshroom,
+            Snowman,
+            Ocelot,
+            IronGolem,
+            Villager = 120
+        }
+
+        #endregion
+
 
         public enum blockitemid {
             Air,
@@ -502,5 +635,6 @@ namespace C_Minebot {
             Disk11,
             waitDisk
         }
+
     }
 }

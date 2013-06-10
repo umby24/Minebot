@@ -21,6 +21,8 @@ namespace C_Minebot
         public Wrapped.Wrapped socket;
         public Thread handler;
         public bool started = false;
+        System.Windows.Forms.Timer readTimer;
+        int timeout = 0;
 
         public networkHandler(string nip, string nport, Form1 asdf) {
             ip = nip;
@@ -51,29 +53,48 @@ namespace C_Minebot
             Thread handle = new Thread(handlePackets);
             handle.Start();
             handler = handle;
+
         }
 
         public void stop()
         {
             handler.Abort();
+            //readTimer.Enabled = false;
             baseStream.Close();
             baseSock.Close();
         }
 
 
-        void handlePackets()
-        {
-                while (baseSock.Connected == true)
-                {
-                    if (baseStream.DataAvailable == true)
-                    {
-                        int id = (int)socket.readByte();
+        void handlePackets() {
+            //while (baseSock.Connected == true) {
+            //    if (baseStream.DataAvailable == true) {
+            //        timeout = 0;
+
+            //        int id = (int)socket.readByte();
+            //        packetHandler ph = new packetHandler(id, socket, myform);
+
+
+            //    }
+            //}
+            try {
+                int id;
+                while ((id = (int)socket.readByte()) != null) {
+                    if (baseSock.Connected == true) {
                         packetHandler ph = new packetHandler(id, socket, myform);
+                    } else {
+                        baseSock.Close();
+                        myform.puts("Disconnected from server.");
+                        handler.Abort();
                     }
                 }
-
+            }
+            catch {
                 baseSock.Close();
                 myform.puts("Disconnected from server.");
+                handler.Abort();
+            }
+            //  baseSock.Close();
+            //  myform.puts("Disconnected from server.");
         }
     }
 }

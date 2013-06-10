@@ -12,7 +12,10 @@ namespace C_Minebot.Packets
             int times = (int)socket.readByte();
             while (times != 0)
             {
-                socket.readInt();
+                int EID = socket.readInt();
+                functions a = new functions();
+                a.deleteEnt(EID,mainform);
+
                 times--;
             }
         }

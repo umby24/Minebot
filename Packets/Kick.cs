@@ -27,7 +27,7 @@ namespace C_Minebot.Packets
         void handle()
         {
             myform.puts("Kicked by server! Reason: " + sock.readString());
-            sock._stream.Close();
+            myform.nh.stop();
         }
 
         void send()
