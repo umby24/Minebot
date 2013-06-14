@@ -74,6 +74,7 @@
     <Reference Include="Cryptography, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\Cryptography.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
@@ -89,10 +90,12 @@
     <Reference Include="Winsock Orcas, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\Winsock Orcas.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Wrapped, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\Wrapped.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -217,6 +220,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <EmbeddedResource Include="Settings.resx">
       <DependentUpon>Settings.cs</DependentUpon>
@@ -233,6 +237,37 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Lib\Cryptography.dll" />
+    <EmbeddedResource Include="Lib\Winsock Orcas.dll" />
+    <EmbeddedResource Include="Lib\Wrapped.dll" />
+    <None Include="Lib\Icons\ZombiePigmanFace.png" />
+    <None Include="Lib\Icons\ZombieFace.png" />
+    <None Include="Lib\Icons\WolfFace.png" />
+    <None Include="Lib\Icons\WitherHead.png" />
+    <None Include="Lib\Icons\Witchface.png" />
+    <None Include="Lib\Icons\VillagerFace.png" />
+    <None Include="Lib\Icons\Squidface.png" />
+    <None Include="Lib\Icons\SpiderFace.png" />
+    <None Include="Lib\Icons\Snowmanface.png" />
+    <None Include="Lib\Icons\SlimeFace.png" />
+    <None Include="Lib\Icons\SkeletonFace.png" />
+    <None Include="Lib\Icons\SilverfishFace.png" />
+    <None Include="Lib\Icons\SheepFace.png" />
+    <None Include="Lib\Icons\PigFace.png" />
+    <None Include="Lib\Icons\OcelotFace.png" />
+    <None Include="Lib\Icons\MooshroomFace.png" />
+    <None Include="Lib\Icons\MagmaCubeFace.png" />
+    <None Include="Lib\Icons\IronGolemFace.png" />
+    <None Include="Lib\Icons\HumanFace.png" />
+    <None Include="Lib\Icons\GhastFace.png" />
+    <None Include="Lib\Icons\EndermanFace.png" />
+    <None Include="Lib\Icons\Enderdragon_face_3.png" />
+    <None Include="Lib\Icons\CreeperFace.png" />
+    <None Include="Lib\Icons\CowFace.png" />
+    <None Include="Lib\Icons\ChickenFace.png" />
+    <None Include="Lib\Icons\CaveSpiderFace.png" />
+    <None Include="Lib\Icons\Blaze_Face.png" />
+    <None Include="Lib\Icons\BatFace.png" />
     <Content Include="logominebot1.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
