@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using C_Minebot.Classes;
 using System.Threading;
+using C_Minebot.Properties;
 
 namespace C_Minebot {
     public partial class Entity_Tracker : Form {
@@ -83,91 +84,91 @@ namespace C_Minebot {
                                 // Draw our pictures to the box
                                 switch (b.name) {
                                     case "Creeper":
-                                        g.DrawImage(Image.FromFile("Icons/" + b.name + "face.png"), startingX, startingZ, 1 * zoom, 1 * zoom);
+                                        g.DrawImage(Resources.CreeperFace, startingX, startingZ, 1 * zoom, 1 * zoom);
                                         break;
                                     case "Skeleton":
-                                        g.DrawImage(Image.FromFile("Icons/" + b.name + "face.png"), startingX, startingZ, 1 * zoom, 1 * zoom);
+                                        g.DrawImage(Resources.SkeletonFace, startingX, startingZ, 1 * zoom, 1 * zoom);
                                         break;
                                     case "Spider":
-                                        g.DrawImage(Image.FromFile("Icons/" + b.name + "face.png"), startingX, startingZ, 1 * zoom, 1 * zoom);
+                                        g.DrawImage(Resources.SpiderFace, startingX, startingZ, 1 * zoom, 1 * zoom);
                                         break;
                                     case "GiantZombie":
-                                        g.DrawImage(Image.FromFile("Icons/Zombieface.png"), startingX, startingZ, 2 * zoom, 2 * zoom);
+                                        g.DrawImage(Resources.ZombieFace, startingX, startingZ, 2 * zoom, 2 * zoom);
                                         break;
                                     case "Zombie":
-                                        g.DrawImage(Image.FromFile("Icons/" + b.name + "face.png"), startingX, startingZ, 1 * zoom, 1 * zoom);
+                                        g.DrawImage(Resources.ZombieFace, startingX, startingZ, 1 * zoom, 1 * zoom);
                                         break;
                                     case "Slime":
-                                        g.DrawImage(Image.FromFile("Icons/" + b.name + "face.png"), startingX, startingZ, 1 * zoom, 1 * zoom);
+                                        g.DrawImage(Resources.SlimeFace, startingX, startingZ, 1 * zoom, 1 * zoom);
                                         break;
                                     case "Ghast":
-                                        g.DrawImage(Image.FromFile("Icons/" + b.name + "face.png"), startingX, startingZ, 1 * zoom, 1 * zoom);
+                                        g.DrawImage(Resources.GhastFace, startingX, startingZ, 1 * zoom, 1 * zoom);
                                         break;
                                     case "ZombiePigman":
-                                        g.DrawImage(Image.FromFile("Icons/" + b.name + "face.png"), startingX, startingZ, 1 * zoom, 1 * zoom);
+                                        g.DrawImage(Resources.ZombiePigmanFace, startingX, startingZ, 1 * zoom, 1 * zoom);
                                         break;
                                     case "Enderman":
-                                        g.DrawImage(Image.FromFile("Icons/" + b.name + "face.png"), startingX, startingZ, 1 * zoom, 1 * zoom);
+                                        g.DrawImage(Resources.EndermanFace, startingX, startingZ, 1 * zoom, 1 * zoom);
                                         break;
                                     case "CaveSpider":
-                                        g.DrawImage(Image.FromFile("Icons/" + b.name + "face.png"), startingX, startingZ, 1 * zoom, 1 * zoom);
+                                        g.DrawImage(Resources.CaveSpiderFace, startingX, startingZ, 1 * zoom, 1 * zoom);
                                         break;
                                     case "Silverfish":
-                                        g.DrawImage(Image.FromFile("Icons/" + b.name + "face.png"), startingX, startingZ, 1 * zoom, 1 * zoom);
+                                        g.DrawImage(Resources.SilverfishFace, startingX, startingZ, 1 * zoom, 1 * zoom);
                                         break;
                                     case "Blaze":
-                                        g.DrawImage(Image.FromFile("Icons/" + b.name + "face.png"), startingX, startingZ, 1 * zoom, 1 * zoom);
+                                        g.DrawImage(Resources.Blaze_Face, startingX, startingZ, 1 * zoom, 1 * zoom);
                                         break;
                                     case "MagmaCube":
-                                        g.DrawImage(Image.FromFile("Icons/" + b.name + "face.png"), startingX, startingZ, 1 * zoom, 1 * zoom);
+                                        g.DrawImage(Resources.MagmaCubeFace, startingX, startingZ, 1 * zoom, 1 * zoom);
                                         break;
                                     case "EnderDragon":
-                                        g.DrawImage(Image.FromFile("Icons/" + b.name + "face.png"), startingX, startingZ, 1 * zoom, 1 * zoom);
+                                        g.DrawImage(Resources.Enderdragon_face_3, startingX, startingZ, 1 * zoom, 1 * zoom);
                                         break;
                                     case "Wither":
-                                        g.DrawImage(Image.FromFile("Icons/" + b.name + "face.png"), startingX, startingZ, 1 * zoom, 1 * zoom);
+                                        g.DrawImage(Resources.WitherHead, startingX, startingZ, 1 * zoom, 1 * zoom);
                                         break;
                                     case "Bat":
-                                        g.DrawImage(Image.FromFile("Icons/" + b.name + "face.png"), startingX, startingZ, 1 * zoom, 1 * zoom);
+                                        g.DrawImage(Resources.BatFace, startingX, startingZ, 1 * zoom, 1 * zoom);
                                         break;
                                     case "Witch":
-                                        g.DrawImage(Image.FromFile("Icons/" + b.name + "face.png"), startingX, startingZ, 1 * zoom, 1 * zoom);
+                                        g.DrawImage(Resources.Witchface, startingX, startingZ, 1 * zoom, 1 * zoom);
                                         break;
                                     case "Pig":
-                                        g.DrawImage(Image.FromFile("Icons/" + b.name + "face.png"), startingX, startingZ, 1 * zoom, 1 * zoom);
+                                        g.DrawImage(Resources.PigFace, startingX, startingZ, 1 * zoom, 1 * zoom);
                                         break;
                                     case "Squid":
-                                        g.DrawImage(Image.FromFile("Icons/" + b.name + "face.png"), startingX, startingZ, 1 * zoom, 1 * zoom);
+                                        g.DrawImage(Resources.Squidface, startingX, startingZ, 1 * zoom, 1 * zoom);
                                         break;
                                     case "Wolf":
-                                        g.DrawImage(Image.FromFile("Icons/" + b.name + "face.png"), startingX, startingZ, 1 * zoom, 1 * zoom);
+                                        g.DrawImage(Resources.WolfFace, startingX, startingZ, 1 * zoom, 1 * zoom);
                                         break;
                                     case "Mooshroom":
-                                        g.DrawImage(Image.FromFile("Icons/" + b.name + "face.png"), startingX, startingZ, 1 * zoom, 1 * zoom);
+                                        g.DrawImage(Resources.MooshroomFace, startingX, startingZ, 1 * zoom, 1 * zoom);
                                         break;
                                     case "Snowman":
-                                        g.DrawImage(Image.FromFile("Icons/" + b.name + "face.png"), startingX, startingZ, 1 * zoom, 1 * zoom);
+                                        g.DrawImage(Resources.Snowmanface, startingX, startingZ, 1 * zoom, 1 * zoom);
                                         break;
                                     case "Ocelot":
-                                        g.DrawImage(Image.FromFile("Icons/" + b.name + "face.png"), startingX, startingZ, 1 * zoom, 1 * zoom);
+                                        g.DrawImage(Resources.OcelotFace, startingX, startingZ, 1 * zoom, 1 * zoom);
                                         break;
                                     case "IronGolem":
-                                        g.DrawImage(Image.FromFile("Icons/" + b.name + "face.png"), startingX, startingZ, 1 * zoom, 1 * zoom);
+                                        g.DrawImage(Resources.IronGolemFace, startingX, startingZ, 1 * zoom, 1 * zoom);
                                         break;
                                     case "Villager":
-                                        g.DrawImage(Image.FromFile("Icons/" + b.name + "face.png"), startingX, startingZ, 1 * zoom, 1 * zoom);
+                                        g.DrawImage(Resources.VillagerFace, startingX, startingZ, 1 * zoom, 1 * zoom);
                                         break;
                                     case "Sheep":
-                                        g.DrawImage(Image.FromFile("Icons/" + b.name + "face.png"), startingX, startingZ, 1 * zoom, 1 * zoom);
+                                        g.DrawImage(Resources.SheepFace, startingX, startingZ, 1 * zoom, 1 * zoom);
                                         break;
                                     case "Cow":
-                                        g.DrawImage(Image.FromFile("Icons/" + b.name + "face.png"), startingX, startingZ, 1 * zoom, 1 * zoom);
+                                        g.DrawImage(Resources.CowFace, startingX, startingZ, 1 * zoom, 1 * zoom);
                                         break;
                                     case "Chicken":
-                                        g.DrawImage(Image.FromFile("Icons/" + b.name + "face.png"), startingX, startingZ, 1 * zoom, 1 * zoom);
+                                        g.DrawImage(Resources.ChickenFace, startingX, startingZ, 1 * zoom, 1 * zoom);
                                         break;
                                     default:
-                                        g.DrawImage(Image.FromFile("Icons/Humanface.png"), startingX, startingZ, 1 * zoom, 1 * zoom);
+                                        g.DrawImage(Resources.HumanFace, startingX, startingZ, 1 * zoom, 1 * zoom);
                                         break;
                                 }
                                 
