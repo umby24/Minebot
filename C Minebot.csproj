@@ -73,10 +73,7 @@
   <ItemGroup>
     <Reference Include="Cryptography, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Visual Studio 2012\Projects\Cryptography\Cryptography\bin\Debug\Cryptography.dll</HintPath>
-    </Reference>
-    <Reference Include="ICSharpCode.SharpZipLib">
-      <HintPath>bin\Debug\ICSharpCode.SharpZipLib.dll</HintPath>
+      <HintPath>lib\Cryptography.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
@@ -89,11 +86,13 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="Winsock Orcas">
-      <HintPath>..\VBMinebot\Minebot SMP Edition\bin\Debug\Winsock Orcas.dll</HintPath>
+    <Reference Include="Winsock Orcas, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\Winsock Orcas.dll</HintPath>
     </Reference>
-    <Reference Include="Wrapped">
-      <HintPath>..\Wrapped\Wrapped\bin\Debug\Wrapped.dll</HintPath>
+    <Reference Include="Wrapped, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\Wrapped.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
