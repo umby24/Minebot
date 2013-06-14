@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Win32;
+
 namespace C_Minebot
 {
     class RegistryControl
@@ -12,34 +13,17 @@ namespace C_Minebot
 
         public object GetSetting(string App,string key,string value,object Def)
         {
-            try
-            {
-                RegistryKey regkey = Registry.CurrentUser.OpenSubKey("Software");
-                regkey = regkey.OpenSubKey("VB and VBA Program Settings");
-                regkey = regkey.OpenSubKey(App);
-                regkey = regkey.OpenSubKey(key);
+            object thisKey = Registry.GetValue("HKEY_CURRENT_USER\\Software\\VB and VBA Program Settings\\" + App + "\\" + key, value, Def);
 
-                if (regkey.GetValue(value) == null)
-                { 
-                    return Def; 
-                }
-                else { 
-                    return regkey.GetValue(value); 
-                }
-            }
-            catch
-            {
+            if (thisKey == null)
                 return Def;
-            }
-
+            else
+                return thisKey;
         }
+
         public void SaveSetting(string App, string key, string value, string content)
         {
-            RegistryKey regkey = Registry.CurrentUser.OpenSubKey("Software", true);
-            regkey = regkey.OpenSubKey("VB and VBA Program Settings",true);
-            regkey = regkey.OpenSubKey(App,true);
-            regkey = regkey.OpenSubKey(key,true);
-            regkey.SetValue(value, content);
+            Registry.SetValue("HKEY_CURRENT_USER\\Software\\VB and VBA Program Settings\\" + App + "\\" + key, value, content);
         }
     }
 }

@@ -105,13 +105,14 @@ namespace C_Minebot
             admins = new List<string>();
 
             string AdminString = Reg.GetSetting("SH", "Minebot SMP", "admins", "").ToString();
-            string[] mysplits = AdminString.Split('|');
 
-            for (int i = 0; i < mysplits.Length; i++)
-            {
-                if (mysplits[i] != "")
-                {
-                    admins.Add(mysplits[i]);
+            if (AdminString != "") {
+                string[] mysplits = AdminString.Split('|');
+
+                for (int i = 0; i < mysplits.Length; i++) {
+                    if (mysplits[i] != "") {
+                        admins.Add(mysplits[i]);
+                    }
                 }
             }
 
@@ -119,17 +120,17 @@ namespace C_Minebot
             try
             {
                 ircIP = (string)Reg.GetSetting("SH", "Minebot SMP", "ircIP", "irc.esper.net");
-
-                int.TryParse((string)Reg.GetSetting("SH", "Minebot SMP", "ircPort", 6667), out ircPort);
+                ircPort = int.Parse(Reg.GetSetting("SH", "Minebot SMP", "ircPort", 6667).ToString());
                 channel = (string)Reg.GetSetting("SH", "Minebot SMP", "ircChan", "#bot");
                 ircname = (string)Reg.GetSetting("SH", "Minebot SMP", "ircName", "VBMinebot");
             }
             catch (Exception f)
             {
-                MessageBox.Show("An error occured while loading settings. " + f.Message);
+                puts("An error occured while loading IRC settings. This shouldn't affect functionality of the bot. \n" + f.Message);
             }
 
             // Load command prefix
+
             RegistryControl reg = new RegistryControl();
             prefix = (string)reg.GetSetting("SH", "Minebot SMP", "prefix", "+");
 
@@ -299,7 +300,10 @@ namespace C_Minebot
         {
             if (this.InvokeRequired)
             {
-                this.Invoke(new putss(puts), text);
+                try {
+                    this.Invoke(new putss(puts), text);
+                }
+                catch (ObjectDisposedException) { }
             }
             else
             {

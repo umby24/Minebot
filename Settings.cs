@@ -29,11 +29,11 @@ namespace C_Minebot
 
             checkBox2.Checked = myform.flatten;
             txtIP.Text = (string)reg.GetSetting("SH","Minebot SMP","IP","smp.mcsteamed.net");
-            txtPort.Text = (string)reg.GetSetting("SH", "Minebot SMP", "Port", 25566);
+            txtPort.Text = reg.GetSetting("SH", "Minebot SMP", "Port", 25566).ToString();
             txtUN.Text = (string)reg.GetSetting("SH", "Minebot SMP", "Username", "Minebot");
             txtPW.Text = (string)reg.GetSetting("SH", "Minebot SMP", "Password", "pie");
             txtIrcIP.Text = (string)reg.GetSetting("SH", "Minebot SMP", "ircIP", "irc.esper.net");
-            txtIRCPort.Text = (string)reg.GetSetting("SH", "Minebot SMP", "ircPort", 6667);
+            txtIRCPort.Text = reg.GetSetting("SH", "Minebot SMP", "ircPort", 6667).ToString();
             txtIrcChan.Text = (string)reg.GetSetting("SH", "Minebot SMP", "ircChan", "#bot");
             txtIrcNick.Text = (string)reg.GetSetting("SH", "Minebot SMP", "ircName", "VBMimebot");
             cbOnline.Checked = bool.Parse((string)reg.GetSetting("SH", "Minebot SMP", "Online", true));

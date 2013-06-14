@@ -21,8 +21,7 @@ namespace C_Minebot
         public Wrapped.Wrapped socket;
         public Thread handler;
         public bool started = false;
-        System.Windows.Forms.Timer readTimer;
-        int timeout = 0;
+
 
         public networkHandler(string nip, string nport, Form1 asdf) {
             ip = nip;
@@ -59,26 +58,15 @@ namespace C_Minebot
         public void stop()
         {
             handler.Abort();
-            //readTimer.Enabled = false;
             baseStream.Close();
             baseSock.Close();
         }
 
 
         void handlePackets() {
-            //while (baseSock.Connected == true) {
-            //    if (baseStream.DataAvailable == true) {
-            //        timeout = 0;
-
-            //        int id = (int)socket.readByte();
-            //        packetHandler ph = new packetHandler(id, socket, myform);
-
-
-            //    }
-            //}
             try {
-                int id;
-                while ((id = (int)socket.readByte()) != null) {
+                int id = 9999;
+                while ((id = (int)socket.readByte()) != 9999) {
                     if (baseSock.Connected == true) {
                         packetHandler ph = new packetHandler(id, socket, myform);
                     } else {
@@ -93,8 +81,6 @@ namespace C_Minebot
                 myform.puts("Disconnected from server.");
                 handler.Abort();
             }
-            //  baseSock.Close();
-            //  myform.puts("Disconnected from server.");
         }
     }
 }

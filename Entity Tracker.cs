@@ -13,7 +13,6 @@ using C_Minebot.Properties;
 namespace C_Minebot {
     public partial class Entity_Tracker : Form {
         Form1 mainForm;
-        Thread drawer;
         int zoom = 1;
         int radius = 10;
         bool grid = false;
@@ -26,10 +25,7 @@ namespace C_Minebot {
 
         }
         private void Entity_tracker_close(object sender, EventArgs e) {
-            if (drawer != null) {
-                drawer.Abort();
                 timer1.Enabled = false;
-            }
         }
         public void startTracking(Form1 main) {
             mainForm = main;
