@@ -23,7 +23,7 @@ namespace C_Minebot.Packets
             mainform.time = socket.readLong();
             PPaL pal;
             if (mainform.location != null)
-                pal = new PPaL(true, socket, mainform);
+                pal = new PPaL(socket, mainform,true);
         }
     }
 }

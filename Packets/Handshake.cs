@@ -10,7 +10,7 @@ namespace C_Minebot
         Wrapped.Wrapped sock;
         Form1 myform;
 
-        public Handshake(bool outgoing, Wrapped.Wrapped socket,Form1 asdf)
+        public Handshake(Wrapped.Wrapped socket, Form1 asdf, bool outgoing = false)
         {
             sock = socket;
             myform = asdf;

@@ -146,7 +146,7 @@ namespace C_Minebot
         {
             if (nh != null)
             {
-                Packets.Kick leaving = new Packets.Kick(true, nh.socket, this);
+                Packets.Kick leaving = new Packets.Kick(nh.socket, this,true);
                 System.Threading.Thread.Sleep(200);
                 nh.stop();
             }
@@ -477,7 +477,7 @@ namespace C_Minebot
                                     case "=ssay":
                                         Packets.chatMessage mypacket;
                                         if (mysplits.Length > 3)
-                                             mypacket = new Packets.chatMessage(true, nh.socket, this, mysplits[3]);
+                                             mypacket = new Packets.chatMessage(nh.socket, this, mysplits[3], true);
                                         break;
                                     case "=help":
                                         ircmessage("C# Minebot IRC Client, Version 1.1");
@@ -561,7 +561,7 @@ namespace C_Minebot
                 return;
             }
 
-            Packets.chatMessage chatmess = new Packets.chatMessage(true, nh.socket, this, chat.Text);
+            Packets.chatMessage chatmess = new Packets.chatMessage(nh.socket, this, chat.Text, true);
             chat.Clear();
         }
 

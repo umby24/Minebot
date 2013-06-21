@@ -7,11 +7,12 @@ using SMProxy;
 
 namespace C_Minebot.Packets
 {
-    class EncRequest
+    public class EncRequest
     {
         Wrapped.Wrapped sock;
         Form1 myform;
-        public EncRequest(bool outgoing, Wrapped.Wrapped socket,Form1 asdf)
+
+        public EncRequest(Wrapped.Wrapped socket, Form1 asdf, bool outgoing = false)
         {
             sock = socket;
             myform = asdf;
@@ -25,6 +26,7 @@ namespace C_Minebot.Packets
         {
             // This packet is complicated, so I will comment the process.
             // Let's get the data off the line first..
+
             string serverID = sock.readString();
             short keyLength = sock.readShort();
             short verifyLength;
@@ -95,7 +97,7 @@ namespace C_Minebot.Packets
             sock.InitEncryption(myform.sharedkey);
 
             // Respond to server.
-            EncResponse Response = new EncResponse(true, sock, myform,EncryptedVerfy,EncryptedSecret);
+            EncResponse Response = new EncResponse(sock, myform, EncryptedVerfy, EncryptedSecret, true);
         }
         void send()
         {

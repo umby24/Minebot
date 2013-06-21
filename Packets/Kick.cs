@@ -10,10 +10,11 @@ namespace C_Minebot.Packets
         Wrapped.Wrapped sock;
         Form1 myform;
 
-        public Kick(bool outgoing, Wrapped.Wrapped socket, Form1 asdf)
+        public Kick(Wrapped.Wrapped socket, Form1 asdf, bool outgoing = false)
         {
             sock = socket;
             myform = asdf;
+
             if (outgoing)
             {
                 send();

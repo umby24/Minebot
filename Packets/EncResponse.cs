@@ -5,14 +5,14 @@ using System.Text;
 
 namespace C_Minebot.Packets
 {
-    class EncResponse
+    public class EncResponse
     {
         Wrapped.Wrapped socket;
         Form1 form;
         byte[] enctoken;
         byte[] enckey;
 
-        public EncResponse(bool outgoing, Wrapped.Wrapped sock, Form1 myform)
+        public EncResponse(Wrapped.Wrapped sock, Form1 myform, bool outgoing = false)
         {
             socket = sock;
             form = myform;
@@ -26,7 +26,7 @@ namespace C_Minebot.Packets
             }
         }
 
-        public EncResponse(bool outgoing, Wrapped.Wrapped sock, Form1 myform,byte[] Etoken,byte[] Ekey)
+        public EncResponse(Wrapped.Wrapped sock, Form1 myform, byte[] Etoken, byte[] Ekey, bool outgoing = false)
         {
             socket = sock;
             form = myform;

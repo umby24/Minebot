@@ -11,7 +11,7 @@ namespace C_Minebot.Packets
         Wrapped.Wrapped Socket;
         Form1 mainform;
 
-        public PPaL(bool outgoing, Wrapped.Wrapped socket, Form1 Mainform)
+        public PPaL(Wrapped.Wrapped socket, Form1 Mainform, bool outgoing = false)
         {
             Socket = socket;
             mainform = Mainform;
@@ -53,7 +53,7 @@ namespace C_Minebot.Packets
             mainform.position = new float[2] { yaw, pitch };
             mainform.onground = onground;
 
-            PPaL response = new PPaL(true, Socket, mainform);
+            PPaL response = new PPaL(Socket, mainform, true);
         }
 
     }

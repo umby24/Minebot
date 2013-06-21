@@ -12,7 +12,7 @@ namespace C_Minebot.Packets
         Form1 mainform;
         string Message;
 
-        public chatMessage(bool outgoing, Wrapped.Wrapped sock, Form1 myform)
+        public chatMessage(Wrapped.Wrapped sock, Form1 myform, bool outgoing = false)
         {
             socket = sock;
             mainform = myform;
@@ -27,7 +27,7 @@ namespace C_Minebot.Packets
             }
         }
 
-        public chatMessage(bool outgoing, Wrapped.Wrapped sock, Form1 myform, string message)
+        public chatMessage(Wrapped.Wrapped sock, Form1 myform, string message, bool outgoing = false)
         {
             socket = sock;
             mainform = myform;

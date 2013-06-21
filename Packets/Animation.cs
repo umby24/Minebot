@@ -10,7 +10,7 @@ namespace C_Minebot.Packets
         Wrapped.Wrapped Socket;
         Form1 mainform;
 
-        public Animation(bool outgoing, Wrapped.Wrapped socket, Form1 Mainform)
+        public Animation(Wrapped.Wrapped socket, Form1 Mainform, bool outgoing = false)
         {
             Socket = socket;
             mainform = Mainform;

@@ -73,11 +73,11 @@ namespace C_Minebot
             if (Mainform.following == false) {
                 Mainform.following = true;
                 Mainform.fname = args[2];
-                Packets.chatMessage chat = new Packets.chatMessage(true, Socket, Mainform, "Following " + args[2]); 
+                Packets.chatMessage chat = new Packets.chatMessage(Socket, Mainform, "Following " + args[2],true); 
             } else {
                 Mainform.following = false;
                 Mainform.fname = "";
-                Packets.chatMessage chat = new Packets.chatMessage(true, Socket, Mainform, "No longer following."); 
+                Packets.chatMessage chat = new Packets.chatMessage(Socket, Mainform, "No longer following.",true); 
             }
         }
         void findEnt(Form1 mainform) {
@@ -89,7 +89,7 @@ namespace C_Minebot
                 }
             }
 
-            Packets.chatMessage chat = new Packets.chatMessage(true, Socket, mainform, "There are " + count.ToString() + " Slimes near you."); 
+            Packets.chatMessage chat = new Packets.chatMessage(Socket, mainform, "There are " + count.ToString() + " Slimes near you.",true); 
         }
         void findBlock(string[] args) {
             // Attempt on an alternitive block lookup method, for speed's sake..
@@ -125,9 +125,9 @@ namespace C_Minebot
             thisblock = thisChunk.getBlock(blockX,blockY,blockZ);
 
             if (thisblock != null) {
-                Packets.chatMessage cm = new Packets.chatMessage(true, Socket, Mainform, "FOUND IT. " + thisblock.Name);
+                Packets.chatMessage cm = new Packets.chatMessage(Socket, Mainform, "FOUND IT. " + thisblock.Name, true);
             } else {
-                Packets.chatMessage cm = new Packets.chatMessage(true, Socket, Mainform, "Fail :(");
+                Packets.chatMessage cm = new Packets.chatMessage(Socket, Mainform, "Fail :(", true);
             }
 
         }
@@ -165,12 +165,12 @@ namespace C_Minebot
                 return;
 
             Mainform.selectedSlot = short.Parse(args[2]);
-            Packets.HeldItemChange hic = new Packets.HeldItemChange(true, Socket, Mainform);
+            Packets.HeldItemChange hic = new Packets.HeldItemChange(Socket, Mainform, true);
         }
 
         void pos()
         {
-            Packets.chatMessage chat = new Packets.chatMessage(true, Socket, Mainform, "X: " + Mainform.location[0].ToString() + " Y: " + Mainform.location[1].ToString() + " Z: " + Mainform.location[2].ToString());
+            Packets.chatMessage chat = new Packets.chatMessage(Socket, Mainform, "X: " + Mainform.location[0].ToString() + " Y: " + Mainform.location[1].ToString() + " Z: " + Mainform.location[2].ToString(), true);
         }
 
         void yaw(string text)
@@ -218,7 +218,7 @@ namespace C_Minebot
         void Say(string text)
         {
             string[] args = text.Split(new char[1] {' '},3);
-            Packets.chatMessage Message = new Packets.chatMessage(true, Socket, Mainform, args[2]);
+            Packets.chatMessage Message = new Packets.chatMessage(Socket, Mainform, args[2], true);
         }
 
         void Mute()
@@ -226,12 +226,12 @@ namespace C_Minebot
             if (Mainform.muted)
             {
                 Mainform.muted = false;
-                Packets.chatMessage chat = new Packets.chatMessage(true, Socket, Mainform, "Unmuted.");
+                Packets.chatMessage chat = new Packets.chatMessage(Socket, Mainform, "Unmuted.", true);
             }
             else
             {
                 Mainform.muted = true;
-                Packets.chatMessage chat = new Packets.chatMessage(true, Socket, Mainform, "Muted.");
+                Packets.chatMessage chat = new Packets.chatMessage(Socket, Mainform, "Muted.", true);
             }
         }
 

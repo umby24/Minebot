@@ -7,7 +7,7 @@ namespace C_Minebot.Packets
 {
     class CloseWindow
     {
-        public CloseWindow(bool outgoing, Wrapped.Wrapped socket, Form1 mainform)
+        public CloseWindow(Wrapped.Wrapped socket, Form1 mainform, bool outgoing = false)
         {
             if (outgoing)
             {

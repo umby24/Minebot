@@ -10,7 +10,7 @@ namespace C_Minebot.Packets
         Wrapped.Wrapped socket;
         Form1 myform;
 
-        public HeldItemChange(bool outgoing, Wrapped.Wrapped Socket, Form1 Myform)
+        public HeldItemChange(Wrapped.Wrapped Socket, Form1 Myform, bool outgoing = false)
         {
             socket = Socket;
             myform = Myform;
