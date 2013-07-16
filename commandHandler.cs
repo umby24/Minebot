@@ -11,7 +11,7 @@ namespace C_Minebot
         Wrapped.Wrapped Socket;
         Form1 Mainform;
 
-        public commandHandler(Wrapped.Wrapped socket, Form1 mainform, string message)
+        public commandHandler(Wrapped.Wrapped socket, Form1 mainform, string username, string message)
         {
             functions func = new functions();
 
@@ -19,7 +19,6 @@ namespace C_Minebot
             Mainform = mainform;
 
             string[] args = message.Split(' ');
-            string username = func.strip_codes(args[0].Replace("<", "").Replace(">", "").Replace(":", "").Replace(" ", ""));
             
 
             if (Mainform.admins.Contains(username))

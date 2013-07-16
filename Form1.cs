@@ -557,7 +557,7 @@ namespace C_Minebot
         {
             if (chat.Text.StartsWith("+"))
             {
-                commandHandler ch = new commandHandler(nh.socket, this, "Minebot: " + chat.Text);
+                commandHandler ch = new commandHandler(nh.socket, this, "Minebot", chat.Text);
                 chat.Clear();
                 return;
             }
@@ -621,9 +621,5 @@ namespace C_Minebot
             MessageBox.Show(build);
         }
         #endregion
-
-        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
-
-        }
     }
 }

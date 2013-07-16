@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Drawing;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace C_Minebot.Packets
 {
@@ -46,20 +48,121 @@ namespace C_Minebot.Packets
         private void handle()
         {
             functions func = new functions();
-
+            string name = "", message = "", type = "", color = "", style = "";
             Message = socket.readString();
-            commandHandler ch = new commandHandler(socket, mainform, func.strip_codes(Message));
-            handleColors(Message);
+
+            JsonTextReader json = new JsonTextReader(new StringReader(Message));
+            while (json.Read()) {
+                if (json.Value != null) {
+                    switch (json.Path) {
+                        case "using[0]":
+                            name = (string)json.Value;
+                            break;
+                        case "using[1]":
+                            message = (string)json.Value;
+                            break;
+                        case "translate":
+                            if (json.Value.ToString() != "translate") 
+                                type = (string)json.Value;
+                            break;
+                        case "color":
+                            if (json.Value.ToString() != "translate")
+                                color = (string)json.Value;
+                            break;
+                    }
+                }
+            }
+            
+           // Now with the JSON Parsed, we have to add some special message cases.
+            switch (type) {
+                case "multiplayer.player.joined":
+                    message = name + " Joined the server";
+                    break;
+                case "death.attack.outOfWorld":
+                    message = name + " fell out of the world!";
+                    break;
+                case "death.attack.explosion.player":
+                    message = name + " was blown up by " + message;
+                    break;
+                case "chat.type.text":
+                    message = name + ": " + message;
+                    commandHandler ch = new commandHandler(socket, mainform, name, message);
+                    break;
+                case "chat.type.emote":
+                    message = "§d" + name + " " + message;
+                    break;
+                default:
+                    message = "You need to parse " + type + "; " + name + " + " + message;
+                    break;
+            }
+            if (color != "")
+                message = convertCode(message, color);
+
+            
+            handleColors(message);
             if (mainform.ircmode == 2 || mainform.ircmode == 3)
             {
-                string[] args = Message.Split(' ');
+                string[] args = message.Split(' ');
                 string username = args[0].Replace("<", "").Replace(">", "").Replace(":", "").Replace(" ", "");
                 username = func.strip_codes(username);
-                if (!(username == mainform.username && Message.Contains("IRC: <")))
+                if (!(username == mainform.username && message.Contains("IRC: <")))
                  mainform.ircmessage(mainform.translate_colors(Message));
             }
         }
 
+        private string convertCode(string text, string color) {
+            switch (color.ToLower()) {
+                case "black":
+                    text = "§0" + text;
+                    break;
+                case "dark blue":
+                    text = "§1" + text;
+                    break;
+                case "dark green":
+                    text = "§2" + text;
+                    break;
+                case "dark cyan":
+                    text = "§3" + text;
+                    break;
+                case "dark red":
+                    text = "§4" + text;
+                    break;
+                case "purple":
+                    text = "§5" + text;
+                    break;
+                case "gold":
+                    text = "§6" + text;
+                    break;
+                case "gray":
+                    text = "§7" + text;
+                    break;
+                case "dark gray":
+                    text = "§8" + text;
+                    break;
+                case "blue":
+                    text = "§9" + text;
+                    break;
+                case "bright green":
+                    text = "§a" + text;
+                    break;
+                case "cyan":
+                    text = "§b" + text;
+                    break;
+                case "red":
+                    text = "§c" + text;
+                    break;
+                case "pink":
+                    text = "§d" + text;
+                    break;
+                case "yellow":
+                    text = "§e" + text;
+                    break;
+                case "white":
+                    text = "§f" + text;
+                    break;
+            }
+            return text;
+        }
         private void send()
         {
             if (mainform.muted == false)
