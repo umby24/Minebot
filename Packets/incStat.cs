@@ -10,7 +10,7 @@ namespace C_Minebot.Packets
         public incStat(Wrapped.Wrapped socket, Form1 mainform)
         {
             socket.readInt();
-            socket.readByte();
+            socket.readInt();
         }
     }
 }

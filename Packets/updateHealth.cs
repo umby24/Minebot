@@ -10,7 +10,7 @@ namespace C_Minebot.Packets
 
         public updateHealth(Wrapped.Wrapped sock, Form1 myform)
         {
-            myform.health = sock.readShort();
+            myform.health = sock.readFloat();
             myform.hunger = sock.readShort();
             sock.readFloat();
             if (0 >= myform.health)

@@ -147,6 +147,7 @@
     <Compile Include="Packets\Entlook.cs" />
     <Compile Include="Packets\EntlookRelmove.cs" />
     <Compile Include="Packets\EntMetadata.cs" />
+    <Compile Include="Packets\entProps.cs" />
     <Compile Include="Packets\EntRelmove.cs" />
     <Compile Include="Packets\EntStatus.cs" />
     <Compile Include="Packets\EntTeleport.cs" />
@@ -163,6 +164,7 @@
     <Compile Include="Packets\Namedsound.cs" />
     <Compile Include="Packets\OpenWindow.cs" />
     <Compile Include="Packets\Particle.cs" />
+    <Compile Include="Packets\placeBlock.cs" />
     <Compile Include="Packets\Player.cs" />
     <Compile Include="Packets\PlayerAbilities.cs" />
     <Compile Include="Packets\PlayerBlockPlacement.cs" />
@@ -188,6 +190,7 @@
     <Compile Include="Packets\spawnPosition.cs" />
     <Compile Include="Packets\TabComplete.cs" />
     <Compile Include="Packets\teams.cs" />
+    <Compile Include="Packets\tileEditor.cs" />
     <Compile Include="Packets\timeUpdate.cs" />
     <Compile Include="Packets\updateHealth.cs" />
     <Compile Include="Packets\updateScore.cs" />
@@ -236,6 +239,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Wrapped.dll" />
     <EmbeddedResource Include="Lib\Cryptography.dll" />
     <EmbeddedResource Include="Lib\Winsock Orcas.dll" />
     <EmbeddedResource Include="Lib\Wrapped.dll" />

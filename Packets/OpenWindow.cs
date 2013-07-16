@@ -9,11 +9,14 @@ namespace C_Minebot.Packets
     {
         public OpenWindow(Wrapped.Wrapped socket, Form1 mainform)
         {
-            socket.readByte();
-            socket.readByte();
+            int meh = socket.readByte();
+            byte invType = socket.readByte();
             socket.readString();
             socket.readByte();
             bool useTitle = socket.readBool();
+
+            if (invType == 11)
+                socket.readInt();
         }
     }
 }

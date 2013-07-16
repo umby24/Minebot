@@ -64,11 +64,30 @@ namespace C_Minebot
                         case "follow":
                             follow(args);
                             break;
+                        case "place":
+                            placeBlock(args);
+                            break;
                     }
                 }
             }
         }
 
+        void placeBlock(string[] args) {
+            functions lookup = new functions();
+
+            if (!lookup.isNumeric(args[2]))
+                return;
+            if (!lookup.isNumeric(args[3]))
+                return;
+            if (!lookup.isNumeric(args[4]))
+                return;
+
+            int blockX = int.Parse(args[2]);
+            int blockY = int.Parse(args[3]);
+            int blockZ = int.Parse(args[4]);
+
+            Packets.placeBlock myblock = new Packets.placeBlock(blockX, (byte)blockY, blockZ, 3, new Classes.Item(1, 1, 0, 0), Socket);
+        }
         void follow(string[] args) {
             if (Mainform.following == false) {
                 Mainform.following = true;

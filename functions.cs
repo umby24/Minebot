@@ -7,6 +7,15 @@ using C_Minebot.Classes;
 namespace C_Minebot {
     class functions {
 
+        public void writeSlot(Item item, Wrapped.Wrapped socket) {
+            if (item == null)
+                socket.writeShort(-1);
+
+            socket.writeByte(item.itemCount);
+            socket.writeShort(item.itemDamage);
+            socket.writeShort(-1);
+        }
+
         public void readMetadata(Wrapped.Wrapped socket) {
             // read metadata from socket
             do {
@@ -45,7 +54,6 @@ namespace C_Minebot {
                 }
             } while (true);
         }
-
         public void readSlot(Wrapped.Wrapped socket, bool inventory = false, Form1 Mainform = null, short slot = 500) {
             // Read's slot data off the socket, and if the options are provided, will also add to the bot's inventory.
 

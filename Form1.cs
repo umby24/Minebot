@@ -34,11 +34,12 @@ namespace C_Minebot
 
         #region Server
 
-        public short health, hunger, selectedSlot;
+        public short hunger, selectedSlot;
         public long time, worldAge;
         public int[] spawnPoint;
         public int EntityID;
         public bool onground;
+        public float health;
         public float[] position;
         public double[] location;
         public string ServerID, serverHash, sessionId, sip, sport;
@@ -137,7 +138,7 @@ namespace C_Minebot
             admins.Add("Minebot");
 
             putsc("=_=_=_= C# Minebot =_=_=_=", Color.Yellow);
-            putsc("=+=+=+= Version 1.5 =+=+=+=", Color.Blue);
+            putsc("=+=+=+= Version 1.5.1 =+=+=+=", Color.Blue);
             putsc("======= by Umby24 ========", Color.Red);
             putsc("-------- All settings loaded ---------", Color.Orange);
 
@@ -561,7 +562,9 @@ namespace C_Minebot
                 return;
             }
 
-            Packets.chatMessage chatmess = new Packets.chatMessage(nh.socket, this, chat.Text, true);
+            //Packets.chatMessage chatmess = new Packets.chatMessage(nh.socket, this, chat.Text, true);
+            nh.chatqueue = chat.Text;
+            nh.chatq = true;
             chat.Clear();
         }
 
@@ -619,5 +622,9 @@ namespace C_Minebot
             MessageBox.Show(build);
         }
         #endregion
+
+        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
+
+        }
     }
 }

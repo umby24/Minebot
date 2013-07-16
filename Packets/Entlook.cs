@@ -15,8 +15,10 @@ namespace C_Minebot.Packets
             functions helper = new functions();
 
             Classes.Entity thisEnt = helper.getEntbyID(EID,mainform);
-            thisEnt.yaw = yaw;
-            thisEnt.pitch = pitch;
+            if (thisEnt != null) {
+                thisEnt.yaw = yaw;
+                thisEnt.pitch = pitch;
+            }
         }
 
     }

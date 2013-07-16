@@ -10,8 +10,8 @@ namespace C_Minebot.Packets
         public PlayerAbilities(Wrapped.Wrapped socket, Form1 mainform)
         {
             socket.readByte();
-            socket.readByte();
-            socket.readByte();
+            socket.readFloat();
+            socket.readFloat();
         }
     }
 }

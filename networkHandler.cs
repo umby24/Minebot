@@ -15,15 +15,16 @@ namespace C_Minebot
 {
     public class networkHandler
     {
-        public string ip;
+        public string ip, chatqueue = "";
         public int port;
         public Form1 myform;
         TcpClient baseSock;
         NetworkStream baseStream;
         public Wrapped.Wrapped socket;
         public Thread handler;
-        public bool started = false;
+        public bool started = false, chatq = false;
         Dictionary<int, Type> packetTypes = new Dictionary<int, Type>();
+        public int last = 9999;
 
         #region initiators
                 public networkHandler(string nip, string nport, Form1 asdf) {
@@ -72,15 +73,21 @@ namespace C_Minebot
             try {
                 int id = 9999;
                 while ((id = (int)socket.readByte()) != 9999) {
+                    if (chatq == true) {
+                        Packets.chatMessage chatmess = new Packets.chatMessage(socket, myform, chatqueue, true);
+                        chatq = false;
+                        chatqueue = "";
+                    }
                     if (baseSock.Connected == true) {
                         if (id == 2 || id == 3 || id == 13 || id == 16 || id == 18 || id == 101 || id == 252 || id == 253 || id == 255) {
                             var packet = Activator.CreateInstance(Type.GetType(packetTypes[id].ToString()), new Object[] { socket, myform, false }); // Tried a few ways around having to do this if-statement. No go on any of them.
                         } else {
                             var packet = Activator.CreateInstance(Type.GetType(packetTypes[id].ToString()), new Object[] { socket, myform }); // New and improved handling.
                         }
+                        last = id;
                     } else {
                         baseSock.Close();
-                        myform.puts("Disconnected from server.");
+                        myform.puts("Disconnected from server");
                         handler.Abort();
                     }
                 }
@@ -127,6 +134,7 @@ namespace C_Minebot
             packetTypes.Add(41, typeof(EntEffect));
             packetTypes.Add(42, typeof(RemoveEntEffect));
             packetTypes.Add(43, typeof(SetExp));
+            packetTypes.Add(44, typeof(entProps));
             packetTypes.Add(51, typeof(ChunkData));
             packetTypes.Add(52, typeof(MultiBlockChange));
             packetTypes.Add(53, typeof(BlockChange));
@@ -148,6 +156,7 @@ namespace C_Minebot
             packetTypes.Add(130, typeof(updateSign));
             packetTypes.Add(131, typeof(itemData));
             packetTypes.Add(132, typeof(updateTileEntity));
+            packetTypes.Add(133, typeof(tileEditor));
             packetTypes.Add(200, typeof(incStat));
             packetTypes.Add(201, typeof(PlayerListItem));
             packetTypes.Add(202, typeof(PlayerAbilities));

@@ -11,6 +11,7 @@ namespace C_Minebot.Packets
         {
             socket.readInt();
             socket.readInt();
+            socket.readByte();
         }
     }
 }
