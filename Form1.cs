@@ -567,7 +567,6 @@ namespace C_Minebot
             nh.chatq = true;
             chat.Clear();
         }
-
         private void muteToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (muted)
