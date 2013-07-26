@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Drawing;
-using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.IO;
 
 namespace C_Minebot.Packets
@@ -50,56 +50,97 @@ namespace C_Minebot.Packets
             functions func = new functions();
             string name = "", message = "", type = "", color = "", style = "";
             Message = socket.readString();
+            var root = JObject.Parse(Message);
 
-            JsonTextReader json = new JsonTextReader(new StringReader(Message));
-            while (json.Read()) {
-                if (json.Value != null) {
-                    switch (json.Path) {
-                        case "using[0]":
-                            name = (string)json.Value;
-                            break;
-                        case "using[1]":
-                            message = (string)json.Value;
+                foreach (KeyValuePair<String, JToken> app in root) {
+                    var appName = app.Key;
+
+                    switch (appName) {
+                        case "text":
+                            message = app.Value.ToString();
+                            if (message.Contains(" "))
+                                name = func.strip_codes(message.Substring(0, message.IndexOf(" ")).Replace("<", "").Replace(">", "").Replace(":", "").Replace(" ", ""));
+                            type = "chat";
                             break;
                         case "translate":
-                            if (json.Value.ToString() != "translate") 
-                                type = (string)json.Value;
+                            type = app.Value.ToString();
+                            break;
+                        case "using":
+                            name = app.Value.First.ToString();
+                            message = app.Value.Last.ToString();
                             break;
                         case "color":
-                            if (json.Value.ToString() != "translate")
-                                color = (string)json.Value;
+                            color = app.Value.ToString();
+                            break;
+                        case "italic":
+                            if (app.Value.ToString() == "true")
+                                style = "italic";
                             break;
                     }
+                    if (type == "chat.type.admin") {
+                        if (app.Value.HasValues == true) {
+                            name = app.Value[0].ToString();
+                            JObject thisObj = JObject.Parse(app.Value[1].ToString());
+
+                            foreach (KeyValuePair<String, JToken> part in thisObj) {
+                                var topName = part.Key;
+
+                                switch (topName) {
+                                    case "translate":
+                                        type = part.Value.ToString();
+                                        break;
+                                    case "using":
+                                        message = part.Value.First.ToString();
+                                        name = part.Value.Last.ToString();
+                                        break;
+                                }
+                            }
+                        }
+                    }
                 }
-            }
-            
-           // Now with the JSON Parsed, we have to add some special message cases.
-            switch (type) {
-                case "multiplayer.player.joined":
-                    message = name + " Joined the server";
-                    break;
-                case "death.attack.outOfWorld":
-                    message = name + " fell out of the world!";
-                    break;
-                case "death.attack.explosion.player":
-                    message = name + " was blown up by " + message;
-                    break;
-                case "chat.type.text":
-                    message = name + ": " + message;
-                    commandHandler ch = new commandHandler(socket, mainform, name, message);
-                    break;
-                case "chat.type.emote":
-                    message = "§d" + name + " " + message;
-                    break;
-                default:
-                    message = "You need to parse " + type + "; " + name + " + " + message;
-                    break;
-            }
-            if (color != "")
-                message = convertCode(message, color);
+
+                // Now with the JSON Parsed, we have to add some special message cases.
+                switch (type) {
+                    case "multiplayer.player.joined":
+                        message = name + " Joined the server";
+                        break;
+                    case "death.attack.outOfWorld":
+                        message = name + " fell out of the world!";
+                        break;
+                    case "death.attack.explosion.player":
+                        message = name + " was blown up by " + message;
+                        break;
+                    case "death.attack.mob":
+                        message = name + " was killed by a " + message;
+                        break;
+                    case "chat.type.text":
+                        message = name + ": " + message;
+                        commandHandler ch = new commandHandler(socket, mainform, name, message);
+                        break;
+                    case "chat":
+                        commandHandler h = new commandHandler(socket, mainform, name, message);
+                        break;
+                    case "chat.type.emote":
+                        message = "§d" + name + " " + message;
+                        break;
+                    case "chat.type.announcement":
+                        message = "§d[" + name + "]:§f " + message;
+                        break;
+                    case "commands.tp.success":
+                        message = name + " teleported to " + message;
+                        break;
+                    case "commands.op.success":
+                        message = name + " was promoted to Op";
+                        break;
+                    default:
+                        message = Message;
+                        break;
+                }
+                if (color != "")
+                    message = convertCode(message, color);
 
             
-            handleColors(message);
+            handleColors(message,style);
             if (mainform.ircmode == 2 || mainform.ircmode == 3)
             {
                 string[] args = message.Split(' ');
@@ -174,11 +215,11 @@ namespace C_Minebot.Packets
 
 
 
-        public void handleColors(string text)
+        public void handleColors(string text, string Style)
         {
             if (!text.Contains("§"))
             {
-                mainform.putsc(text, Color.White);
+                mainform.putsc(text, Color.White,Style);
                 return;
             }
 
@@ -192,7 +233,7 @@ namespace C_Minebot.Packets
                 {
                     string temp = text.Substring(0, text.IndexOf("§"));
                     text = text.Substring(text.IndexOf("§"), text.Length - text.IndexOf("§"));
-                    mainform.putsc(temp, Color.White, true);
+                    mainform.putsc(temp, Color.White, true,Style);
                 }
                 else
                 {
@@ -206,52 +247,52 @@ namespace C_Minebot.Packets
                         switch (code)
                         {
                             case "0":
-                                mainform.putsc(temp, Color.FromArgb(0, 0, 0), true);
+                                mainform.putsc(temp, Color.FromArgb(0, 0, 0), true, Style);
                                 break;
                             case "1":
-                                mainform.putsc(temp, Color.FromArgb(0, 0, 170), true);
+                                mainform.putsc(temp, Color.FromArgb(0, 0, 170), true, Style);
                                 break;
                             case "2":
-                                mainform.putsc(temp, Color.FromArgb(0, 170, 0), true);
+                                mainform.putsc(temp, Color.FromArgb(0, 170, 0), true, Style);
                                 break;
                             case "3":
-                                mainform.putsc(temp, Color.FromArgb(0, 170, 170), true);
+                                mainform.putsc(temp, Color.FromArgb(0, 170, 170), true, Style);
                                 break;
                             case "4":
-                                mainform.putsc(temp, Color.FromArgb(170, 0, 0), true);
+                                mainform.putsc(temp, Color.FromArgb(170, 0, 0), true, Style);
                                 break;
                             case "5":
-                                mainform.putsc(temp, Color.FromArgb(170, 0, 170), true);
+                                mainform.putsc(temp, Color.FromArgb(170, 0, 170), true, Style);
                                 break;
                             case "6":
-                                mainform.putsc(temp, Color.FromArgb(255, 170, 0), true);
+                                mainform.putsc(temp, Color.FromArgb(255, 170, 0), true, Style);
                                 break;
                             case "7":
-                                mainform.putsc(temp, Color.FromArgb(170, 170, 170), true);
+                                mainform.putsc(temp, Color.FromArgb(170, 170, 170), true, Style);
                                 break;
                             case "8":
-                                mainform.putsc(temp, Color.FromArgb(85, 85, 85), true);
+                                mainform.putsc(temp, Color.FromArgb(85, 85, 85), true, Style);
                                 break;
                             case "9":
-                                mainform.putsc(temp, Color.FromArgb(85, 85, 255), true);
+                                mainform.putsc(temp, Color.FromArgb(85, 85, 255), true, Style);
                                 break;
                             case "a":
-                                mainform.putsc(temp, Color.FromArgb(85, 255, 85), true);
+                                mainform.putsc(temp, Color.FromArgb(85, 255, 85), true, Style);
                                 break;
                             case "b":
-                                mainform.putsc(temp, Color.FromArgb(85, 255, 255), true);
+                                mainform.putsc(temp, Color.FromArgb(85, 255, 255), true, Style);
                                 break;
                             case "c":
-                                mainform.putsc(temp, Color.FromArgb(255, 85, 85), true);
+                                mainform.putsc(temp, Color.FromArgb(255, 85, 85), true, Style);
                                 break;
                             case "d":
-                                mainform.putsc(temp, Color.FromArgb(255, 85, 255), true);
+                                mainform.putsc(temp, Color.FromArgb(255, 85, 255), true, Style);
                                 break;
                             case "e":
-                                mainform.putsc(temp, Color.FromArgb(255, 255, 85), true);
+                                mainform.putsc(temp, Color.FromArgb(255, 255, 85), true, Style);
                                 break;
                             case "f":
-                                mainform.putsc(temp, Color.FromArgb(255, 255, 255), true);
+                                mainform.putsc(temp, Color.FromArgb(255, 255, 255), true, Style);
                                 break;
                         }
 
@@ -273,55 +314,55 @@ namespace C_Minebot.Packets
                         switch (code)
                         {
                             case "0":
-                                mainform.putsc(temp2, Color.FromArgb(0, 0, 0), true);
+                                mainform.putsc(temp2, Color.FromArgb(0, 0, 0), true, Style);
                                 break;
                             case "1":
-                                mainform.putsc(temp2, Color.FromArgb(0, 0, 170), true);
+                                mainform.putsc(temp2, Color.FromArgb(0, 0, 170), true, Style);
                                 break;
                             case "2":
-                                mainform.putsc(temp2, Color.FromArgb(0, 170, 0), true);
+                                mainform.putsc(temp2, Color.FromArgb(0, 170, 0), true, Style);
                                 break;
                             case "3":
-                                mainform.putsc(temp2, Color.FromArgb(0, 170, 170), true);
+                                mainform.putsc(temp2, Color.FromArgb(0, 170, 170), true, Style);
                                 break;
                             case "4":
-                                mainform.putsc(temp2, Color.FromArgb(170, 0, 0), true);
+                                mainform.putsc(temp2, Color.FromArgb(170, 0, 0), true, Style);
                                 break;
                             case "5":
-                                mainform.putsc(temp2, Color.FromArgb(170, 0, 170), true);
+                                mainform.putsc(temp2, Color.FromArgb(170, 0, 170), true, Style);
                                 break;
                             case "6":
-                                mainform.putsc(temp2, Color.FromArgb(255, 170, 0), true);
+                                mainform.putsc(temp2, Color.FromArgb(255, 170, 0), true, Style);
                                 break;
                             case "7":
-                                mainform.putsc(temp2, Color.FromArgb(170, 170, 170), true);
+                                mainform.putsc(temp2, Color.FromArgb(170, 170, 170), true, Style);
                                 break;
                             case "8":
-                                mainform.putsc(temp2, Color.FromArgb(85, 85, 85), true);
+                                mainform.putsc(temp2, Color.FromArgb(85, 85, 85), true, Style);
                                 break;
                             case "9":
-                                mainform.putsc(temp2, Color.FromArgb(85, 85, 255), true);
+                                mainform.putsc(temp2, Color.FromArgb(85, 85, 255), true, Style);
                                 break;
                             case "a":
-                                mainform.putsc(temp2, Color.FromArgb(85, 255, 85), true);
+                                mainform.putsc(temp2, Color.FromArgb(85, 255, 85), true, Style);
                                 break;
                             case "b":
-                                mainform.putsc(temp2, Color.FromArgb(85, 255, 255), true);
+                                mainform.putsc(temp2, Color.FromArgb(85, 255, 255), true, Style);
                                 break;
                             case "c":
-                                mainform.putsc(temp2, Color.FromArgb(255, 85, 85), true);
+                                mainform.putsc(temp2, Color.FromArgb(255, 85, 85), true, Style);
                                 break;
                             case "d":
-                                mainform.putsc(temp2, Color.FromArgb(255, 85, 255), true);
+                                mainform.putsc(temp2, Color.FromArgb(255, 85, 255), true, Style);
                                 break;
                             case "e":
-                                mainform.putsc(temp2, Color.FromArgb(255, 255, 85), true);
+                                mainform.putsc(temp2, Color.FromArgb(255, 255, 85), true, Style);
                                 break;
                             case "f":
-                                mainform.putsc(temp2, Color.FromArgb(255, 255, 255), true);
+                                mainform.putsc(temp2, Color.FromArgb(255, 255, 255), true, Style);
                                 break;
                             default:
-                                mainform.putsc(temp2, Color.FromArgb(255, 255, 255), true);
+                                mainform.putsc(temp2, Color.FromArgb(255, 255, 255), true, Style);
                                 break;
                         }
                         count--;

@@ -152,6 +152,7 @@
             this.chat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.chat.Location = new System.Drawing.Point(12, 233);
+            this.chat.MaxLength = 120;
             this.chat.Name = "chat";
             this.chat.Size = new System.Drawing.Size(665, 20);
             this.chat.TabIndex = 2;

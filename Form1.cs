@@ -240,13 +240,13 @@ namespace C_Minebot
         #region Threadsafe
 
         private delegate void putss(string text);
-        private delegate void putsc_(string text, Color tColor, bool append);
+        private delegate void putsc_(string text, Color tColor, bool append, string Style);
 
-        public void putsc(string text, Color tColor, bool append)
+        public void putsc(string text, Color tColor, bool append, string Style = "")
         {
             if (this.InvokeRequired)
             {
-                this.Invoke(new putsc_(putsc), text, tColor, append);
+                this.Invoke(new putsc_(putsc), text, tColor, append, Style);
             }
             else {
                 if (append == true)
@@ -255,6 +255,8 @@ namespace C_Minebot
                     console.AppendText(text);
                     console.Select(console.Text.Length - text.Length, text.Length);
                     console.SelectionColor = tColor;
+                    if (Style == "italic")
+                        console.SelectionFont = new Font("Cambria", 12, FontStyle.Italic);
                     int linesToAdd = (SendMessage(console.Handle, EM_GETLINECOUNT, 0, 0) - intLines);
                     SendMessage(console.Handle, EM_LINESCROLL, 0, linesToAdd);
                     return;
@@ -264,35 +266,29 @@ namespace C_Minebot
                 console.AppendText(text);
                 console.Select(console.Text.Length - text.Length, text.Length);
                 console.SelectionColor = tColor;
+                if (Style == "italic")
+                    console.SelectionFont = new Font("Cambria", 12, FontStyle.Italic);
                 int blinesToAdd = (SendMessage(console.Handle, EM_GETLINECOUNT, 0, 0) - aintLines);
                 SendMessage(console.Handle, EM_LINESCROLL, 0, blinesToAdd);
             }
 
         }
-        public void putsc(string text, Color tColor)
+        public void putsc(string text, Color tColor, string Style = "")
         {
             bool append = false;
             if (this.InvokeRequired)
             {
-                this.Invoke(new putsc_(putsc), text, tColor, append);
+                this.Invoke(new putsc_(putsc), text, tColor, append, Style);
             }
             else
             {
-                if (append == true)
-                {
-                    int intLines = SendMessage(console.Handle, EM_GETLINECOUNT, 0, 0);
-                    console.AppendText(text);
-                    console.Select(console.Text.Length - text.Length, text.Length);
-                    console.SelectionColor = tColor;
-                    int linesToAdd = (SendMessage(console.Handle, EM_GETLINECOUNT, 0, 0) - intLines);
-                    SendMessage(console.Handle, EM_LINESCROLL, 0, linesToAdd);
-                    return;
-                }
                 int aintLines = SendMessage(console.Handle, EM_GETLINECOUNT, 0, 0);
                 console.AppendText(Environment.NewLine);
                 console.AppendText(text);
                 console.Select(console.Text.Length - text.Length, text.Length);
                 console.SelectionColor = tColor;
+                if (Style == "italic") 
+                    console.SelectionFont = new Font("Cambria", 12, FontStyle.Italic);
                 int blinesToAdd = (SendMessage(console.Handle, EM_GETLINECOUNT, 0, 0) - aintLines);
                 SendMessage(console.Handle, EM_LINESCROLL, 0, blinesToAdd);
             }
