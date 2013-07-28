@@ -147,7 +147,7 @@ namespace C_Minebot.Packets
                 string username = args[0].Replace("<", "").Replace(">", "").Replace(":", "").Replace(" ", "");
                 username = func.strip_codes(username);
                 if (!(username == mainform.username && message.Contains("IRC: <")))
-                 mainform.ircmessage(mainform.translate_colors(Message));
+                 mainform.ircmessage(mainform.translate_colors(message));
             }
         }
 

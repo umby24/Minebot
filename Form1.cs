@@ -398,6 +398,10 @@ namespace C_Minebot
                 smessage = smessage.Replace("§D", ((Char)3) + "13");
                 smessage = smessage.Replace("§E", ((Char)3) + "08");
                 smessage = smessage.Replace("§F", ((Char)3) + "01");
+                smessage = smessage.Replace("§n", "");
+                smessage = smessage.Replace("§r", "");
+                smessage = smessage.Replace("§N", "");
+                smessage = smessage.Replace("§R", "");
             }
 
             return smessage;
@@ -553,7 +557,7 @@ namespace C_Minebot
         {
             if (chat.Text.StartsWith("+"))
             {
-                commandHandler ch = new commandHandler(nh.socket, this, "Minebot", chat.Text);
+                commandHandler ch = new commandHandler(nh.socket, this, "Minebot", "Minebot: " + chat.Text);
                 chat.Clear();
                 return;
             }

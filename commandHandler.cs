@@ -63,6 +63,9 @@ namespace C_Minebot
                         case "follow":
                             follow(args);
                             break;
+                        case "fjoin":
+                            thisfjoin();
+                            break;
                         case "place":
                             placeBlock(args);
                             break;
@@ -71,6 +74,9 @@ namespace C_Minebot
             }
         }
 
+        void thisfjoin() {
+            Mainform.send("JOIN " + Mainform.channel);
+        }
         void placeBlock(string[] args) {
             functions lookup = new functions();
 

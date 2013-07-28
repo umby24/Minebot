@@ -29,7 +29,8 @@ namespace C_Minebot.Packets
                 }
             }
 
-            thisChunk.updateBlock(x, y, z, blockID);
+            if (thisChunk != null)
+                thisChunk.updateBlock(x, y, z, blockID);
 
         }
 
