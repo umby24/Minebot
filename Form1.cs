@@ -331,7 +331,7 @@ namespace C_Minebot
             }
             else
             {
-                if (lstOnline.Items.Contains(name) == false)
+                if (lstOnline.Items.Contains(name))
                     lstOnline.Items.Remove(name);
             }
         }
