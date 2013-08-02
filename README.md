@@ -5,7 +5,7 @@ C# Minebot is the complete, ground up rewrite and successor to VB Minebot.
 C# Minebot utilizes the Wrapped socket library for connections with the server, and to handle all 
 encrypted communications as well.
 
-Currently supports Minecraft 1.4.7. does **NOT** support snapshots, and likely never will.
+Currently supports Minecraft 1.6.2 does **NOT** support snapshots, and likely never will.
 
 This project is only worked on in my free time, and thus is not in active development most of the time.
 
@@ -67,7 +67,7 @@ Note that all commands listed below to activate must be prefixed by a '+' by def
 
 Current Developer is Umby24.
 
-Those whose work has assisted include SinZ (Github: SinZ167) and SirCmpwn
+Those whose work has assisted include SinZ (Github: SinZ163) and SirCmpwn
 
 The socket libary used in C# Minebot (Wrapped) is a port of SinZ' own project, SinZationalSockets ported to VB.NET.
 
