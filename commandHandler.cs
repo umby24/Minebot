@@ -63,17 +63,38 @@ namespace C_Minebot
                         case "follow":
                             follow(args);
                             break;
-                        case "fjoin":
-                            thisfjoin();
-                            break;
                         case "place":
                             placeBlock(args);
+                            break;
+                        case "cselect":
+                            cselect(args);
+                            break;
+                        case "import":
+                            import(args);
                             break;
                     }
                 }
             }
         }
 
+        void import(string[] args) {
+            Mainform.importing = true;
+            Mainform.importName = args[2];
+            Packets.chatMessage chat = new Packets.chatMessage(Socket, Mainform, "Place an Iron Ore marker to import.", true);
+        }
+        void cselect(string[] args) {
+            functions lookup = new functions();
+            int blockId;
+
+            if (!lookup.isNumeric(args[2]))
+                return;
+
+            blockId = int.Parse(args[2]);
+
+            Packets.creativeInventory ci = new Packets.creativeInventory(Socket, Mainform, 40, new Classes.Item(blockId, 1, 2, 0));
+
+
+        }
         void thisfjoin() {
             Mainform.send("JOIN " + Mainform.channel);
         }
@@ -89,9 +110,24 @@ namespace C_Minebot
 
             int blockX = int.Parse(args[2]);
             int blockY = int.Parse(args[3]);
-            int blockZ = int.Parse(args[4]);
+            int blockZ = int.Parse(args[4]) - 1; // - 1 corrects some error in sending this packet that results in the Z coord being off.
 
-            Packets.placeBlock myblock = new Packets.placeBlock(blockX, (byte)blockY, blockZ, 3, new Classes.Item(1, 1, 0, 0), Socket);
+            int heldSlot = Mainform.selectedSlot + 36;
+            Classes.Item heldItem = null;
+
+            foreach (Classes.Item b in Mainform.inventory) {
+                if (b.slot == heldSlot) {
+                    heldItem = b;
+                    break;
+                }
+            }
+
+            if (heldItem != null) {
+                Packets.placeBlock myblock = new Packets.placeBlock(blockX, (byte)blockY, blockZ, 3, heldItem, Socket);
+            } else {
+                Packets.chatMessage chat = new Packets.chatMessage(Socket, Mainform, "Not holding anything.", true);
+            }
+
         }
         void follow(string[] args) {
             if (Mainform.following == false) {

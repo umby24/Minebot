@@ -32,6 +32,7 @@ namespace C_Minebot.Packets
             Classes.Decompressor DC = new Decompressor(trim);
             decompressed = DC.decompress();
 
+            
             if (pbitmap == 0) {
                 // Unload chunk, save ALL the ram!
                 Classes.Chunk thischunk = null;
@@ -43,11 +44,14 @@ namespace C_Minebot.Packets
                     }
                 }
 
-                if (thischunk != null) 
+                if (thischunk != null) {
                     Mainform.Chunks.Remove(thischunk);
+                    return;
+                }
             }
 
             Chunk myChunk = new Chunk(x, z, pbitmap, abitmap, true, groundup); // Skylight assumed true..
+            Mainform.puts("DC: " + decompressed.Length + " num: " + myChunk.numBlocks + " pbit: " + pbitmap);
             decompressed = myChunk.getData(decompressed);
 
             Mainform.Chunks.Add(myChunk); // Add to main form for use later.

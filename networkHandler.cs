@@ -79,7 +79,7 @@ namespace C_Minebot
                         chatqueue = "";
                     }
                     if (baseSock.Connected == true) {
-                        if (id == 2 || id == 3 || id == 13 || id == 16 || id == 18 || id == 101 || id == 252 || id == 253 || id == 255) {
+                        if (id == 2 || id == 3 || id == 13 || id == 16 || id == 18 || id == 101 || id == 107 || id == 252 || id == 253 || id == 255) {
                             var packet = Activator.CreateInstance(Type.GetType(packetTypes[id].ToString()), new Object[] { socket, myform, false }); // Tried a few ways around having to do this if-statement. No go on any of them.
                         } else {
                             var packet = Activator.CreateInstance(Type.GetType(packetTypes[id].ToString()), new Object[] { socket, myform }); // New and improved handling.
@@ -153,6 +153,7 @@ namespace C_Minebot
             packetTypes.Add(104, typeof(setWindowItems));
             packetTypes.Add(105, typeof(updateWindowProperty));
             packetTypes.Add(106, typeof(ConfirmTransaction));
+            packetTypes.Add(107, typeof(creativeInventory));
             packetTypes.Add(130, typeof(updateSign));
             packetTypes.Add(131, typeof(itemData));
             packetTypes.Add(132, typeof(updateTileEntity));

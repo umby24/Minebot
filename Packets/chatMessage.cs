@@ -104,6 +104,9 @@ namespace C_Minebot.Packets
                     case "multiplayer.player.joined":
                         message = name + " Joined the server";
                         break;
+                    case "multiplayer.player.left":
+                        message = name + " Left the server";
+                        break;
                     case "death.attack.outOfWorld":
                         message = name + " fell out of the world!";
                         break;

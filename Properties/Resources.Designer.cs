@@ -303,6 +303,26 @@ namespace C_Minebot.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap terrain {
+            get {
+                object obj = ResourceManager.GetObject("terrain", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap tilesetHQ {
+            get {
+                object obj = ResourceManager.GetObject("tilesetHQ", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap VillagerFace {
             get {
                 object obj = ResourceManager.GetObject("VillagerFace", resourceCulture);

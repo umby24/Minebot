@@ -190,6 +190,12 @@
   <data name="Squidface" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Lib\Icons\Squidface.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="terrain" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\terrain.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tilesetHQ" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\tilesetHQ.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="VillagerFace" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Lib\Icons\VillagerFace.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

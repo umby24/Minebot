@@ -91,6 +91,12 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="Vortex">
+      <HintPath>..\..\programming\Visual Studio 2010\Projects\MinecraftTest\MinecraftTest\MinecraftBot\bin\Debug\Vortex.dll</HintPath>
+    </Reference>
+    <Reference Include="Vortex.Win32DirectX">
+      <HintPath>..\..\programming\Visual Studio 2010\Projects\MinecraftTest\MinecraftTest\MinecraftBot\bin\Debug\Vortex.Win32DirectX.dll</HintPath>
+    </Reference>
     <Reference Include="Winsock Orcas, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\Winsock Orcas.dll</HintPath>
@@ -103,9 +109,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChunkViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ChunkViewer.Designer.cs">
+      <DependentUpon>ChunkViewer.cs</DependentUpon>
+    </Compile>
     <Compile Include="Classes\Chunk.cs" />
     <Compile Include="Classes\Decompressor.cs" />
     <Compile Include="Classes\Entity.cs" />
+    <Compile Include="Classes\Importer.cs" />
     <Compile Include="Classes\Item.cs" />
     <Compile Include="Classes\MapBlock.cs" />
     <Compile Include="Classes\Section.cs" />
@@ -140,6 +153,7 @@
     <Compile Include="Packets\CloseWindow.cs" />
     <Compile Include="Packets\CollectItem.cs" />
     <Compile Include="Packets\ConfirmTransaction.cs" />
+    <Compile Include="Packets\creativeInventory.cs" />
     <Compile Include="Packets\DestroyEnt.cs" />
     <Compile Include="Packets\displayScoreboard.cs" />
     <Compile Include="Packets\EncRequest.cs" />
@@ -211,6 +225,9 @@
     <Compile Include="Settings.Designer.cs">
       <DependentUpon>Settings.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="ChunkViewer.resx">
+      <DependentUpon>ChunkViewer.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Entity Tracker.resx">
       <DependentUpon>Entity Tracker.cs</DependentUpon>
     </EmbeddedResource>
@@ -243,6 +260,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\tilesetHQ.png" />
+    <None Include="Resources\terrain.png" />
     <None Include="Resources\Newtonsoft.Json.dll" />
     <None Include="Resources\Wrapped.dll" />
     <EmbeddedResource Include="Lib\Cryptography.dll" />

@@ -22,8 +22,12 @@ namespace C_Minebot
         public string fname = "";
         #region Bot Specific
         public string prefix = "+";
+        public string importName = "";
         public bool setopen = false;
         public bool muted = false;
+        public bool importing = false;
+        public bool exporting = false;
+        public bool moving = false;
         public bool onlineMode;
         public Color windowColor, TextColor, TextAColor;
         public Boolean flatten;
@@ -331,7 +335,7 @@ namespace C_Minebot
             }
             else
             {
-                if (lstOnline.Items.Contains(name) == false)
+                if (lstOnline.Items.Contains(name))
                     lstOnline.Items.Remove(name);
             }
         }
@@ -366,9 +370,8 @@ namespace C_Minebot
         {
             send("NICK " + ircname);
             send("USER C C C :" + ircname);
-            send("MODE " + ircname + " +i");
+            send("MODE " + ircname + " +B-x");
             send("JOIN " + channel);
-            puts("Connected.");
         }
         public string translate_colors(string text)
         {
@@ -416,16 +419,9 @@ namespace C_Minebot
             string[] splits;
             int index = 0;
 
-            splits = incoming.Split('\r','\n');
+            splits = incoming.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-            for (int b = 0; (splits.Length - 1) >= b;b++)
-            {
-                splits[b] = splits[b].Replace("\r\n","");
-                splits[b] = splits[b].Replace("\n","");
-                splits[b] = splits[b].Replace("\r","");
-            }
-
-            do
+            while (index < splits.Length)
             {
 
                 incoming = splits[index];
@@ -457,10 +453,11 @@ namespace C_Minebot
 
                     message = message.Replace("\r\n", "");
 
+
                     switch (second)
                     {
                         case "PRIVMSG":
-                            if (ircmode == 1 || ircmode == 3 && message.StartsWith("+") == false)
+                            if (ircmode == 1 || ircmode == 3 && message.StartsWith("=") == false)
                             {
                                 nh.socket.writeByte(3);
                                 nh.socket.writeString("IRC: <" + host.Substring(0, host.IndexOf("!")) + "> " + message);
@@ -481,7 +478,7 @@ namespace C_Minebot
                                              mypacket = new Packets.chatMessage(nh.socket, this, mysplits[3], true);
                                         break;
                                     case "=help":
-                                        ircmessage("C# Minebot IRC Client, Version 1.1");
+                                        ircmessage("C# Minebot IRC Client, Version 1.2");
                                         ircmessage("Only functional to relay messages between IRC channels and minecraft servers.");
                                         ircmessage("Commands are =say, =ssay, and =help.");
                                         break;
@@ -492,11 +489,17 @@ namespace C_Minebot
                         case "376":
                             send("JOIN " + channel);
                             ircmessage("Current mode: " + ircmode);
+                            puts("Connected!");
+                            break;
+                        case "451":
+                            send("NICK " + ircname);
+                            send("USER C C C :" + ircname);
+                            send("MODE " + ircname + " +B-x");
                             break;
                     }
                 }
                 index++;
-            } while (index == splits.Length - 1);
+            } 
 
             incoming = "";
         }

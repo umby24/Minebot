@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace C_Minebot.Packets
 {
@@ -29,6 +30,13 @@ namespace C_Minebot.Packets
                 }
             }
 
+            if (blockID == 15 && Mainform.importing == true) {
+                Mainform.importing = false;
+                Classes.Importer Importer = new Classes.Importer(Mainform, Mainform.importName, x, (int)y, z);
+              //  Thread importThread = new Thread(Importer.import);
+               // importThread.Start();
+                Importer.import();
+            }
             if (thisChunk != null)
                 thisChunk.updateBlock(x, y, z, blockID);
 
