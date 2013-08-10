@@ -5,7 +5,7 @@ C# Minebot is the complete, ground up rewrite and successor to VB Minebot.
 C# Minebot utilizes the Wrapped socket library for connections with the server, and to handle all 
 encrypted communications as well.
 
-Currently supports Minecraft 1.4.7. does **NOT** support snapshots, and likely never will.
+Currently supports Minecraft 1.6.2. does **NOT** support snapshots, and likely never will.
 
 This project is only worked on in my free time, and thus is not in active development most of the time.
 
@@ -37,7 +37,7 @@ The proxy will accept a limited number of commands from the IRC channel. These c
 
 ### Inventory Viewing
 
-C# Minebot can now show you all of the inventory items that you have in game, as well as the ammount you have of each of these items.
+C# Minebot can now show you all of the inventory items that you have in game, as well as the amount you have of each of these items.
 
 You can use commands in game to drop the entire stack of whatever item you may have. 
 
@@ -60,7 +60,12 @@ Note that all commands listed below to activate must be prefixed by a '+' by def
 	move [x|y|z] [-10-10] -- Will make the bot move in the specified direction by the ammount given (Max of 10 blocks in any direction at one time)
 	drop [number] -- Will make the bot drop the item contained in your inventory at slot [number].
 	pos -- make's the bot print it's current position.
-
+    block [type] -- searches for block of type [type] and tells you the first location of it that the bot can find.
+	warning -- Tells you how many slimes are loaded near you.
+	follow [name] -- Makes the bot follow [name]. To stop the following, do follow without any arguments.
+	place [x] [y] [z] -- Places the currently held item at the coordinates given.
+	cselect [id] -- Selects block id [id] from the creative inventory (If in creative mode) and places it in slot 40 (Hotbar item #4)
+	import -- [Not currently complete]
 
 
 ## Developers and Credits
@@ -72,3 +77,5 @@ Those whose work has assisted include SinZ (Github: SinZ167) and SirCmpwn
 The socket libary used in C# Minebot (Wrapped) is a port of SinZ' own project, SinZationalSockets ported to VB.NET.
 
 Encryption support in this bot as required to communicate with minecraft servers was achieved thanks to SirCmpwn's project SMProxy.
+
+The Library loading process provided for the bot is also by SinZ.
