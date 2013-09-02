@@ -36,7 +36,7 @@ namespace C_Minebot
             txtIRCPort.Text = reg.GetSetting("SH", "Minebot SMP", "ircPort", 6667).ToString();
             txtIrcChan.Text = (string)reg.GetSetting("SH", "Minebot SMP", "ircChan", "#bot");
             txtIrcNick.Text = (string)reg.GetSetting("SH", "Minebot SMP", "ircName", "VBMimebot");
-            cbOnline.Checked = bool.Parse((string)reg.GetSetting("SH", "Minebot SMP", "Online", true));
+            cbOnline.Checked = bool.Parse((string)reg.GetSetting("SH", "Minebot SMP", "Online", "true"));
             txtPrefix.Text = (string)reg.GetSetting("SH", "Minebot SMP", "prefix", "+");
 
            // Load in admins from main form

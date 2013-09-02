@@ -95,9 +95,6 @@ namespace C_Minebot
 
 
         }
-        void thisfjoin() {
-            Mainform.send("JOIN " + Mainform.channel);
-        }
         void placeBlock(string[] args) {
             functions lookup = new functions();
 

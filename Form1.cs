@@ -89,12 +89,13 @@ namespace C_Minebot
                 string resourceName = new AssemblyName(args.Name).Name + ".dll";
                 string resource = Array.Find(this.GetType().Assembly.GetManifestResourceNames(), element => element.EndsWith(resourceName));
 
-                using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resource))
-                {
-                    Byte[] assemblyData = new Byte[stream.Length];
-                    stream.Read(assemblyData, 0, assemblyData.Length);
-                    return Assembly.Load(assemblyData);
-                }
+                    using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resource))
+                    {
+                        Byte[] assemblyData = new Byte[stream.Length];
+                        stream.Read(assemblyData, 0, assemblyData.Length);
+                        return Assembly.Load(assemblyData);
+                    }
+                
             };
             InitializeComponent();
         }
@@ -624,5 +625,11 @@ namespace C_Minebot
             MessageBox.Show(build);
         }
         #endregion
+
+        private void damnToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            functions myhelper = new functions();
+            myhelper.moveTo(-192, 76, 191, this);
+        }
     }
 }

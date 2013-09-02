@@ -13,8 +13,15 @@ namespace C_Minebot
 
         public object GetSetting(string App,string key,string value,object Def)
         {
-            object thisKey = Registry.GetValue("HKEY_CURRENT_USER\\Software\\VB and VBA Program Settings\\" + App + "\\" + key, value, Def);
-
+            object thisKey;
+            try
+            {
+                thisKey = Registry.GetValue("HKEY_CURRENT_USER\\Software\\VB and VBA Program Settings\\" + App + "\\" + key, value, Def);
+            }
+            catch
+            {
+                return Def;
+            }
             if (thisKey == null)
                 return Def;
             else
