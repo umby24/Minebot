@@ -5,6 +5,8 @@ using System.Text;
 using System.Net;
 using System.IO;
 using System.Security.Cryptography;
+using Newtonsoft.Json.Linq;
+using System.Web;
 
 namespace C_Minebot
 {
@@ -26,11 +28,46 @@ namespace C_Minebot
             }
         }
 
+        public string[] newLogin(string username, string password) {
+            string json = "{\"agent\": {\"name\": \"minecraft\",\"version\": 1},\"username\": \"" + username + "\",\"password\": \"" + password + "\"}";
+            string accessToken = "";
+            string profileID = "";
+
+            HttpWebRequest wreq = (HttpWebRequest)WebRequest.Create("https://authserver.mojang.com/authenticate");
+
+            wreq.Method = "POST";
+            wreq.ContentType = "application/json";
+            wreq.ContentLength = json.Length;
+
+            using (Stream stream = wreq.GetRequestStream()) {
+                stream.Write(Encoding.ASCII.GetBytes(json), 0, json.Length);
+            }
+
+            HttpWebResponse response = (HttpWebResponse)wreq.GetResponse();
+            string code = new StreamReader(response.GetResponseStream()).ReadToEnd();
+
+            var root = JObject.Parse(code);
+
+            foreach (KeyValuePair<string, JToken> app in root) {
+                var appName = app.Key;
+                
+                switch (appName) {
+                    case "accessToken":
+                        accessToken = app.Value.ToString();
+                        break;
+                    case "selectedProfile":
+                        profileID = app.Value.First.First.ToString();
+                        break;
+                }
+            }
+
+            return new string[] { accessToken, profileID };
+        }
         public bool VerifyName(string username, string SessionID, string ServerHash)
         {
 
             WebClient request = new WebClient();
-            String result = request.DownloadString("http://session.minecraft.net/game/joinserver.jsp?user=" + username + "&sessionId=" + SessionID + "&serverId=" + ServerHash);
+            String result = request.DownloadString("http://session.minecraft.net/game/joinserver.jsp?user=" + username + "&sessionId=" + HttpUtility.UrlEncode(SessionID) + "&serverId=" + ServerHash);
 
             if (result == "OK")
                 return true;

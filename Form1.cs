@@ -212,21 +212,19 @@ namespace C_Minebot
 
                 Minecraft_Net_Interaction Login = new Minecraft_Net_Interaction();
 
-                string Response = Login.Login(UN, PW);
+               // string Response = Login.Login(UN, PW);
+                string[] response = Login.newLogin(UN,PW);
 
-                if (Response.Contains(':'))
+                if (response[0] != "")
                 {
-                    string[] mysplit = Response.Split(':');
-                    username = mysplit[2];
-                    sessionId = mysplit[3];
-                    puts("Done.");
+                    sessionId = "token:" + response[0] + ":" + response[1];
                 }
                 else
                 {
                     if (sessionId != null)
                     {
                         puts("Error logging in to Minecraft.net!");
-                        puts(Response);
+                        puts(response.ToString());
                     }
                     else
                     {
@@ -625,11 +623,5 @@ namespace C_Minebot
             MessageBox.Show(build);
         }
         #endregion
-
-        private void damnToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            functions myhelper = new functions();
-            myhelper.moveTo(-192, 76, 191, this);
-        }
     }
 }

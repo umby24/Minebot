@@ -44,7 +44,6 @@
             this.chat = new System.Windows.Forms.TextBox();
             this.btnSend = new System.Windows.Forms.Button();
             this.lstOnline = new System.Windows.Forms.ListBox();
-            this.damnToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -115,8 +114,7 @@
             this.muteToolStripMenuItem,
             this.aboutToolStripMenuItem,
             this.asdToolStripMenuItem,
-            this.trackerToolStripMenuItem,
-            this.damnToolStripMenuItem});
+            this.trackerToolStripMenuItem});
             this.optionToolStripMenuItem.Name = "optionToolStripMenuItem";
             this.optionToolStripMenuItem.Size = new System.Drawing.Size(56, 20);
             this.optionToolStripMenuItem.Text = "&Option";
@@ -180,13 +178,6 @@
             this.lstOnline.Size = new System.Drawing.Size(120, 199);
             this.lstOnline.TabIndex = 4;
             // 
-            // damnToolStripMenuItem
-            // 
-            this.damnToolStripMenuItem.Name = "damnToolStripMenuItem";
-            this.damnToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.damnToolStripMenuItem.Text = "damn";
-            this.damnToolStripMenuItem.Click += new System.EventHandler(this.damnToolStripMenuItem_Click);
-            // 
             // Form1
             // 
             this.AcceptButton = this.btnSend;
@@ -228,7 +219,6 @@
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem asdToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem trackerToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem damnToolStripMenuItem;
     }
 }
 
