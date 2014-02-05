@@ -5,337 +5,334 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 using Microsoft.VisualBasic;
 
-namespace C_Minebot
-{
-    public partial class Settings : Form
-    {
-        List<string> favs;
-        public Form1 myform;
-        public Settings()
-        {
+using CBOT.Classes;
+
+namespace CBOT {
+    public partial class Settings : Form {
+        #region Variables
+        private string AccessToken, ClientToken;
+        private bool Login = false, Verify = false;
+        public Dictionary<string, string> Bookmarks;
+        public Dictionary<string, Image> BIcons;
+        public Dictionary<string, string> BPlayers;
+        mainForm MainGui;
+        #endregion
+
+        public Settings(mainForm gui) {
+            MainGui = gui;
             InitializeComponent();
         }
 
-        private void Settings_Load(object sender, EventArgs e)
-        {
-            favs = new List<string>();
-            RegistryControl reg = new RegistryControl();
-
-            linkLabel1.Links.Add(0, linkLabel1.Text.Length, linkLabel1.Text);
-            linkLabel2.Links.Add(0, linkLabel2.Text.Length, linkLabel2.Text);
-
-            checkBox2.Checked = myform.flatten;
-            txtIP.Text = (string)reg.GetSetting("SH","Minebot SMP","IP","smp.mcsteamed.net");
-            txtPort.Text = reg.GetSetting("SH", "Minebot SMP", "Port", 25566).ToString();
-            txtUN.Text = (string)reg.GetSetting("SH", "Minebot SMP", "Username", "Minebot");
-            txtPW.Text = (string)reg.GetSetting("SH", "Minebot SMP", "Password", "pie");
-            txtIrcIP.Text = (string)reg.GetSetting("SH", "Minebot SMP", "ircIP", "irc.esper.net");
-            txtIRCPort.Text = reg.GetSetting("SH", "Minebot SMP", "ircPort", 6667).ToString();
-            txtIrcChan.Text = (string)reg.GetSetting("SH", "Minebot SMP", "ircChan", "#bot");
-            txtIrcNick.Text = (string)reg.GetSetting("SH", "Minebot SMP", "ircName", "VBMimebot");
-            cbOnline.Checked = bool.Parse((string)reg.GetSetting("SH", "Minebot SMP", "Online", "true"));
-            txtPrefix.Text = (string)reg.GetSetting("SH", "Minebot SMP", "prefix", "+");
-
-           // Load in admins from main form
-            for (int i = 0; i < (myform.admins.Count); i++)
-            {
-                lstAdmins.Items.Add(myform.admins[i]);
+        #region Button Clicks
+        private void btnQuickConnect_Click(object sender, EventArgs e) {
+            if (HelpingFunctions.isNumeric(txtQuickPort.Text) == false) {
+                MessageBox.Show("Server port must be a number!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
 
-                string Favorites = (string)reg.GetSetting("SH", "Minebot SMP", "Fav", "");
-                if (Favorites.Contains("=") && Favorites.Contains("|"))
-                {
-                    string[] Favsplit = Favorites.Split('=');
-                    for (int i = 0; i < (Favsplit.Length); i++)
-                    {
-                        if (Favsplit[i] != "")
-                        {
-                            favs.Add(Favsplit[i]);
-                            lstFav.Items.Add(Favsplit[i].Split('|')[0]);
-                        }
+            if (txtQuickIP.Text.Replace(" ", "") == "" || txtQuickPort.Text.Replace(" ", "") == "") {
+                MessageBox.Show("IP and Port must be filled in!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
-                    }
+            if (chkOnlineMode.Checked == true) {
+                if ((AccessToken != null && ClientToken != null) && (AccessToken != "" && ClientToken != "")) {
+                    Verify = true;
+                    Login = false;
+                } else {
+                    Login = true;
+                    Verify = false;
                 }
+            } else {
+                Login = false;
+                Verify = false;
             }
 
-        private void Settings_closing(object sender, EventArgs e)
-        {
-            myform.setopen = false;
+            ConnectMinecraft(txtQuickIP.Text, int.Parse(txtQuickPort.Text));
         }
 
-        #region Clicks
-        private void button1_Click(object sender, EventArgs e)
-        {
-            colorDialog1.ShowDialog();
-            myform.windowColor = colorDialog1.Color;
+        private void btnQuickBookmark_Click(object sender, EventArgs e) {
+            if (HelpingFunctions.isNumeric(txtQuickPort.Text) == false) {
+                MessageBox.Show("Server port must be a number!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (txtQuickIP.Text.Replace(" ", "") == "" || txtQuickPort.Text.Replace(" ", "") == "") {
+                MessageBox.Show("IP and Port must be filled in!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
-            RegistryControl Reg = new RegistryControl();
-            Reg.SaveSetting("SH", "Minebot SMP", "bcr", colorDialog1.Color.R.ToString());
-            Reg.SaveSetting("SH", "Minebot SMP", "bcg", colorDialog1.Color.G.ToString());
-            Reg.SaveSetting("SH", "Minebot SMP", "bcb", colorDialog1.Color.B.ToString());
-            myform.loadColors();
-        }
-        private void button2_Click(object sender, EventArgs e)
-        {
-            colorDialog1.ShowDialog();
-            myform.windowColor = colorDialog1.Color;
+            string Servername = Interaction.InputBox("Enter the name to bookmark this server under", "Bookmark server");
 
-            RegistryControl Reg = new RegistryControl();
-            Reg.SaveSetting("SH", "Minebot SMP", "bgr", colorDialog1.Color.R.ToString());
-            Reg.SaveSetting("SH", "Minebot SMP", "bgg", colorDialog1.Color.G.ToString());
-            Reg.SaveSetting("SH", "Minebot SMP", "bgb", colorDialog1.Color.B.ToString());
-            myform.loadColors();
-        }
-        private void button3_Click(object sender, EventArgs e)
-        {
-            colorDialog1.ShowDialog();
-            myform.windowColor = colorDialog1.Color;
-
-            RegistryControl Reg = new RegistryControl();
-            Reg.SaveSetting("SH", "Minebot SMP", "ter", colorDialog1.Color.R.ToString());
-            Reg.SaveSetting("SH", "Minebot SMP", "teg", colorDialog1.Color.G.ToString());
-            Reg.SaveSetting("SH", "Minebot SMP", "teb", colorDialog1.Color.B.ToString());
-            myform.loadColors();
-        }
-        private void lstFav_DoubleClick(object Sender, EventArgs e)
-        {
-            if (lstFav.SelectedItem == null)
+            if (Servername == "")
                 return;
 
-            string selected = lstFav.SelectedItem.ToString();
+            if (Bookmarks == null)
+                Bookmarks = new Dictionary<string, string>();
 
-            for (int i = 0; i < favs.Count; i++)
-            {
-                if (favs[i].Split('|')[0] == selected)
-                {
-                    txtIP.Text = favs[i].Split('|')[1];
-                    txtPort.Text = favs[i].Split('|')[2].Replace("=", "");
+            Bookmarks.Add(Servername, Servername + "|" + txtQuickIP.Text + "|" + txtQuickPort.Text + "=");
+
+            txtQuickIP.Clear();
+            txtQuickPort.Clear();
+
+            SaveSettings();
+            ResetList();
+        }
+
+        private void btnConnect_Click(object sender, EventArgs e) {
+            if (lstServers.SelectedIndex == -1)
+                return;
+
+            string ServerName = (string)lstServers.SelectedItem;
+
+            if (ServerName.Contains(" ")) // -- This may include ping information, need to split it if so.
+                ServerName = ServerName.Substring(0, ServerName.IndexOf(" "));
+
+            string fullString = Bookmarks[ServerName];
+            string IP = fullString.Substring(fullString.IndexOf("|") + 1, fullString.LastIndexOf("|") - (fullString.IndexOf("|") + 1));
+            string Port = fullString.Substring(fullString.LastIndexOf("|") + 1, fullString.IndexOf("=") - (fullString.LastIndexOf("|") + 1));
+
+            if (chkOnlineMode.Checked == true) {
+                if ((AccessToken != null && ClientToken != null) && (AccessToken != "" && ClientToken != "")) {
+                    Verify = true;
+                    Login = false;
+                } else {
+                    Login = true;
+                    Verify = false;
+                }
+            } else {
+                Login = false;
+                Verify = false;
+            }
+
+            ConnectMinecraft(IP, int.Parse(Port));
+        }
+        private void btnPingServers_Click(object sender, EventArgs e) {
+            lstServers.Items.Clear();
+
+            if (BIcons == null)
+                BIcons = new Dictionary<string, Image>();
+
+            if (BPlayers == null)
+                BPlayers = new Dictionary<string, string>();
+
+            BIcons.Clear();
+            BPlayers.Clear();
+
+            foreach (string Server in Bookmarks.Keys) {
+                string fullString = Bookmarks[Server];
+                string IP = fullString.Substring(fullString.IndexOf("|") + 1, fullString.LastIndexOf("|") - (fullString.IndexOf("|") + 1));
+                string Port = fullString.Substring(fullString.LastIndexOf("|") + 1, fullString.IndexOf("=") - (fullString.LastIndexOf("|") + 1));
+
+                ServerPinger Pinger = new ServerPinger(IP, int.Parse(Port), Server);
+                Pinger.PingComplete += PingCompleteHandler;
+                Pinger.ping();
+            }
+        }
+        private void btnAddServer_Click(object sender, EventArgs e) {
+            string ServerName = Interaction.InputBox("Input the name for the server", "Add Bookmark");
+
+            if (ServerName == "")
+                return;
+
+            string IP = Interaction.InputBox("Input the IP for the server", "Add Bookmark");
+
+            if (IP == "")
+                return;
+
+            string Port = Interaction.InputBox("Input the port for the server", "Add Bookmark", "25565");
+
+            if (Port == "")
+                return;
+
+            if (HelpingFunctions.isNumeric(Port) == false) {
+                MessageBox.Show("Server port must be a number!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            Bookmarks.Add(ServerName, ServerName + "|" + IP + "|" + Port + "=");
+            SaveSettings();
+            ResetList();
+        }
+
+        private void lstServers_SelectedIndexChanged(object sender, EventArgs e) {
+            if (lstServers.SelectedIndex == -1)
+                return;
+
+            string ServerName = (string)lstServers.SelectedItem;
+
+            if (ServerName.Contains(" ")) // -- This may include ping information, need to split it if so.
+                ServerName = ServerName.Substring(0, ServerName.IndexOf(" "));
+
+            if (BIcons != null) { 
+                if (BIcons.ContainsKey(ServerName))
+                    IconBox.Image = BIcons[ServerName];
+
+                if (BPlayers.ContainsKey(ServerName))
+                    lblPlayers.Text = "Players:\n" + BPlayers[ServerName];
+            }
+        }
+        private void btnRemoveServer_Click(object sender, EventArgs e) {
+            if (lstServers.SelectedIndex == -1)
+                return;
+
+            string ServerName = (string)lstServers.SelectedItem;
+
+            if (ServerName.Contains(" ")) // -- This may include ping information, need to split it if so.
+                ServerName = ServerName.Substring(0, ServerName.IndexOf(" "));
+
+            Bookmarks.Remove(ServerName);
+            SaveSettings();
+            ResetList();
+        }
+        #endregion
+
+        private void Settings_Load(object sender, EventArgs e) {
+            // -- Load bot settings
+            settingsReader SR = new settingsReader("Settings.ini", true);
+            SR.readSettings();
+
+            if (!File.Exists("Settings.ini")) {
+                SR.settings.Add("QuickIP", "");
+                SR.saveSettings();
+            }
+
+            SR.readSettings();
+            // -- Server bookmarks
+            Bookmarks = new Dictionary<string, string>();
+
+            if (SR.settings.ContainsKey("Bookmarks")) {
+                // -- [ServerName]|IP|Port=
+                if (!SR.settings["Bookmarks"].Contains("=")) {
+                    MessageBox.Show("Settings file formatted incorrectly!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                string[] servers = SR.settings["Bookmarks"].Split(new Char[] {'='}, StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (string i in servers) {
+                    string ServerName = i.Substring(0, i.IndexOf("|"));
+                    Bookmarks.Add(ServerName, i + "=");
+                    lstServers.Items.Add(ServerName);
                 }
             }
 
+            // -- Quick Connect info
+            if (SR.settings.ContainsKey("QuickIP"))
+                txtQuickIP.Text = SR.settings["QuickIP"];
+
+            if (SR.settings.ContainsKey("QuickPort"))
+                txtQuickPort.Text = SR.settings["QuickPort"];
+
+            // -- User info
+
+            if (SR.settings.ContainsKey("Username"))
+                txtUsername.Text = SR.settings["Username"];
+
+            if (SR.settings.ContainsKey("Verify"))
+                chkOnlineMode.Checked = bool.Parse(SR.settings["Verify"]);
+
+            if (SR.settings.ContainsKey("AccessToken")) {
+                AccessToken = SR.settings["AccessToken"];
+                chkStorePassword.Checked = true;
+            }
+
+            if (SR.settings.ContainsKey("ClientToken"))
+                ClientToken = SR.settings["ClientToken"];
+
         }
 
-        private void btnConnect_Click(object sender, EventArgs e)
-        {
-            myform.beginConnect(txtIP.Text, txtPort.Text, txtUN.Text, txtPW.Text, cbOnline.Checked);
-            myform.setopen = false;
+        private void SaveSettings() {
+            settingsReader SR = new settingsReader("Settings.ini",true);
+            SR.settings = new Dictionary<string, string>();
+
+            SR.settings.Add("Username", txtUsername.Text);
+
+            if (chkStorePassword.Checked == true) {
+                SR.settings.Add("AccessToken", AccessToken);
+                SR.settings.Add("ClientToken", ClientToken);
+            }
+
+            SR.settings.Add("Verify", chkOnlineMode.Checked.ToString());
+            SR.settings.Add("QuickIP", txtQuickIP.Text);
+            SR.settings.Add("QuickPort", txtQuickPort.Text);
+            SR.settings.Add("Bookmarks", String.Join("", Bookmarks.Values.ToArray()));
+
+            SR.saveSettings();
+        }
+        private void ConnectMinecraft(string ip, int port) {
+            if (MainGui.connected == true)
+                MainGui.MinecraftServer.Disconnect();
+
+            if (MainGui.MinecraftServer == null)
+                MainGui.MinecraftServer = new libMC.NET.Minecraft(ip, port, txtUsername.Text, txtPassword.Text, chkOnlineMode.Checked);
+
+            if (Verify) {
+                bool Result = MainGui.MinecraftServer.VerifySession(AccessToken, ClientToken);
+
+                if (!Result)
+                    Login = true;
+            }
+
+            if (Login) {
+                if (txtPassword.Text != "")
+                    MainGui.MinecraftServer.Login();
+                else {
+                    MessageBox.Show("Error verifying credentials, please enter your password to connect.", "LoginError", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+
+            AccessToken = MainGui.MinecraftServer.AccessToken;
+            ClientToken = MainGui.MinecraftServer.ClientToken;
+
+            MainGui.connected = true;
+
+            MainGui.RegisterHandlers();
+
+            MainGui.MinecraftServer.Connect();
+
+            SaveSettings();
+
+            Thread.Sleep(3);
+
             this.Close();
         }
+        private void ResetList() {
+            lstServers.Items.Clear();
 
-        private void btnRemFav_Click(object sender, EventArgs e)
-        {
-            string name = lstFav.GetItemText(lstFav.SelectedItem);
+            foreach (string s in Bookmarks.Keys) {
+                lstServers.Items.Add(s);
+            }
+        }
 
-            if (name == "" || name == null)
-            {
-                MessageBox.Show("No item selected.");
+        private delegate void PingComplete(object ping);
+        private void PingCompleteHandler(object Ping) {
+            if (this.InvokeRequired) {
+                this.Invoke(new PingComplete(PingCompleteHandler), Ping);
                 return;
             }
+            ServerPinger FinishedPing = (ServerPinger)Ping;
 
-            RegistryControl reg = new RegistryControl();
-            string fullstring;
-            string Favorites = (string)reg.GetSetting("SH", "Minebot SMP", "Fav", "");
-            string temp = Favorites.Substring(0, Favorites.IndexOf(name));
+            lstServers.Items.Add(FinishedPing.serverName + " - " + FinishedPing.PingResponse[0] + "/" + FinishedPing.PingResponse[1] + " (" + FinishedPing.PingResponse[4] + ") " + FinishedPing.msPing + " ms");
+            
+            BIcons.Add(FinishedPing.serverName, FinishedPing.favicon);
 
+            if (FinishedPing.Players != null)
+                BPlayers.Add(FinishedPing.serverName, String.Join("\n", FinishedPing.Players));
 
-            if (temp.Length != 0)
-                fullstring = Favorites.Replace(temp, "");
-            else
-                fullstring = Favorites;
-
-            fullstring = fullstring.Substring(0, fullstring.IndexOf("=") + 1);
-            Favorites = Favorites.Replace(fullstring, "");
-            reg.SaveSetting("SH", "Minebot SMP", "Fav", Favorites);
-            lstFav.Items.Clear();
-
-            if (Favorites.Contains("=") && Favorites.Contains("|"))
-            {
-                string[] Favsplit = Favorites.Split('=');
-                for (int i = 0; i < (Favsplit.Length); i++)
-                {
-                    if (Favsplit[i] != "")
-                    {
-                        favs.Add(Favsplit[i]);
-                        lstFav.Items.Add(Favsplit[i].Split('|')[0]);
-                    }
-
-                }
-            }
+            FinishedPing.SP.Disconnect();
         }
 
-        private void btnAddFav_Click(object sender, EventArgs e)
-        {
-
-            // As much as I wanted to stay away from VB Methods, there is no equivelant of this in C#.
-            string name = Interaction.InputBox("What is the name for your server?", "Server Name");
-            string ip = Interaction.InputBox("What is the server's IP?", "Server IP");
-            string port = Interaction.InputBox("What is the server's port?", "Server Port");
-            RegistryControl reg = new RegistryControl();
-
-            string Favorites = (string)reg.GetSetting("SH", "Minebot SMP", "Fav", "");
-
-            Favorites += name + "|" + ip + "|" + port + "=";
-            reg.SaveSetting("SH", "Minebot SMP", "Fav", Favorites);
-            lstFav.Items.Clear();
-
-            if (Favorites.Contains("=") && Favorites.Contains("|"))
-            {
-                string[] Favsplit = Favorites.Split('=');
-
-                for (int i = 0; i < (Favsplit.Length); i++)
-                {
-                    if (Favsplit[i] != "")
-                    {
-                        favs.Add(Favsplit[i]);
-                        lstFav.Items.Add(Favsplit[i].Split('|')[0]);
-                    }
-
-                }
-            }
-        }
-
-        private void btnAddAdmin_Click(object sender, EventArgs e)
-        {
-            RegistryControl Reg = new RegistryControl();
-
-            string name = Interaction.InputBox("What is the admin's in-game username?", "Username");
-            string admins = (string)Reg.GetSetting("SH", "Minebot SMP", "Admins", "");
-
-            admins += name + "|";
-            Reg.SaveSetting("SH", "Minebot SMP", "Admins", admins);
-            myform.admins.Clear();
-            lstAdmins.Items.Clear();
-
-            string[] mysplits = admins.Split('|');
-
-            for (int i = 0; i < mysplits.Length; i++)
-            {
-                if (mysplits[i] != "")
-                {
-                    myform.admins.Add(mysplits[i]);
-                    lstAdmins.Items.Add(mysplits[i]);
-                }
-            }
-
-            if (!myform.admins.Contains("Minebot"))
-            {
-                myform.admins.Add("Minebot");
-                lstAdmins.Items.Add("Minebot");
-            }
-        }
-
-        private void btnRemAdmin_Click(object sender, EventArgs e)
-        {
-            RegistryControl Reg = new RegistryControl();
-
-            string selected = (string)lstAdmins.SelectedItem;
-            string admins = (string)Reg.GetSetting("SH", "Minebot SMP", "Admins", "");
-
-            if (selected == null)
-                return;
-
-            admins = admins.Replace(selected + "|", "");
-            Reg.SaveSetting("SH", "Minebot SMP", "Admins", admins);
-            lstAdmins.Items.Clear();
-            myform.admins.Clear();
-
-            string[] mysplits = admins.Split('|');
-
-            for (int i = 0; i < mysplits.Length; i++)
-            {
-                if (mysplits[i] != "")
-                {
-                    myform.admins.Add(mysplits[i]);
-                    lstAdmins.Items.Add(mysplits[i]);
-                }
-            }
-
-            if (!myform.admins.Contains("Minebot"))
-            {
-                myform.admins.Add("Minebot");
-                lstAdmins.Items.Add("Minebot");
-            }
-        }
-        #endregion
-
-
-
-        #region Changed
-        private void checkBox2_CheckedChanged(object sender, EventArgs e)
-        {
-            RegistryControl Reg = new RegistryControl();
-            Reg.SaveSetting("SH", "Minebot SMP", "flat", checkBox2.Checked.ToString());
-            myform.loadColors();
-        }
-
-        private void cbOnline_CheckedChanged(object sender, EventArgs e)
-        {
-            RegistryControl Reg = new RegistryControl();
-            Reg.SaveSetting("SH", "Minebot SMP", "Online", cbOnline.Checked.ToString());
-        }
-
-
-
-        private void txtIP_TextChanged(object sender, EventArgs e)
-        {
-            RegistryControl Reg = new RegistryControl();
-            Reg.SaveSetting("SH", "Minebot SMP", "IP", txtIP.Text);
-        }
-
-        private void txtPort_TextChanged(object sender, EventArgs e)
-        {
-            RegistryControl Reg = new RegistryControl();
-            Reg.SaveSetting("SH", "Minebot SMP", "Port", txtPort.Text);
-        }
-
-        private void txtUN_TextChanged(object sender, EventArgs e)
-        {
-            RegistryControl Reg = new RegistryControl();
-            Reg.SaveSetting("SH", "Minebot SMP", "Username", txtUN.Text);
-        }
-
-        private void txtPW_TextChanged(object sender, EventArgs e)
-        {
-            RegistryControl Reg = new RegistryControl();
-            Reg.SaveSetting("SH", "Minebot SMP", "Password", txtPW.Text);
-        }
-
-
-
-        private void txtIrcIP_TextChanged(object sender, EventArgs e)
-        {
-            RegistryControl Reg = new RegistryControl();
-            Reg.SaveSetting("SH", "Minebot SMP", "ircIP", txtIrcIP.Text);
-        }
-
-        private void txtIRCPort_TextChanged(object sender, EventArgs e)
-        {
-            RegistryControl Reg = new RegistryControl();
-            Reg.SaveSetting("SH", "Minebot SMP", "ircPort", txtIRCPort.Text);
-        }
-
-        private void txtIrcChan_TextChanged(object sender, EventArgs e)
-        {
-            RegistryControl Reg = new RegistryControl();
-            Reg.SaveSetting("SH", "Minebot SMP", "ircChan", txtIrcChan.Text);
-        }
-
-        private void txtIrcNick_TextChanged(object sender, EventArgs e)
-        {
-            RegistryControl Reg = new RegistryControl();
-            Reg.SaveSetting("SH", "Minebot SMP", "ircName", txtIrcNick.Text);
-        }
-        #endregion
-
-        private void txtPrefix_TextChanged(object sender, EventArgs e) {
-
-            RegistryControl reg = new RegistryControl();
-            reg.SaveSetting("SH", "Minebot SMP", "prefix", txtPrefix.Text);
+        private void tabPage1_Click(object sender, EventArgs e) {
 
         }
+
 
 
 

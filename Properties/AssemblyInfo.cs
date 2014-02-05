@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("C Minebot")]
+[assembly: AssemblyTitle("CBOT")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("C Minebot")]
-[assembly: AssemblyCopyright("")]
+[assembly: AssemblyProduct("CBOT")]
+[assembly: AssemblyCopyright("Copyright ©  2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("15b3ab76-091b-42cc-b37b-2a9058dd67e6")]
+[assembly: Guid("9eb832f8-6f88-49de-b759-2e346d5a035b")]
 
 // Version information for an assembly consists of the following four values:
 //

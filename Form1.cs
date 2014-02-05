@@ -5,74 +5,34 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
-using Winsock_Orcas;
-using System.Text.RegularExpressions;
-using System.Collections;
-using C_Minebot.Classes;
-using System.Reflection;
+using System.IO;
 
-namespace C_Minebot
-{
-    public partial class Form1 : Form
-    {
+using libMC.NET;
+using libMC.NET.Packets.Play.ServerBound;
+
+using CBOT.Classes;
+
+namespace CBOT {
+    public partial class mainForm : Form {
         #region Variables
-        public bool following = false;
-        public string fname = "";
-        #region Bot Specific
+        public Thread luaThread;
+        public LuaWrapper luaHandler;
+        public bool connected = false;
+        public Minecraft MinecraftServer;
         public string prefix = "+";
-        public string importName = "";
-        public bool setopen = false;
-        public bool muted = false;
-        public bool importing = false;
-        public bool exporting = false;
-        public bool moving = false;
-        public bool onlineMode;
-        public Color windowColor, TextColor, TextAColor;
-        public Boolean flatten;
-        public Boolean colorize = true;
-        public List<string> admins;
-        public List<Classes.Item> inventory = new List<Classes.Item>();
+        #region Follow Command
+        public bool Following = false;
+        public int Follow_ID = 0;
+        #endregion
+        #region Commands
+        public Dictionary<string, Command> Commands;
+        public List<string> AccessList;
         #endregion
 
-        #region Server
-
-        public short hunger, selectedSlot;
-        public long time, worldAge;
-        public int[] spawnPoint;
-        public int EntityID;
-        public bool onground;
-        public float health;
-        public float[] position;
-        public double[] location;
-        public string ServerID, serverHash, sessionId, sip, sport;
-
-        public List<Chunk> Chunks = new List<Chunk>();
-        public List<Entity> Entitys = new List<Entity>();
-        #endregion
-
-        #region Encryption
-        public byte[] PublicKey, token;
-        public byte[] sharedkey = new byte[16];
-        #endregion
-
-        #region Network
-        public string username;
-        public networkHandler nh;
-        #endregion
-
-        #region IRC Bot
-
-        public Winsock_Orcas.Winsock IRCSock;
-        public int ircmode = 0;
-        public int ircPort;
-        public string channel, ircname, ircIP;
-        public bool canTalk = false;
-
-        #endregion
-
-        #endregion
         #region Colorized Chatbox
         public const int EM_GETLINECOUNT = 0xBA;
         public const int EM_LINESCROLL = 0xB6;
@@ -81,547 +41,409 @@ namespace C_Minebot
         public static extern int SendMessage(IntPtr hWnd, int msg, int wParam, int lParam);
 
         #endregion
-        #region Form Events
-        public Form1()
-        {
-            AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
-            {
-                string resourceName = new AssemblyName(args.Name).Name + ".dll";
-                string resource = Array.Find(this.GetType().Assembly.GetManifestResourceNames(), element => element.EndsWith(resourceName));
 
-                    using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resource))
-                    {
-                        Byte[] assemblyData = new Byte[stream.Length];
-                        stream.Read(assemblyData, 0, assemblyData.Length);
-                        return Assembly.Load(assemblyData);
-                    }
-                
-            };
+        #endregion
+
+        public mainForm() {
             InitializeComponent();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            // Load interface Customizations
-             loadColors();
+        private void mainForm_Load(object sender, EventArgs e) {
+            puts("Welcome to Minebot!");
 
-            // Load bot allowed administrators.
+            luaHandler = new LuaWrapper(this); // -- initalize Lua
 
-            RegistryControl Reg = new RegistryControl();
-            admins = new List<string>();
+            luaThread = new Thread(luaHandler.Lua_Main); // -- Begin script loading/reloading loop.
+            luaThread.Start();
 
-            string AdminString = Reg.GetSetting("SH", "Minebot SMP", "admins", "").ToString();
+            puts("Lua initilized");
 
-            if (AdminString != "") {
-                string[] mysplits = AdminString.Split('|');
+            Commands = new Dictionary<string, Command> {
+                {"+luarun", new LuaRun()},
+                {"+getblock", new GetBlock()},
+                {"+hold", new Hold()},
+                {"+say", new Say()},
+                {"+follow", new Follow()}
+            }; // -- Initilize bot command databases.
 
-                for (int i = 0; i < mysplits.Length; i++) {
-                    if (mysplits[i] != "") {
-                        admins.Add(mysplits[i]);
-                    }
+            // -- Initilize bot accesslist, and load it from file.
+
+            AccessList = new List<string>();
+
+            settingsReader SR = new settingsReader("admin.txt", true);
+
+            if (!File.Exists("admin.txt")) {
+                SR.settings = new Dictionary<string, string>();
+                SR.settings.Add("admins", "");
+                SR.saveSettings();
+            }
+
+            SR.readSettings();
+
+            if (SR.settings["admins"] != null) {
+                string[] admins = SR.settings["admins"].Split('|');
+                foreach (string b in admins) {
+                    AccessList.Add(b);
                 }
             }
 
-            // Load IRC settings
-            try
-            {
-                ircIP = (string)Reg.GetSetting("SH", "Minebot SMP", "ircIP", "irc.esper.net");
-                ircPort = int.Parse(Reg.GetSetting("SH", "Minebot SMP", "ircPort", 6667).ToString());
-                channel = (string)Reg.GetSetting("SH", "Minebot SMP", "ircChan", "#bot");
-                ircname = (string)Reg.GetSetting("SH", "Minebot SMP", "ircName", "VBMinebot");
-            }
-            catch (Exception f)
-            {
-                puts("An error occured while loading IRC settings. This shouldn't affect functionality of the bot. \n" + f.Message);
-            }
-
-            // Load command prefix
-
-            RegistryControl reg = new RegistryControl();
-            prefix = (string)reg.GetSetting("SH", "Minebot SMP", "prefix", "+");
-
-            admins.Add("Minebot");
-
-            putsc("=_=_=_= C# Minebot =_=_=_=", Color.Yellow);
-            putsc("=+=+=+= Version 1.5.1 =+=+=+=", Color.Blue);
-            putsc("======= by Umby24 ========", Color.Red);
-            putsc("-------- All settings loaded ---------", Color.Orange);
-
+            puts("Access list loaded");
         }
-        private void Form1_Close(object sender, EventArgs e)
-        {
-            if (nh != null)
-            {
-                Packets.Kick leaving = new Packets.Kick(nh.socket, this,true);
-                System.Threading.Thread.Sleep(200);
-                nh.stop();
+        void mainForm_FormClosing(object sender, System.Windows.Forms.FormClosingEventArgs e) {
+            if (connected)
+                MinecraftServer.Disconnect();
+
+            luaThread.Abort();
+        }
+
+        #region Button Clicks
+        private void connectToolStripMenuItem_Click(object sender, EventArgs e) {
+            Settings settingsWindow = new Settings(this);
+            settingsWindow.Show();
+        }
+
+        private void disconnectToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (connected) {
+                MinecraftServer.Disconnect();
+                DeregisterHandlers();
+                connected = false;
+                lstPlayers.Items.Clear();
+                puts("Disconnected from server.");
             }
-            
+        }
+
+        private void reconnectToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (connected)
+                MinecraftServer.Disconnect();
+
+            lstPlayers.Items.Clear();
+            boxConsole.Clear();
+
+            if (MinecraftServer != null)
+                MinecraftServer.Connect();
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e) {
+            //if (connected)
+            //    MinecraftServer.Disconnect();
+
+            //this.Close();
+            MinecraftServer.ThisPlayer.location.x = MinecraftServer.ThisPlayer.location.x + 2;
+            PlayerPosition pp = new PlayerPosition(ref MinecraftServer);
         }
         #endregion
-        #region FormHelpers
-
-        public void loadColors()
-        {
-            //Retrieve color settings from registry.
-            RegistryControl reg = new RegistryControl();
-
-            windowColor = Color.FromArgb(int.Parse(reg.GetSetting("SH", "Minebot SMP", "bcr", 255).ToString()), int.Parse(reg.GetSetting("SH", "Minebot SMP", "bcg", 255).ToString()), int.Parse(reg.GetSetting("SH", "Minebot SMP", "bcb", 255).ToString()));
-            TextColor = Color.FromArgb(int.Parse(reg.GetSetting("SH", "Minebot SMP", "ter", 0).ToString()), int.Parse(reg.GetSetting("SH", "Minebot SMP", "teg", 0).ToString()), int.Parse(reg.GetSetting("SH", "Minebot SMP", "teb", 0).ToString()));
-            TextAColor = Color.FromArgb(int.Parse(reg.GetSetting("SH", "Minebot SMP", "bgr", 192).ToString()), int.Parse(reg.GetSetting("SH", "Minebot SMP", "bgg", 192).ToString()), int.Parse(reg.GetSetting("SH", "Minebot SMP", "bgb", 192).ToString()));
-
-            flatten = Boolean.Parse(reg.GetSetting("SH", "Minebot SMP", "flat", "false").ToString());
-            colorize = Boolean.Parse(reg.GetSetting("SH", "Minebot SMP", "colored", "true").ToString());
-
-            if (flatten == true)
-            {
-                btnSend.FlatStyle = FlatStyle.Flat;
-            }
-            else
-            {
-                btnSend.FlatStyle = FlatStyle.Standard;
-            }
-
-            //Set the colors from this form, the other forms will pull from this form to color themselves.
-            this.BackColor = windowColor;
-            this.ForeColor = TextColor;
-            btnSend.ForeColor = TextColor;
-            btnSend.BackColor = windowColor;
-            this.lstOnline.BackColor = TextAColor;
-            lstOnline.ForeColor = TextColor;
-            console.BackColor = TextAColor;
-            console.ForeColor = TextColor;
-            chat.BackColor = TextAColor;
-            chat.ForeColor = TextColor;
-            this.ResumeLayout(false);
-            this.PerformLayout();
-        }
-
-        public void beginConnect(string IP, string port, string UN, string PW, bool online)
-        {
-
-            lstOnline.Items.Clear();
-            username = UN;
-            onlineMode = online;
-            sip = IP;
-            sport = port;
-
-            if (online && sessionId == null)
-            {
-                puts("Logging in to Minecraft.net...");
-
-                Minecraft_Net_Interaction Login = new Minecraft_Net_Interaction();
-
-               // string Response = Login.Login(UN, PW);
-                string[] response = Login.newLogin(UN,PW);
-
-                if (response[0] != "")
-                {
-                    sessionId = "token:" + response[0] + ":" + response[1];
-                }
-                else
-                {
-                    if (sessionId != null)
-                    {
-                        puts("Error logging in to Minecraft.net!");
-                        puts(response.ToString());
-                    }
-                    else
-                    {
-                        puts("Attempting to log in with old credentials..");
-                    }
-                }
-            }
-            else
-                sessionId = "epicw1n";
-
-            //Begin connection to server.
-            nh = new networkHandler(IP, port, this);
-            nh.start();
-        }
-        #endregion
-        #region Threadsafe
-
+        #region Form Helpers
         private delegate void putss(string text);
         private delegate void putsc_(string text, Color tColor, bool append, string Style);
 
-        public void putsc(string text, Color tColor, bool append, string Style = "")
-        {
-            if (this.InvokeRequired)
-            {
+        public void putsc(string text, Color tColor, bool append, string Style = "") {
+            if (this.InvokeRequired) {
                 this.Invoke(new putsc_(putsc), text, tColor, append, Style);
-            }
-            else {
-                if (append == true)
-                {
-                    int intLines = SendMessage(console.Handle, EM_GETLINECOUNT, 0, 0);
-                    console.AppendText(text);
-                    console.Select(console.Text.Length - text.Length, text.Length);
-                    console.SelectionColor = tColor;
+            } else {
+                if (append == true) {
+                    int intLines = SendMessage(boxConsole.Handle, EM_GETLINECOUNT, 0, 0);
+                    boxConsole.AppendText(text);
+                    boxConsole.Select(boxConsole.Text.Length - text.Length, text.Length);
+                    boxConsole.SelectionColor = tColor;
+
                     if (Style == "italic")
-                        console.SelectionFont = new Font("Cambria", 12, FontStyle.Italic);
-                    int linesToAdd = (SendMessage(console.Handle, EM_GETLINECOUNT, 0, 0) - intLines);
-                    SendMessage(console.Handle, EM_LINESCROLL, 0, linesToAdd);
+                        boxConsole.SelectionFont = new Font("Cambria", 12, FontStyle.Italic);
+                    if (Style == "bold")
+                        boxConsole.SelectionFont = new Font("Cambria", 12, FontStyle.Bold);
+                    if (Style == "strike")
+                        boxConsole.SelectionFont = new Font("Cambria", 12, FontStyle.Strikeout);
+
+                    int linesToAdd = (SendMessage(boxConsole.Handle, EM_GETLINECOUNT, 0, 0) - intLines);
+                    SendMessage(boxConsole.Handle, EM_LINESCROLL, 0, linesToAdd);
                     return;
                 }
-                int aintLines = SendMessage(console.Handle, EM_GETLINECOUNT, 0, 0);
-                console.AppendText(Environment.NewLine);
-                console.AppendText(text);
-                console.Select(console.Text.Length - text.Length, text.Length);
-                console.SelectionColor = tColor;
+                int aintLines = SendMessage(boxConsole.Handle, EM_GETLINECOUNT, 0, 0);
+                boxConsole.AppendText(Environment.NewLine);
+                boxConsole.AppendText(text);
+                boxConsole.Select(boxConsole.Text.Length - text.Length, text.Length);
+                boxConsole.SelectionColor = tColor;
+
                 if (Style == "italic")
-                    console.SelectionFont = new Font("Cambria", 12, FontStyle.Italic);
-                int blinesToAdd = (SendMessage(console.Handle, EM_GETLINECOUNT, 0, 0) - aintLines);
-                SendMessage(console.Handle, EM_LINESCROLL, 0, blinesToAdd);
+                    boxConsole.SelectionFont = new Font("Cambria", 12, FontStyle.Italic);
+                if (Style == "bold")
+                    boxConsole.SelectionFont = new Font("Cambria", 12, FontStyle.Bold);
+                if (Style == "strike")
+                    boxConsole.SelectionFont = new Font("Cambria", 12, FontStyle.Strikeout);
+
+                int blinesToAdd = (SendMessage(boxConsole.Handle, EM_GETLINECOUNT, 0, 0) - aintLines);
+                SendMessage(boxConsole.Handle, EM_LINESCROLL, 0, blinesToAdd);
             }
 
         }
-        public void putsc(string text, Color tColor, string Style = "")
-        {
+        public void putsc(string text, Color tColor, string Style = "") {
             bool append = false;
-            if (this.InvokeRequired)
-            {
+            if (this.InvokeRequired) {
                 this.Invoke(new putsc_(putsc), text, tColor, append, Style);
-            }
-            else
-            {
-                int aintLines = SendMessage(console.Handle, EM_GETLINECOUNT, 0, 0);
-                console.AppendText(Environment.NewLine);
-                console.AppendText(text);
-                console.Select(console.Text.Length - text.Length, text.Length);
-                console.SelectionColor = tColor;
-                if (Style == "italic") 
-                    console.SelectionFont = new Font("Cambria", 12, FontStyle.Italic);
-                int blinesToAdd = (SendMessage(console.Handle, EM_GETLINECOUNT, 0, 0) - aintLines);
-                SendMessage(console.Handle, EM_LINESCROLL, 0, blinesToAdd);
+            } else {
+                int aintLines = SendMessage(boxConsole.Handle, EM_GETLINECOUNT, 0, 0);
+                boxConsole.AppendText(Environment.NewLine);
+                boxConsole.AppendText(text);
+                boxConsole.Select(boxConsole.Text.Length - text.Length, text.Length);
+                boxConsole.SelectionColor = tColor;
+                if (Style == "italic")
+                    boxConsole.SelectionFont = new Font("Cambria", 12, FontStyle.Italic);
+                int blinesToAdd = (SendMessage(boxConsole.Handle, EM_GETLINECOUNT, 0, 0) - aintLines);
+                SendMessage(boxConsole.Handle, EM_LINESCROLL, 0, blinesToAdd);
             }
         }
-        public void puts(string text)
-        {
-            if (this.InvokeRequired)
-            {
+        public void puts(string text) {
+            if (this.InvokeRequired) {
                 try {
                     this.Invoke(new putss(puts), text);
-                }
-                catch (ObjectDisposedException) { }
-            }
-            else
-            {
-                console.AppendText(Environment.NewLine + text);
-                console.Select(console.Text.Length, console.Text.Length);
-                console.ScrollToCaret();
-            }
-        }
-
-        public void add(string name)
-        {
-            if (this.InvokeRequired)
-            {
-                this.Invoke(new putss(add), name);
-            }
-            else
-            {
-                if (lstOnline.Items.Contains(name) == false)
-                    lstOnline.Items.Add(name);
-            }
-        }
-
-        public void remove(string name)
-        {
-            if (this.InvokeRequired)
-            {
-                this.Invoke(new putss(remove), name);
-            }
-            else
-            {
-                if (lstOnline.Items.Contains(name))
-                    lstOnline.Items.Remove(name);
+                } catch (ObjectDisposedException) { }
+            } else {
+                boxConsole.AppendText(Environment.NewLine + text);
+                boxConsole.Select(boxConsole.Text.Length, boxConsole.Text.Length);
+                boxConsole.ScrollToCaret();
             }
         }
         #endregion
-        #region IRC
+        #region Helping Functions
 
-        public void stopIRC()
-        {
-            IRCSock.Close();
+        /// <summary>
+        /// Registers all event handlers for the bot.
+        /// </summary>
+        public void RegisterHandlers() {
+            MinecraftServer.Message += MinecraftServer_message;
+            MinecraftServer.PlayerListitemAdd += MinecraftServer_playerListitemAdd;
+            MinecraftServer.PlayerListitemRemove += MinecraftServer_playerListitemRemove;
+            MinecraftServer.LoginSuccess += MinecraftServer_loginSuccess;
+            MinecraftServer.SetPlayerHealth += MinecraftServer_setPlayerHealth;
+            // MinecraftServer.DebugMessage += MinecraftServer_DebugMessage;
+            MinecraftServer.InfoMessage += MinecraftServer_InfoMessage;
+            MinecraftServer.PlayerKicked += MinecraftServer_PlayerKicked;
+            MinecraftServer.EntityRelMove += MinecraftServer_entityRelMove;
+            MinecraftServer.EntityTeleport += MinecraftServer_entityTeleport;
+
+            putsc("Handlers Registered!", Color.Green);
         }
-        public void startIRC()
-        {
-            RegistryControl Reg = new RegistryControl();
 
-            ircIP = (string)Reg.GetSetting("SH", "Minebot SMP", "ircIP", "irc.esper.net");
+        void MinecraftServer_entityTeleport(int Entity_ID, int X, int Y, int Z) {
+            if (Following && (Entity_ID == Follow_ID)) {
+                MinecraftServer.ThisPlayer.location.x = X;
+                MinecraftServer.ThisPlayer.location.y = Y;
+                MinecraftServer.ThisPlayer.location.z = Z;
 
-            int.TryParse((string)Reg.GetSetting("SH", "Minebot SMP", "ircPort", 6667), out ircPort);
-            channel = (string)Reg.GetSetting("SH", "Minebot SMP", "ircChan", "#bot");
-            ircname = (string)Reg.GetSetting("SH", "Minebot SMP", "ircName", "VBMimebot");
-
-            IRCSock = new Winsock();
-            IRCSock.BufferSize = 8192;
-            IRCSock.LegacySupport = true;
-            IRCSock.Protocol = Winsock_Orcas.WinsockProtocol.Tcp;
-            IRCSock.Connected += new Winsock_Orcas.IWinsock.ConnectedEventHandler(IRCSock_Connected);
-            IRCSock.DataArrival += new Winsock_Orcas.IWinsock.DataArrivalEventHandler(IRCSock_DataArrival);
-            IRCSock.Connect(ircIP, ircPort);
-
-            puts(Environment.NewLine + "Connecting.");
-        }
-        public void IRCSock_Connected(object sender, WinsockConnectedEventArgs e)
-        {
-            send("NICK " + ircname);
-            send("USER C C C :" + ircname);
-            send("MODE " + ircname + " +B-x");
-            send("JOIN " + channel);
-        }
-        public string translate_colors(string text)
-        {
-            string smessage = text;
-
-            if (smessage.Contains("§"))
-            {
-                smessage = smessage.Replace("§0", ((Char) 3) + "00");
-                smessage = smessage.Replace("§1", ((Char)3) + "02");
-                smessage = smessage.Replace("§2", ((Char)3) + "03");
-                smessage = smessage.Replace("§3", ((Char)3) + "10");
-                smessage = smessage.Replace("§4", ((Char)3) + "05");
-                smessage = smessage.Replace("§5", ((Char)3) + "06");
-                smessage = smessage.Replace("§6", ((Char)3) + "07");
-                smessage = smessage.Replace("§7", ((Char)3) + "15");
-                smessage = smessage.Replace("§8", ((Char)3) + "14");
-                smessage = smessage.Replace("§9", ((Char)3) + "12");
-                smessage = smessage.Replace("§a", ((Char)3) + "09");
-                smessage = smessage.Replace("§b", ((Char)3) + "11");
-                smessage = smessage.Replace("§c", ((Char)3) + "04");
-                smessage = smessage.Replace("§d", ((Char)3) + "13");
-                smessage = smessage.Replace("§e", ((Char)3) + "08");
-                smessage = smessage.Replace("§f", ((Char)3) + "01");
-                smessage = smessage.Replace("§A", ((Char)3) + "09");
-                smessage = smessage.Replace("§B", ((Char)3) + "11");
-                smessage = smessage.Replace("§C", ((Char)3) + "04");
-                smessage = smessage.Replace("§D", ((Char)3) + "13");
-                smessage = smessage.Replace("§E", ((Char)3) + "08");
-                smessage = smessage.Replace("§F", ((Char)3) + "01");
-                smessage = smessage.Replace("§n", "");
-                smessage = smessage.Replace("§r", "");
-                smessage = smessage.Replace("§N", "");
-                smessage = smessage.Replace("§R", "");
+                var PlayerPosition = new libMC.NET.Packets.Play.ServerBound.PlayerPositionAndLook(ref MinecraftServer);
             }
-
-            return smessage;
-        }
-        public void IRCSock_DataArrival(object sender, WinsockDataArrivalEventArgs e)
-        {
-
-            string incoming = Encoding.UTF8.GetString((byte[])IRCSock.Get());
-            string host = "";
-            string dat = "";
-            string message = "";
-            string[] splits;
-            int index = 0;
-
-            splits = incoming.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-
-            while (index < splits.Length)
-            {
-
-                incoming = splits[index];
-
-                if (incoming.Contains(" "))
-                {
-
-                    if (incoming.Contains("/NAMES list"))
-                        canTalk = true;
-
-                    if (incoming.Substring(0, 1) == ":")
-                        host = incoming.Substring(1, incoming.IndexOf(" ") - 1);
-                    else
-                        host = incoming.Substring(0, incoming.IndexOf(" "));
-
-                    dat = incoming.Substring(incoming.IndexOf(" ") + 1, incoming.Length - (incoming.IndexOf(" ") + 1));
-
-                    if (dat.Contains(":"))
-                        message = dat.Substring(dat.IndexOf(":") + 1, dat.Length - (dat.IndexOf(":") + 1));
-
-                    if (host == "PING")
-                    {
-                        send("PONG " + dat);
-                        return;
-                    }
-
-                    string second = dat.Substring(0, dat.IndexOf(" "));
-                    string[] mysplits = dat.Split(new string[] { " " }, 4, StringSplitOptions.None);
-
-                    message = message.Replace("\r\n", "");
-
-
-                    switch (second)
-                    {
-                        case "PRIVMSG":
-                            if (ircmode == 1 || ircmode == 3 && message.StartsWith("=") == false)
-                            {
-                                nh.socket.writeByte(3);
-                                nh.socket.writeString("IRC: <" + host.Substring(0, host.IndexOf("!")) + "> " + message);
-                            }
-                            if (message.StartsWith("="))
-                            {
-                                string cmd = mysplits[2].Substring(1, mysplits[2].Length - 1);
-
-                                switch (cmd.ToLower())
-                                {
-                                    case "=say":
-                                        if (mysplits.Length > 3)
-                                        ircmessage(mysplits[3]);
-                                        break;
-                                    case "=ssay":
-                                        Packets.chatMessage mypacket;
-                                        if (mysplits.Length > 3)
-                                             mypacket = new Packets.chatMessage(nh.socket, this, mysplits[3], true);
-                                        break;
-                                    case "=help":
-                                        ircmessage("C# Minebot IRC Client, Version 1.2");
-                                        ircmessage("Only functional to relay messages between IRC channels and minecraft servers.");
-                                        ircmessage("Commands are =say, =ssay, and =help.");
-                                        break;
-                                }
-                            }
-
-                            break;
-                        case "376":
-                            send("JOIN " + channel);
-                            ircmessage("Current mode: " + ircmode);
-                            puts("Connected!");
-                            break;
-                        case "451":
-                            send("NICK " + ircname);
-                            send("USER C C C :" + ircname);
-                            send("MODE " + ircname + " +B-x");
-                            break;
-                    }
-                }
-                index++;
-            } 
-
-            incoming = "";
         }
 
-        string stripillegal2(string text)
-        {
-            string final = "";
+        void MinecraftServer_entityRelMove(int Entity_ID, int Change_X, int Change_Y, int Change_Z) {
+            if (Following && (Entity_ID == Follow_ID)) {
+                MinecraftServer.ThisPlayer.location.x += Change_X;
+                MinecraftServer.ThisPlayer.location.y += Change_Y;
+                MinecraftServer.ThisPlayer.location.z += Change_Z;
 
-            foreach (char b in text)
-            {
-                if ((Char.IsLetterOrDigit(b) && (b == '!' || b == '@' || b == '#' || b == '$' || b == '%' || b == '*' || b == '(' || b == ')' || b == '=' || b == '-' || b == '_' || b == '+' || b == '/' || b == '\\' || b == '<' || b == '>' || b == '?' || b == '.' || b == ',' || b == ' ')))
-                {
-                    final += b;
-                }
+                var PlayerPosition = new libMC.NET.Packets.Play.ServerBound.PlayerPositionAndLook(ref MinecraftServer);
             }
-
-            return final;
         }
-        public void send(string msg)
-        {
-            if (IRCSock == null)
+
+        void MinecraftServer_PlayerKicked(string reason) {
+            putsc("You have been kicked! Reason: " + reason, Color.Red);
+            MinecraftServer.Disconnect();
+            DeregisterHandlers();
+            connected = false;
+            lstPlayers.Items.Clear();
+            puts("Disconnected from server.");
+        }
+
+        public void DeregisterHandlers() {
+            MinecraftServer.Message -= MinecraftServer_message;
+            MinecraftServer.PlayerListitemAdd -= MinecraftServer_playerListitemAdd;
+            MinecraftServer.PlayerListitemRemove -= MinecraftServer_playerListitemRemove;
+            MinecraftServer.LoginSuccess -= MinecraftServer_loginSuccess;
+            MinecraftServer.SetPlayerHealth -= MinecraftServer_setPlayerHealth;
+            //MinecraftServer.DebugMessage -= MinecraftServer_DebugMessage;
+            MinecraftServer.InfoMessage -= MinecraftServer_InfoMessage;
+            MinecraftServer.PlayerKicked -= MinecraftServer_PlayerKicked;
+            MinecraftServer.EntityRelMove += MinecraftServer_entityRelMove;
+            MinecraftServer.EntityTeleport += MinecraftServer_entityTeleport;
+
+            putsc("Handlers DeRegistered!", Color.Red);
+        }
+        private Color GetChatColor(string code) {
+            switch (code) {
+                case "0":
+                    return Color.FromArgb(0, 0, 0);
+                    
+                case "1":
+                    return Color.FromArgb(0, 0, 170);
+                    
+                case "2":
+                    return Color.FromArgb(0, 170, 0);
+                    
+                case "3":
+                    return Color.FromArgb(0, 170, 170);
+                    
+                case "4":
+                    return Color.FromArgb(170, 0, 0);
+                    
+                case "5":
+                    return Color.FromArgb(170, 0, 170);
+                    
+                case "6":
+                    return Color.FromArgb(255, 170, 0);
+                    
+                case "7":
+                    return Color.FromArgb(170, 170, 170);
+                    
+                case "8":
+                    return Color.FromArgb(85, 85, 85);
+                    
+                case "9":
+                    return Color.FromArgb(85, 85, 255);
+                    
+                case "a":
+                    return Color.FromArgb(85, 255, 85);
+                    
+                case "b":
+                    return Color.FromArgb(85, 255, 255);
+                    
+                case "c":
+                    return Color.FromArgb(255, 85, 85);
+                    
+                case "d":
+                    return Color.FromArgb(255, 85, 255);
+                    
+                case "e":
+                    return Color.FromArgb(255, 255, 85);
+                    
+                case "f":
+                    return Color.FromArgb(255, 255, 255);
+                default:
+                    return Color.FromArgb(255, 255, 255);
+            }
+        }
+        public void HandleColors_2(string text) {
+            if (!text.Contains("§")) {
+                putsc(text, Color.White);
                 return;
+            }
+            string style = "";
 
-            if (IRCSock.State == WinsockStates.Connected)
-            {
-                msg += "\r\n";
-                byte[] data = System.Text.ASCIIEncoding.UTF8.GetBytes(msg);
-                IRCSock.Send(data);
+            putsc("", Color.Black); // -- Make a new line
+            
+            while (text.Contains("§")) {
+                    int colorIndex = text.IndexOf("§");
+                    string code = text.Substring(colorIndex + 1, 1);
+
+                    if (colorIndex != 0) 
+                        putsc(text.Substring(0, colorIndex), Color.White,true);
+                    
+                    text = text.Substring(colorIndex + 2, text.Length - (colorIndex + 2));
+
+                    colorIndex = text.IndexOf("§");
+
+                    if (colorIndex == -1) {
+                        putsc(text, GetChatColor(code.ToLower()), true, style);
+                        break;
+                    }
+
+                    putsc(text.Substring(0, colorIndex), GetChatColor(code.ToLower()), true, style);
+                    text = text.Substring(colorIndex, text.Length - (colorIndex));
             }
         }
-        public void ircmessage(string text)
-        {
-            send("PRIVMSG " + channel + " :" + text);
-        }
+        
         #endregion
-        #region Button Clicks
-        private void trackerToolStripMenuItem_Click(object sender, EventArgs e) {
-            Entity_Tracker tracker = new Entity_Tracker();
-            tracker.Show();
-            tracker.startTracking(this);
-        }
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("This is the official successor to VB Minebot, written so I could learn C#, and to get this project up again, but cleaner.", "About C# Minebot");
+
+        #region Event Handlers
+        void MinecraftServer_InfoMessage(object sender, string message) {
+            putsc("[INFO]: " + message, Color.Green);
         }
 
-        private void connectToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (setopen == false)
-            {
-                Settings whatever = new Settings();
-                whatever.myform = this;
-                whatever.Show();
-                setopen = true;
+        void MinecraftServer_DebugMessage(object sender, string message) {
+            putsc("[DEBUG]: " + message, Color.Red);
+        }
+
+        void MinecraftServer_setPlayerHealth(float health, short hunger, float saturation) {
+            putsc("[DEBUG] Health update! " + health.ToString(), Color.Red);
+
+            if (0 >= health) {
+                // -- Respawn
+                var RespawnPacket = new ClientStatus(ref MinecraftServer, 0);
+                putsc("[DEBUG] Respawned!", Color.Red);
+                var PlayerPacket = new Player(ref MinecraftServer);
+                var PlayerPacket1 = new Player(ref MinecraftServer);
+                var PlayerPacket2 = new Player(ref MinecraftServer);
+                var PlayerPacket3 = new Player(ref MinecraftServer);
             }
         }
-        private void btnSend_Click(object sender, EventArgs e)
-        {
-            if (chat.Text.StartsWith("+"))
-            {
-                commandHandler ch = new commandHandler(nh.socket, this, "Minebot", "Minebot: " + chat.Text);
-                chat.Clear();
+        void MinecraftServer_message(object sender, string message, string name) {
+            if (message.StartsWith(prefix)) {  // -- Handle commands.
+                if (!AccessList.Contains(name))
+                    return;
+
+                if (!message.Contains(" "))
+                    message = message + " ";
+
+                string command = message.Substring(0, message.IndexOf(" "));
+                string[] splits = message.Substring(message.IndexOf(" ") + 1, message.Length - (message.IndexOf(" ") + 1)).Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+                string afterMessage = message.Substring(message.IndexOf(" ") + 1, message.Length - (message.IndexOf(" ") + 1));
+
+                if (Commands.ContainsKey(command.ToLower()) == false)
+                    ChatMessage.SendChat(MinecraftServer, "Command not found!");
+                else {
+                    var tCommand = Commands[command.ToLower()];
+                    tCommand.run(command, splits, afterMessage, name, this);
+                }                   
+            }
+
+            if (name != "EVENT")
+                HandleColors_2("<" + name + "> " + message);
+            else
+                HandleColors_2(message);
+        }
+
+        void MinecraftServer_loginSuccess(object sender) {
+            luaHandler.Run_Lua_Function("LoginSuccess",null);
+        }
+
+        void MinecraftServer_playerListitemRemove(string name) {
+            if (this.InvokeRequired) {
+                this.Invoke(new PlayerListRemove(MinecraftServer_playerListitemRemove), name);
+                return;
+            }
+            luaHandler.Run_Lua_Function("Player_Logout", new[] { name });
+            lstPlayers.Items.Remove(name);
+        }
+
+        void MinecraftServer_playerListitemAdd(string name, short ping) {
+            if (this.InvokeRequired) {
+                this.Invoke(new PlayerListAdd(MinecraftServer_playerListitemAdd), name, ping);
                 return;
             }
 
-            //Packets.chatMessage chatmess = new Packets.chatMessage(nh.socket, this, chat.Text, true);
-            nh.chatqueue = chat.Text;
-            nh.chatq = true;
-            chat.Clear();
-        }
-        private void muteToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (muted)
-            {
-                muted = false;
-                muteToolStripMenuItem.Checked = false;
-            }
-            else
-            {
-                muted = true;
-                muteToolStripMenuItem.Checked = true;
-            }
-        }
-
-        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (setopen == false)
-            {
-                Settings whatever = new Settings();
-                whatever.myform = this;
-                whatever.Show();
-                setopen = true;
-            }
-        }
-
-        private void reconnectToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (nh != null)
-            {
-                nh.stop();
-
-                Entitys.Clear();
-                Chunks.Clear();
-                inventory.Clear();
-                following = false;
-                fname = "";
-
-                if (sip != null)
-                    beginConnect(sip, sport, username, "asdf", onlineMode);
-
-            }
-        }
-
-        private void asdToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            functions thisLookup = new functions();
-            string build = "";
-
-            for (int i = 0; i < 44; i++) {
-                build += i.ToString() + ": " + thisLookup.getitembyslot(i,this) +  "(" + thisLookup.getItemCount(i,this) + ")" + Environment.NewLine;
-            }
-            MessageBox.Show(build);
+            luaHandler.Run_Lua_Function("Player_Login", new[] { name });
+            lstPlayers.Items.Add(name);
         }
         #endregion
+
+        #region Thread-Safe Delegates
+        private delegate void PlayerListRemove(string name);
+        private delegate void PlayerListAdd(string name, short ping);
+        #endregion
+
+        public void AddCommand(string name, string lua_function, string help) {
+            name = name.ToLower();
+            if (Commands.ContainsKey(prefix + name))
+                Commands.Remove(prefix + name);
+
+            ScriptedCommand newCommand = new ScriptedCommand(prefix + name, "Lua:" + lua_function, help);
+            Commands.Add(prefix + name, newCommand);
+        }
+        public void Send_Message(string message) {
+            if (connected) {
+                ChatMessage.SendChat(MinecraftServer, message);
+            }
+        }
+        private void btnSend_Click(object sender, EventArgs e) {
+            ChatMessage.SendChat(MinecraftServer, boxChat.Text);
+            boxChat.Clear();
+        }
     }
 }
