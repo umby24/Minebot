@@ -11,8 +11,8 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.IO;
 
-using libMC.NET;
-using libMC.NET.Packets.Play.ServerBound;
+using libMC.NET.Client;
+using libMC.NET.Network;
 
 using CBOT.Classes;
 
@@ -22,7 +22,7 @@ namespace CBOT {
         public Thread luaThread;
         public LuaWrapper luaHandler;
         public bool connected = false;
-        public Minecraft MinecraftServer;
+        public MinecraftClient MinecraftServer;
         public string prefix = "+";
         #region Follow Command
         public bool Following = false;
@@ -32,7 +32,6 @@ namespace CBOT {
         public Dictionary<string, Command> Commands;
         public List<string> AccessList;
         #endregion
-
         #region Colorized Chatbox
         public const int EM_GETLINECOUNT = 0xBA;
         public const int EM_LINESCROLL = 0xB6;
@@ -61,16 +60,16 @@ namespace CBOT {
             Commands = new Dictionary<string, Command> {
                 {"+luarun", new LuaRun()},
                 {"+getblock", new GetBlock()},
-                {"+hold", new Hold()},
-                {"+say", new Say()},
-                {"+follow", new Follow()}
+                //{"+hold", new Hold()},
+                {"+say", new Say()}
+                //{"+follow", new Follow()}
             }; // -- Initilize bot command databases.
 
             // -- Initilize bot accesslist, and load it from file.
 
             AccessList = new List<string>();
 
-            settingsReader SR = new settingsReader("admin.txt", true);
+            var SR = new settingsReader("admin.txt", true);
 
             if (!File.Exists("admin.txt")) {
                 SR.settings = new Dictionary<string, string>();
@@ -124,12 +123,15 @@ namespace CBOT {
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e) {
-            //if (connected)
-            //    MinecraftServer.Disconnect();
+            if (connected)
+                MinecraftServer.Disconnect();
 
-            //this.Close();
-            MinecraftServer.ThisPlayer.location.x = MinecraftServer.ThisPlayer.location.x + 2;
-            PlayerPosition pp = new PlayerPosition(ref MinecraftServer);
+            this.Close();
+        }
+
+        private void btnSend_Click(object sender, EventArgs e) {
+            MinecraftServer.SendChat(boxChat.Text);
+            boxChat.Clear();
         }
         #endregion
         #region Form Helpers
@@ -209,39 +211,40 @@ namespace CBOT {
         /// Registers all event handlers for the bot.
         /// </summary>
         public void RegisterHandlers() {
+           
             MinecraftServer.Message += MinecraftServer_message;
-            MinecraftServer.PlayerListitemAdd += MinecraftServer_playerListitemAdd;
-            MinecraftServer.PlayerListitemRemove += MinecraftServer_playerListitemRemove;
+            //MinecraftServer.PlayerListitemAdd += MinecraftServer_playerListitemAdd;
+            //MinecraftServer.PlayerListitemRemove += MinecraftServer_playerListitemRemove;
             MinecraftServer.LoginSuccess += MinecraftServer_loginSuccess;
-            MinecraftServer.SetPlayerHealth += MinecraftServer_setPlayerHealth;
-            // MinecraftServer.DebugMessage += MinecraftServer_DebugMessage;
-            MinecraftServer.InfoMessage += MinecraftServer_InfoMessage;
+            //MinecraftServer.SetPlayerHealth += MinecraftServer_setPlayerHealth;
+            //// MinecraftServer.DebugMessage += MinecraftServer_DebugMessage;
+            //MinecraftServer.InfoMessage += MinecraftServer_InfoMessage;
             MinecraftServer.PlayerKicked += MinecraftServer_PlayerKicked;
-            MinecraftServer.EntityRelMove += MinecraftServer_entityRelMove;
-            MinecraftServer.EntityTeleport += MinecraftServer_entityTeleport;
+            //MinecraftServer.EntityRelMove += MinecraftServer_entityRelMove;
+            //MinecraftServer.EntityTeleport += MinecraftServer_entityTeleport;
 
             putsc("Handlers Registered!", Color.Green);
         }
 
-        void MinecraftServer_entityTeleport(int Entity_ID, int X, int Y, int Z) {
-            if (Following && (Entity_ID == Follow_ID)) {
-                MinecraftServer.ThisPlayer.location.x = X;
-                MinecraftServer.ThisPlayer.location.y = Y;
-                MinecraftServer.ThisPlayer.location.z = Z;
+        //void MinecraftServer_entityTeleport(int Entity_ID, int X, int Y, int Z) {
+        //    if (Following && (Entity_ID == Follow_ID)) {
+        //        MinecraftServer.ThisPlayer.location.x = X;
+        //        MinecraftServer.ThisPlayer.location.y = Y;
+        //        MinecraftServer.ThisPlayer.location.z = Z;
 
-                var PlayerPosition = new libMC.NET.Packets.Play.ServerBound.PlayerPositionAndLook(ref MinecraftServer);
-            }
-        }
+        //        var PlayerPosition = new libMC.NET.Packets.Play.ServerBound.PlayerPositionAndLook(ref MinecraftServer);
+        //    }
+        //}
 
-        void MinecraftServer_entityRelMove(int Entity_ID, int Change_X, int Change_Y, int Change_Z) {
-            if (Following && (Entity_ID == Follow_ID)) {
-                MinecraftServer.ThisPlayer.location.x += Change_X;
-                MinecraftServer.ThisPlayer.location.y += Change_Y;
-                MinecraftServer.ThisPlayer.location.z += Change_Z;
+        //void MinecraftServer_entityRelMove(int Entity_ID, int Change_X, int Change_Y, int Change_Z) {
+        //    if (Following && (Entity_ID == Follow_ID)) {
+        //        MinecraftServer.ThisPlayer.location.x += Change_X;
+        //        MinecraftServer.ThisPlayer.location.y += Change_Y;
+        //        MinecraftServer.ThisPlayer.location.z += Change_Z;
 
-                var PlayerPosition = new libMC.NET.Packets.Play.ServerBound.PlayerPositionAndLook(ref MinecraftServer);
-            }
-        }
+        //        var PlayerPosition = new libMC.NET.Packets.Play.ServerBound.PlayerPositionAndLook(ref MinecraftServer);
+        //    }
+        //}
 
         void MinecraftServer_PlayerKicked(string reason) {
             putsc("You have been kicked! Reason: " + reason, Color.Red);
@@ -254,15 +257,15 @@ namespace CBOT {
 
         public void DeregisterHandlers() {
             MinecraftServer.Message -= MinecraftServer_message;
-            MinecraftServer.PlayerListitemAdd -= MinecraftServer_playerListitemAdd;
-            MinecraftServer.PlayerListitemRemove -= MinecraftServer_playerListitemRemove;
+            //MinecraftServer.PlayerListitemAdd -= MinecraftServer_playerListitemAdd;
+            //MinecraftServer.PlayerListitemRemove -= MinecraftServer_playerListitemRemove;
             MinecraftServer.LoginSuccess -= MinecraftServer_loginSuccess;
-            MinecraftServer.SetPlayerHealth -= MinecraftServer_setPlayerHealth;
-            //MinecraftServer.DebugMessage -= MinecraftServer_DebugMessage;
+            //MinecraftServer.SetPlayerHealth -= MinecraftServer_setPlayerHealth;
+            MinecraftServer.DebugMessage -= MinecraftServer_DebugMessage;
             MinecraftServer.InfoMessage -= MinecraftServer_InfoMessage;
             MinecraftServer.PlayerKicked -= MinecraftServer_PlayerKicked;
-            MinecraftServer.EntityRelMove += MinecraftServer_entityRelMove;
-            MinecraftServer.EntityTeleport += MinecraftServer_entityTeleport;
+            //MinecraftServer.EntityRelMove += MinecraftServer_entityRelMove;
+            //MinecraftServer.EntityTeleport += MinecraftServer_entityTeleport;
 
             putsc("Handlers DeRegistered!", Color.Red);
         }
@@ -348,7 +351,19 @@ namespace CBOT {
                     text = text.Substring(colorIndex, text.Length - (colorIndex));
             }
         }
-        
+        public void AddCommand(string name, string lua_function, string help) {
+            name = name.ToLower();
+            if (Commands.ContainsKey(prefix + name))
+                Commands.Remove(prefix + name);
+
+            ScriptedCommand newCommand = new ScriptedCommand(prefix + name, "Lua:" + lua_function, help);
+            Commands.Add(prefix + name, newCommand);
+        }
+        public void Send_Message(string message) {
+            if (connected) {
+                MinecraftServer.SendChat(message);
+            }
+        }
         #endregion
 
         #region Event Handlers
@@ -360,19 +375,19 @@ namespace CBOT {
             putsc("[DEBUG]: " + message, Color.Red);
         }
 
-        void MinecraftServer_setPlayerHealth(float health, short hunger, float saturation) {
-            putsc("[DEBUG] Health update! " + health.ToString(), Color.Red);
+        //void MinecraftServer_setPlayerHealth(float health, short hunger, float saturation) {
+        //    putsc("[DEBUG] Health update! " + health.ToString(), Color.Red);
 
-            if (0 >= health) {
-                // -- Respawn
-                var RespawnPacket = new ClientStatus(ref MinecraftServer, 0);
-                putsc("[DEBUG] Respawned!", Color.Red);
-                var PlayerPacket = new Player(ref MinecraftServer);
-                var PlayerPacket1 = new Player(ref MinecraftServer);
-                var PlayerPacket2 = new Player(ref MinecraftServer);
-                var PlayerPacket3 = new Player(ref MinecraftServer);
-            }
-        }
+        //    if (0 >= health) {
+        //        // -- Respawn
+        //        var RespawnPacket = new ClientStatus(ref MinecraftServer, 0);
+        //        putsc("[DEBUG] Respawned!", Color.Red);
+        //        var PlayerPacket = new Player(ref MinecraftServer);
+        //        var PlayerPacket1 = new Player(ref MinecraftServer);
+        //        var PlayerPacket2 = new Player(ref MinecraftServer);
+        //        var PlayerPacket3 = new Player(ref MinecraftServer);
+        //    }
+        //}
         void MinecraftServer_message(object sender, string message, string name) {
             if (message.StartsWith(prefix)) {  // -- Handle commands.
                 if (!AccessList.Contains(name))
@@ -386,7 +401,7 @@ namespace CBOT {
                 string afterMessage = message.Substring(message.IndexOf(" ") + 1, message.Length - (message.IndexOf(" ") + 1));
 
                 if (Commands.ContainsKey(command.ToLower()) == false)
-                    ChatMessage.SendChat(MinecraftServer, "Command not found!");
+                    MinecraftServer.SendChat("Command not found!");
                 else {
                     var tCommand = Commands[command.ToLower()];
                     tCommand.run(command, splits, afterMessage, name, this);
@@ -428,22 +443,6 @@ namespace CBOT {
         private delegate void PlayerListAdd(string name, short ping);
         #endregion
 
-        public void AddCommand(string name, string lua_function, string help) {
-            name = name.ToLower();
-            if (Commands.ContainsKey(prefix + name))
-                Commands.Remove(prefix + name);
 
-            ScriptedCommand newCommand = new ScriptedCommand(prefix + name, "Lua:" + lua_function, help);
-            Commands.Add(prefix + name, newCommand);
-        }
-        public void Send_Message(string message) {
-            if (connected) {
-                ChatMessage.SendChat(MinecraftServer, message);
-            }
-        }
-        private void btnSend_Click(object sender, EventArgs e) {
-            ChatMessage.SendChat(MinecraftServer, boxChat.Text);
-            boxChat.Clear();
-        }
     }
 }

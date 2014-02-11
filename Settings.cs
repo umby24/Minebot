@@ -270,7 +270,7 @@ namespace CBOT {
                 MainGui.MinecraftServer.Disconnect();
 
             if (MainGui.MinecraftServer == null)
-                MainGui.MinecraftServer = new libMC.NET.Minecraft(ip, port, txtUsername.Text, txtPassword.Text, chkOnlineMode.Checked);
+                MainGui.MinecraftServer = new libMC.NET.Client.MinecraftClient(ip, port, txtUsername.Text, txtPassword.Text, chkOnlineMode.Checked);
 
             if (Verify) {
                 bool Result = MainGui.MinecraftServer.VerifySession(AccessToken, ClientToken);
@@ -320,7 +320,10 @@ namespace CBOT {
             ServerPinger FinishedPing = (ServerPinger)Ping;
 
             lstServers.Items.Add(FinishedPing.serverName + " - " + FinishedPing.PingResponse[0] + "/" + FinishedPing.PingResponse[1] + " (" + FinishedPing.PingResponse[4] + ") " + FinishedPing.msPing + " ms");
-            
+
+            if (BIcons.ContainsKey(FinishedPing.serverName))
+                BIcons.Remove(FinishedPing.serverName);
+
             BIcons.Add(FinishedPing.serverName, FinishedPing.favicon);
 
             if (FinishedPing.Players != null)

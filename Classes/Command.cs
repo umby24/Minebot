@@ -13,22 +13,22 @@ namespace CBOT.Classes {
         void run(string command, string[] args, string Text1, string sender, mainForm mf);
     }
 
-    public struct Hold : Command {
-        public string command { get { return "+hold"; } }
-        public string plugin { get { return ""; } }
-        public string help { get { return "Change the bot's held block."; } }
+    //public struct Hold : Command {
+    //    public string command { get { return "+hold"; } }
+    //    public string plugin { get { return ""; } }
+    //    public string help { get { return "Change the bot's held block."; } }
 
-        public void run(string command, string[] args, string Text1, string sender, mainForm mf) {
-            if (!HelpingFunctions.isNumeric(args[0]))
-                return;
+    //    public void run(string command, string[] args, string Text1, string sender, mainForm mf) {
+    //        if (!HelpingFunctions.isNumeric(args[0]))
+    //            return;
 
-            if (short.Parse(args[0]) < 0 || short.Parse(args[0]) > 9)
-                return;
+    //        if (short.Parse(args[0]) < 0 || short.Parse(args[0]) > 9)
+    //            return;
 
-            mf.MinecraftServer.ThisPlayer.selectedSlot = (byte)short.Parse(args[0]);
-            libMC.NET.Packets.Play.ServerBound.HeldItemChange hc = new libMC.NET.Packets.Play.ServerBound.HeldItemChange(ref mf.MinecraftServer);
-        }
-    }
+    //        mf.MinecraftServer.ThisPlayer.selectedSlot = (byte)short.Parse(args[0]);
+    //        libMC.NET.Packets.Play.ServerBound.HeldItemChange hc = new libMC.NET.Packets.Play.ServerBound.HeldItemChange(ref mf.MinecraftServer);
+    //    }
+    //}
 
     public struct Say : Command {
         public string command { get { return "+say"; } }
@@ -40,27 +40,27 @@ namespace CBOT.Classes {
         }
     }
 
-    public struct Follow : Command {
-        public string command { get { return "+follow"; } }
-        public string plugin { get { return ""; } }
-        public string help { get { return "Follow a player. +follow [name]"; } }
+    //public struct Follow : Command {
+    //    public string command { get { return "+follow"; } }
+    //    public string plugin { get { return ""; } }
+    //    public string help { get { return "Follow a player. +follow [name]"; } }
 
-        public void run(string command, string[] args, string Text1, string sender, mainForm mf) {
-            if (mf.lstPlayers.Items.Contains(args[0])) {
-                foreach (libMC.NET.Entities.Entity b in mf.MinecraftServer.MinecraftWorld.Entities) {
-                    if (b.playerName == args[0]) {
-                        mf.Follow_ID = b.Entity_ID;
-                        mf.Following = true;
-                        mf.MinecraftServer.ThisPlayer.location.x = b.Location.x;
-                        mf.MinecraftServer.ThisPlayer.location.y = b.Location.y;
-                        mf.MinecraftServer.ThisPlayer.location.z = b.Location.z;
+    //    public void run(string command, string[] args, string Text1, string sender, mainForm mf) {
+    //        if (mf.lstPlayers.Items.Contains(args[0])) {
+    //            foreach (libMC.NET.Entities.Entity b in mf.MinecraftServer.MinecraftWorld.Entities) {
+    //                if (b.playerName == args[0]) {
+    //                    mf.Follow_ID = b.Entity_ID;
+    //                    mf.Following = true;
+    //                    mf.MinecraftServer.ThisPlayer.location.x = b.Location.x;
+    //                    mf.MinecraftServer.ThisPlayer.location.y = b.Location.y;
+    //                    mf.MinecraftServer.ThisPlayer.location.z = b.Location.z;
 
-                        var PlayerPosition = new libMC.NET.Packets.Play.ServerBound.PlayerPositionAndLook(ref mf.MinecraftServer);
-                    }
-                }
-            }
-        }
-    }
+    //                    var PlayerPosition = new libMC.NET.Packets.Play.ServerBound.PlayerPositionAndLook(ref mf.MinecraftServer);
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
     public struct LuaRun : Command {
         public string command { get { return "+luarun"; } }
         public string plugin { get { return ""; } }

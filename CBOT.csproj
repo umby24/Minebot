@@ -49,6 +49,7 @@
   <ItemGroup>
     <Reference Include="libMC.NET">
       <HintPath>..\libMC.NET\bin\Debug\libMC.NET.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="NLua">
