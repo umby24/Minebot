@@ -266,36 +266,38 @@ namespace CBOT {
             SR.saveSettings();
         }
         private void ConnectMinecraft(string ip, int port) {
-            if (MainGui.connected == true)
-                MainGui.MinecraftServer.Disconnect();
+            if (MainGui.Connected == true)
+                MainGui.Client.Disconnect();
 
-            if (MainGui.MinecraftServer == null)
-                MainGui.MinecraftServer = new libMC.NET.Client.MinecraftClient(ip, port, txtUsername.Text, txtPassword.Text, chkOnlineMode.Checked);
+            if (MainGui.Client == null)
+                MainGui.Client = new libMC.NET.Client.MinecraftClient(ip, port, txtUsername.Text, txtPassword.Text, chkOnlineMode.Checked);
 
             if (Verify) {
-                bool Result = MainGui.MinecraftServer.VerifySession(AccessToken, ClientToken);
+                bool Result = MainGui.Client.VerifySession(AccessToken, ClientToken);
 
                 if (!Result)
                     Login = true;
             }
 
             if (Login) {
-                if (txtPassword.Text != "")
-                    MainGui.MinecraftServer.Login();
-                else {
-                    MessageBox.Show("Error verifying credentials, please enter your password to connect.", "LoginError", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (txtPassword.Text != "") {
+                    MainGui.Client.ClientName = txtUsername.Text;
+                    MainGui.Client.ClientPassword = txtPassword.Text;
+                    MainGui.Client.Login();
+                } else {
+                    MessageBox.Show("Error verifying credentials, please enter your password to connect.", "Login Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
             }
 
-            AccessToken = MainGui.MinecraftServer.AccessToken;
-            ClientToken = MainGui.MinecraftServer.ClientToken;
+            AccessToken = MainGui.Client.AccessToken;
+            ClientToken = MainGui.Client.ClientToken;
 
-            MainGui.connected = true;
+            MainGui.Connected = true;
 
             MainGui.RegisterHandlers();
-
-            MainGui.MinecraftServer.Connect();
+            MainGui.Client.ServerState = 2;
+            MainGui.Client.Connect();
 
             SaveSettings();
 
@@ -303,6 +305,7 @@ namespace CBOT {
 
             this.Close();
         }
+
         private void ResetList() {
             lstServers.Items.Clear();
 
@@ -335,9 +338,5 @@ namespace CBOT {
         private void tabPage1_Click(object sender, EventArgs e) {
 
         }
-
-
-
-
     }
 }

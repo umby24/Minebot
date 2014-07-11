@@ -11,8 +11,10 @@ namespace CBOT {
         public Dictionary<string, string> settings;
 
         public settingsReader(string fName, bool create = false) {
-            if (!File.Exists(fName) && create == false) 
+            if (!File.Exists(fName) && create == false)
                 throw new FileNotFoundException("SettingsReader: Settings file not found");
+            else if (!File.Exists(fName) && create == true)
+                File.WriteAllText(fName, "");
 
             fileName = fName;
             
@@ -22,7 +24,7 @@ namespace CBOT {
 
             StreamReader fileReader = new StreamReader(fileName);
 
-            do {
+            while (!fileReader.EndOfStream) {
                 string line = fileReader.ReadLine();
 
                 if (!line.Contains("="))
@@ -33,7 +35,7 @@ namespace CBOT {
 
                 settings.Add(key, setting);
 
-            } while (!fileReader.EndOfStream);
+            } 
             // -- Settings parsed.
             fileReader.Close();
             fileReader.Dispose();

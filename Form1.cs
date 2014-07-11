@@ -12,26 +12,12 @@ using System.Runtime.InteropServices;
 using System.IO;
 
 using libMC.NET.Client;
-using libMC.NET.Network;
-
-using CBOT.Classes;
 
 namespace CBOT {
     public partial class mainForm : Form {
-        #region Variables
-        public Thread luaThread;
-        public LuaWrapper luaHandler;
-        public bool connected = false;
-        public MinecraftClient MinecraftServer;
-        public string prefix = "+";
-        #region Follow Command
-        public bool Following = false;
-        public int Follow_ID = 0;
-        #endregion
-        #region Commands
-        public Dictionary<string, Command> Commands;
-        public List<string> AccessList;
-        #endregion
+        public bool Connected;
+        public MinecraftClient Client;
+        public Settings SettingsForm;
         #region Colorized Chatbox
         public const int EM_GETLINECOUNT = 0xBA;
         public const int EM_LINESCROLL = 0xB6;
@@ -39,100 +25,6 @@ namespace CBOT {
         [DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int msg, int wParam, int lParam);
 
-        #endregion
-
-        #endregion
-
-        public mainForm() {
-            InitializeComponent();
-        }
-
-        private void mainForm_Load(object sender, EventArgs e) {
-            puts("Welcome to Minebot!");
-
-            luaHandler = new LuaWrapper(this); // -- initalize Lua
-
-            luaThread = new Thread(luaHandler.Lua_Main); // -- Begin script loading/reloading loop.
-            luaThread.Start();
-
-            puts("Lua initilized");
-
-            Commands = new Dictionary<string, Command> {
-                {"+luarun", new LuaRun()},
-                {"+getblock", new GetBlock()},
-                //{"+hold", new Hold()},
-                {"+say", new Say()}
-                //{"+follow", new Follow()}
-            }; // -- Initilize bot command databases.
-
-            // -- Initilize bot accesslist, and load it from file.
-
-            AccessList = new List<string>();
-
-            var SR = new settingsReader("admin.txt", true);
-
-            if (!File.Exists("admin.txt")) {
-                SR.settings = new Dictionary<string, string>();
-                SR.settings.Add("admins", "");
-                SR.saveSettings();
-            }
-
-            SR.readSettings();
-
-            if (SR.settings["admins"] != null) {
-                string[] admins = SR.settings["admins"].Split('|');
-                foreach (string b in admins) {
-                    AccessList.Add(b);
-                }
-            }
-
-            puts("Access list loaded");
-        }
-        void mainForm_FormClosing(object sender, System.Windows.Forms.FormClosingEventArgs e) {
-            if (connected)
-                MinecraftServer.Disconnect();
-
-            luaThread.Abort();
-        }
-
-        #region Button Clicks
-        private void connectToolStripMenuItem_Click(object sender, EventArgs e) {
-            Settings settingsWindow = new Settings(this);
-            settingsWindow.Show();
-        }
-
-        private void disconnectToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (connected) {
-                MinecraftServer.Disconnect();
-                DeregisterHandlers();
-                connected = false;
-                lstPlayers.Items.Clear();
-                puts("Disconnected from server.");
-            }
-        }
-
-        private void reconnectToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (connected)
-                MinecraftServer.Disconnect();
-
-            lstPlayers.Items.Clear();
-            boxConsole.Clear();
-
-            if (MinecraftServer != null)
-                MinecraftServer.Connect();
-        }
-
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (connected)
-                MinecraftServer.Disconnect();
-
-            this.Close();
-        }
-
-        private void btnSend_Click(object sender, EventArgs e) {
-            MinecraftServer.SendChat(boxChat.Text);
-            boxChat.Clear();
-        }
         #endregion
         #region Form Helpers
         private delegate void putss(string text);
@@ -205,117 +97,175 @@ namespace CBOT {
             }
         }
         #endregion
-        #region Helping Functions
 
-        /// <summary>
-        /// Registers all event handlers for the bot.
-        /// </summary>
-        public void RegisterHandlers() {
-           
-            MinecraftServer.Message += MinecraftServer_message;
-            //MinecraftServer.PlayerListitemAdd += MinecraftServer_playerListitemAdd;
-            //MinecraftServer.PlayerListitemRemove += MinecraftServer_playerListitemRemove;
-            MinecraftServer.LoginSuccess += MinecraftServer_loginSuccess;
-            //MinecraftServer.SetPlayerHealth += MinecraftServer_setPlayerHealth;
-            //// MinecraftServer.DebugMessage += MinecraftServer_DebugMessage;
-            //MinecraftServer.InfoMessage += MinecraftServer_InfoMessage;
-            MinecraftServer.PlayerKicked += MinecraftServer_PlayerKicked;
-            //MinecraftServer.EntityRelMove += MinecraftServer_entityRelMove;
-            //MinecraftServer.EntityTeleport += MinecraftServer_entityTeleport;
-
-            putsc("Handlers Registered!", Color.Green);
+        public mainForm() {
+            InitializeComponent();
         }
 
-        //void MinecraftServer_entityTeleport(int Entity_ID, int X, int Y, int Z) {
-        //    if (Following && (Entity_ID == Follow_ID)) {
-        //        MinecraftServer.ThisPlayer.location.x = X;
-        //        MinecraftServer.ThisPlayer.location.y = Y;
-        //        MinecraftServer.ThisPlayer.location.z = Z;
+        private void mainForm_Load(object sender, EventArgs e) {
+            putsc("Welcome to Minebot!", Color.Blue, "bold");
+            putsc("by Umby24", Color.Green, "italic");
+        }
 
-        //        var PlayerPosition = new libMC.NET.Packets.Play.ServerBound.PlayerPositionAndLook(ref MinecraftServer);
-        //    }
-        //}
+        #region Button Presses
+        private void connectToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (SettingsForm != null)
+                return;
 
-        //void MinecraftServer_entityRelMove(int Entity_ID, int Change_X, int Change_Y, int Change_Z) {
-        //    if (Following && (Entity_ID == Follow_ID)) {
-        //        MinecraftServer.ThisPlayer.location.x += Change_X;
-        //        MinecraftServer.ThisPlayer.location.y += Change_Y;
-        //        MinecraftServer.ThisPlayer.location.z += Change_Z;
+            SettingsForm = new Settings(this);
+            SettingsForm.Show();
+        }
 
-        //        var PlayerPosition = new libMC.NET.Packets.Play.ServerBound.PlayerPositionAndLook(ref MinecraftServer);
-        //    }
-        //}
+        private void reconnectToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (Connected)
+                Client.Disconnect();
 
-        void MinecraftServer_PlayerKicked(string reason) {
-            putsc("You have been kicked! Reason: " + reason, Color.Red);
-            MinecraftServer.Disconnect();
-            DeregisterHandlers();
-            connected = false;
             lstPlayers.Items.Clear();
-            puts("Disconnected from server.");
+            boxConsole.Clear();
+
+            if (Client != null)
+                Client.Connect();
         }
 
+        private void disconnectToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (Connected) {
+                Client.Disconnect();
+                DeregisterHandlers();
+                Connected = false;
+                lstPlayers.Items.Clear();
+                puts("Disconnected from server.");
+            }
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (SettingsForm != null)
+                SettingsForm.Close();
+
+            if (Connected)
+                Client.Disconnect();
+
+            this.Close();
+        }
+        #endregion
+        #region Event Handlers
+        public void RegisterHandlers() {
+            Client.Message += Client_Message;
+            Client.LoginFailure += Client_LoginFailure;
+            Client.ErrorMessage += Client_ErrorMessage;
+            Client.InfoMessage += Client_InfoMessage;
+
+            Client.JoinedGame += Client_JoinedGame;
+            Client.PlayerKicked += Client_PlayerKicked;
+
+            Client.PlayerListitemAdd += Client_PlayerListitemAdd;
+            Client.PlayerListitemRemove += Client_PlayerListitemRemove;
+            Client.PlayerListitemUpdate += Client_PlayerListitemUpdate;
+        }
+        
         public void DeregisterHandlers() {
-            MinecraftServer.Message -= MinecraftServer_message;
-            //MinecraftServer.PlayerListitemAdd -= MinecraftServer_playerListitemAdd;
-            //MinecraftServer.PlayerListitemRemove -= MinecraftServer_playerListitemRemove;
-            MinecraftServer.LoginSuccess -= MinecraftServer_loginSuccess;
-            //MinecraftServer.SetPlayerHealth -= MinecraftServer_setPlayerHealth;
-            MinecraftServer.DebugMessage -= MinecraftServer_DebugMessage;
-            MinecraftServer.InfoMessage -= MinecraftServer_InfoMessage;
-            MinecraftServer.PlayerKicked -= MinecraftServer_PlayerKicked;
-            //MinecraftServer.EntityRelMove += MinecraftServer_entityRelMove;
-            //MinecraftServer.EntityTeleport += MinecraftServer_entityTeleport;
+            Client.Message -= Client_Message;
+            Client.LoginFailure -= Client_LoginFailure;
+            Client.ErrorMessage -= Client_ErrorMessage;
+            Client.InfoMessage -= Client_InfoMessage;
 
-            putsc("Handlers DeRegistered!", Color.Red);
+            Client.JoinedGame -= Client_JoinedGame;
+            Client.PlayerKicked -= Client_PlayerKicked;
+
+            Client.PlayerListitemAdd -= Client_PlayerListitemAdd;
+            Client.PlayerListitemRemove -= Client_PlayerListitemRemove;
+            Client.PlayerListitemUpdate -= Client_PlayerListitemUpdate;
         }
+
+
+
+        void Client_PlayerKicked(string reason) {
+            putsc("You were kicked! Reason: " + reason, Color.Red, "bold");
+            Client.Disconnect();
+            Connected = false;
+            DeregisterHandlers();
+            lstPlayers.Items.Clear();
+        }
+
+        void Client_JoinedGame() {
+            putsc("You joined the game!", Color.Green);
+        }
+
+        void Client_InfoMessage(object sender, string message) {
+            putsc("[Info] " + message, Color.Green);
+        }
+
+        void Client_LoginFailure(object sender, string reason) {
+            putsc("Login Failure: " + reason, Color.Red, "bold");
+        }
+
+        void Client_ErrorMessage(object sender, string message) {
+            putsc("An error occured: " + message, Color.Red, "bold");
+        }
+
+        void Client_PlayerListitemUpdate(string name, short ping) {
+            
+        }
+
+        void Client_PlayerListitemRemove(string name) {
+            lstPlayers.Items.Remove(name);
+        }
+
+        void Client_PlayerListitemAdd(string name, short ping) {
+            lstPlayers.Items.Add(name);
+        }
+
+        void Client_Message(object sender, string message, string raw) {
+            HandleColors_2(message);
+        }
+        #endregion
+        #region Helpers
         private Color GetChatColor(string code) {
             switch (code) {
                 case "0":
                     return Color.FromArgb(0, 0, 0);
-                    
+
                 case "1":
                     return Color.FromArgb(0, 0, 170);
-                    
+
                 case "2":
                     return Color.FromArgb(0, 170, 0);
-                    
+
                 case "3":
                     return Color.FromArgb(0, 170, 170);
-                    
+
                 case "4":
                     return Color.FromArgb(170, 0, 0);
-                    
+
                 case "5":
                     return Color.FromArgb(170, 0, 170);
-                    
+
                 case "6":
                     return Color.FromArgb(255, 170, 0);
-                    
+
                 case "7":
                     return Color.FromArgb(170, 170, 170);
-                    
+
                 case "8":
                     return Color.FromArgb(85, 85, 85);
-                    
+
                 case "9":
                     return Color.FromArgb(85, 85, 255);
-                    
+
                 case "a":
                     return Color.FromArgb(85, 255, 85);
-                    
+
                 case "b":
                     return Color.FromArgb(85, 255, 255);
-                    
+
                 case "c":
                     return Color.FromArgb(255, 85, 85);
-                    
+
                 case "d":
                     return Color.FromArgb(255, 85, 255);
-                    
+
                 case "e":
                     return Color.FromArgb(255, 255, 85);
-                    
+
                 case "f":
                     return Color.FromArgb(255, 255, 255);
                 default:
@@ -330,119 +280,34 @@ namespace CBOT {
             string style = "";
 
             putsc("", Color.Black); // -- Make a new line
-            
+
             while (text.Contains("§")) {
-                    int colorIndex = text.IndexOf("§");
-                    string code = text.Substring(colorIndex + 1, 1);
+                int colorIndex = text.IndexOf("§");
+                string code = text.Substring(colorIndex + 1, 1);
 
-                    if (colorIndex != 0) 
-                        putsc(text.Substring(0, colorIndex), Color.White,true);
-                    
-                    text = text.Substring(colorIndex + 2, text.Length - (colorIndex + 2));
+                if (colorIndex != 0)
+                    putsc(text.Substring(0, colorIndex), Color.White, true);
 
-                    colorIndex = text.IndexOf("§");
+                text = text.Substring(colorIndex + 2, text.Length - (colorIndex + 2));
 
-                    if (colorIndex == -1) {
-                        putsc(text, GetChatColor(code.ToLower()), true, style);
-                        break;
-                    }
+                colorIndex = text.IndexOf("§");
 
-                    putsc(text.Substring(0, colorIndex), GetChatColor(code.ToLower()), true, style);
-                    text = text.Substring(colorIndex, text.Length - (colorIndex));
-            }
-        }
-        public void AddCommand(string name, string lua_function, string help) {
-            name = name.ToLower();
-            if (Commands.ContainsKey(prefix + name))
-                Commands.Remove(prefix + name);
+                if (colorIndex == -1) {
+                    putsc(text, GetChatColor(code.ToLower()), true, style);
+                    break;
+                }
 
-            ScriptedCommand newCommand = new ScriptedCommand(prefix + name, "Lua:" + lua_function, help);
-            Commands.Add(prefix + name, newCommand);
-        }
-        public void Send_Message(string message) {
-            if (connected) {
-                MinecraftServer.SendChat(message);
+                putsc(text.Substring(0, colorIndex), GetChatColor(code.ToLower()), true, style);
+                text = text.Substring(colorIndex, text.Length - (colorIndex));
             }
         }
         #endregion
 
-        #region Event Handlers
-        void MinecraftServer_InfoMessage(object sender, string message) {
-            putsc("[INFO]: " + message, Color.Green);
-        }
-
-        void MinecraftServer_DebugMessage(object sender, string message) {
-            putsc("[DEBUG]: " + message, Color.Red);
-        }
-
-        //void MinecraftServer_setPlayerHealth(float health, short hunger, float saturation) {
-        //    putsc("[DEBUG] Health update! " + health.ToString(), Color.Red);
-
-        //    if (0 >= health) {
-        //        // -- Respawn
-        //        var RespawnPacket = new ClientStatus(ref MinecraftServer, 0);
-        //        putsc("[DEBUG] Respawned!", Color.Red);
-        //        var PlayerPacket = new Player(ref MinecraftServer);
-        //        var PlayerPacket1 = new Player(ref MinecraftServer);
-        //        var PlayerPacket2 = new Player(ref MinecraftServer);
-        //        var PlayerPacket3 = new Player(ref MinecraftServer);
-        //    }
-        //}
-        void MinecraftServer_message(object sender, string message, string name) {
-            if (message.StartsWith(prefix)) {  // -- Handle commands.
-                if (!AccessList.Contains(name))
-                    return;
-
-                if (!message.Contains(" "))
-                    message = message + " ";
-
-                string command = message.Substring(0, message.IndexOf(" "));
-                string[] splits = message.Substring(message.IndexOf(" ") + 1, message.Length - (message.IndexOf(" ") + 1)).Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-                string afterMessage = message.Substring(message.IndexOf(" ") + 1, message.Length - (message.IndexOf(" ") + 1));
-
-                if (Commands.ContainsKey(command.ToLower()) == false)
-                    MinecraftServer.SendChat("Command not found!");
-                else {
-                    var tCommand = Commands[command.ToLower()];
-                    tCommand.run(command, splits, afterMessage, name, this);
-                }                   
+        private void btnSend_Click(object sender, EventArgs e) {
+            if (Connected) {
+                Client.SendChat(boxChat.Text);
+                boxChat.Clear();
             }
-
-            if (name != "EVENT")
-                HandleColors_2("<" + name + "> " + message);
-            else
-                HandleColors_2(message);
         }
-
-        void MinecraftServer_loginSuccess(object sender) {
-            luaHandler.Run_Lua_Function("LoginSuccess",null);
-        }
-
-        void MinecraftServer_playerListitemRemove(string name) {
-            if (this.InvokeRequired) {
-                this.Invoke(new PlayerListRemove(MinecraftServer_playerListitemRemove), name);
-                return;
-            }
-            luaHandler.Run_Lua_Function("Player_Logout", new[] { name });
-            lstPlayers.Items.Remove(name);
-        }
-
-        void MinecraftServer_playerListitemAdd(string name, short ping) {
-            if (this.InvokeRequired) {
-                this.Invoke(new PlayerListAdd(MinecraftServer_playerListitemAdd), name, ping);
-                return;
-            }
-
-            luaHandler.Run_Lua_Function("Player_Login", new[] { name });
-            lstPlayers.Items.Add(name);
-        }
-        #endregion
-
-        #region Thread-Safe Delegates
-        private delegate void PlayerListRemove(string name);
-        private delegate void PlayerListAdd(string name, short ping);
-        #endregion
-
-
     }
 }
